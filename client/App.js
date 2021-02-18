@@ -1,59 +1,46 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import * as SecureStore from "expo-secure-store";
 import * as Font from "expo-font";
-import { Ionicons } from "@expo/vector-icons";
-import HomeScreen from "./Components/HomeScreen";
-import RouteScreen from "./Components/RouteScreen";
-import DetailScreen from "./Components/DetailScreen";
-import SettingsScreen from "./Components/SettingsScreen";
+import LoginScreen from "./Components/LoginScreen";
+import MainScreen from "./Components/MainScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Tab = createBottomTabNavigator();
-const homeName = "홈";
-const routeName = "동선";
-const detailName = "걸음 기록";
-const settingsName = "설정";
-
+const Stack = createStackNavigator();
+const loginName = "로그인";
+const mainName = "메인";
 export default function App() {
+  const [isLogin, setIsLogin] = useState();
   const [loaded] = Font.useFonts({
     DoHyeon: require("./assets/fonts/DoHyeon-Regular.ttf"),
   });
   if (!loaded) {
     return null;
   }
+  const getState = async () => {
+    const state = await SecureStore.getItemAsync("isLogin").catch(async () => {
+      return await SecureStore.setItemAsync("isLogin", "true");
+    });
+    setIsLogin(state);
+  };
+  const setInitScreen = () => {
+    if (isLogin) return mainName;
+    else return loginName;
+  };
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === homeName) {
-              iconName = focused ? "ios-home" : "ios-home-outline";
-            } else if (route.name === routeName) {
-              iconName = focused ? "ios-walk" : "ios-walk-outline";
-            } else if (route.name === detailName) {
-              iconName = focused ? "ios-calendar" : "ios-calendar-outline";
-            } else if (route.name === settingsName) {
-              iconName = focused ? "ios-settings" : "ios-settings-outline";
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
-        tabBarOptions={{
-          activeTintColor: "#262223",
-          inactiveTintColor: "gray",
-        }}
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={setInitScreen}
       >
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={routeName} component={RouteScreen} />
-        <Tab.Screen name={detailName} component={DetailScreen} />
-        <Tab.Screen name={settingsName} component={SettingsScreen} />
-      </Tab.Navigator>
+        <Stack.Screen name={loginName} component={LoginScreen} />
+        <Stack.Screen name={mainName} component={MainScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
+  // return <NavigationContainer>{switchNav()}</NavigationContainer>;
 }
 
 const styles = StyleSheet.create({

@@ -3,11 +3,12 @@ import React, { Fragment } from "react";
 import { Text, View, SafeAreaView, Platform } from "react-native";
 import styles from "../assets/styles";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
+  console.log(navigation);
   if (Platform.OS === "ios") {
     return (
       <Fragment>
-        <SafeAreaView style={styles.com__headers}>
+        <SafeAreaView style={styles.com_headers}>
           <StatusBar style="dark" />
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>

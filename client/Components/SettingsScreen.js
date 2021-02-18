@@ -1,9 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment } from "react";
-import { Text, View, SafeAreaView, Platform } from "react-native";
+import { Text, View, SafeAreaView, Platform, Button } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+
 import styles from "../assets/styles";
 
-export default function SettingsScreen() {
+const SettingsStack = createStackNavigator();
+export default function SettingsScreen({ navigation }) {
   if (Platform.OS === "ios") {
     return (
       <Fragment>

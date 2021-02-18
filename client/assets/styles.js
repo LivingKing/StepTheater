@@ -32,5 +32,9 @@ const styles = StyleSheet.create({
     fontFamily: "DoHyeon",
     fontSize: 20,
   },
+  route_safeView_contents_map: {
+    width: "100%",
+    height: "100%",
+  },
 });
 export default styles;

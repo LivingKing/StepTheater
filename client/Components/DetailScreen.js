@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment, useEffect, useState } from "react";
-import { View, SafeAreaView, Platform, Button } from "react-native";
+import { View, SafeAreaView, Platform, Text } from "react-native";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import { LocaleConfig } from "react-native-calendars";
 import styles from "../assets/styles";
@@ -68,8 +68,12 @@ export default function DetailScreen() {
           <StatusBar style="dark" />
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.com_safeView_title}>
+            <Text style={styles.com_safeView_title_text}>걸음 기록</Text>
+          </View>
+          <View style={styles.com_safeView_contents}>
             <CalendarList
+              style={{ backgroundColor: "#f4f0ec" }}
               markedDates={markedDates}
               current={selectedDate}
               pastScrollRange={24}
