@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   com_headers: {
@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
     textAlign: "right",
     fontFamily: "DoHyeon",
     fontSize: 20,
+  },
+  route_safeView_contents_map: {
+    width: "100%",
+    height: "100%",
   },
 });
 export default styles;

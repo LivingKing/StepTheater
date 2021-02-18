@@ -7,7 +7,7 @@ export default function HomeScreen() {
   if (Platform.OS === "ios") {
     return (
       <Fragment>
-        <SafeAreaView style={styles.com__headers}>
+        <SafeAreaView style={styles.com_headers}>
           <StatusBar style="dark" />
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
