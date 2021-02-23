@@ -233,7 +233,10 @@ export default function AdditionScreen({ navigation }) {
                   <Button
                     onPress={() => {
                       setSucDialogVisible(false);
-                      navigation.navigate("메인");
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: "메인" }],
+                      });
                     }}
                   >
                     <Text style={styles.regi_dialog_btn}>확인</Text>

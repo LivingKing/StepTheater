@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
@@ -19,40 +19,25 @@ const findName = "찾기";
 const regiName = "회원가입";
 const addName = "추가입력";
 export default function App() {
-  const [isLogin, setIsLogin] = useState();
+  const [isLogin, setIsLogin] = useState(async () => {
+    return await SecureStore.getItemAsync("IsLogin");
+  });
+  const [stackLoading, SetStackLoading] = useState(true);
   const [loaded] = Font.useFonts({
     DoHyeon: require("./assets/fonts/DoHyeon-Regular.ttf"),
   });
   if (!loaded) {
     return null;
   }
-  const getState = async () => {
-    const state = await SecureStore.getItemAsync("isLogin").catch(async () => {
-      return await SecureStore.setItemAsync("isLogin", "false");
-    });
-    setIsLogin(state);
-  };
-  const setInitScreen = () => {
-    getState();
-    if (isLogin) return mainName;
-    else return loginName;
-  };
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{ headerShown: false }}
-          initialRouteName={setInitScreen}
-        >
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name={loginName} component={LoginScreen} />
           <Stack.Screen name={mainName} component={MainScreen} />
           <Stack.Screen name={findName} component={FindScreen} />
           <Stack.Screen name={regiName} component={RegisterScreen} />
-          <Stack.Screen
-            options={{ gestureEnabled: false }}
-            name={addName}
-            component={AdditionScreen}
-          />
+          <Stack.Screen name={addName} component={AdditionScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

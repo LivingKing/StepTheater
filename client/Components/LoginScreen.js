@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import { View, SafeAreaView, Platform, Text } from "react-native";
+import { NavigationActions, StackActions } from "@react-navigation/native";
 import { TextInput, Button, HelperText } from "react-native-paper";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as SecureStore from "expo-secure-store";
@@ -11,9 +12,23 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [password, setPassword] = useState("");
+  const [isLogin, SetIsLogin] = useState("");
   const emailRef = useRef();
   const passwordRef = useRef();
-
+  const showState = async () => {
+    console.log(
+      "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
+      "\nUserId : " + (await SecureStore.getItemAsync("userId")),
+      "\nEmail : " + (await SecureStore.getItemAsync("Email")),
+      "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
+      "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
+    );
+    SetIsLogin(isLogin);
+  };
+  useEffect(() => {
+    showState();
+    navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+  });
   const localLogin = async () => {
     const response = await fetch(
       "http://203.241.228.112:11200/api/member/login",
@@ -42,7 +57,7 @@ export default function LoginScreen({ navigation }) {
       await SecureStore.setItemAsync("LoginType", result.memberType);
       await SecureStore.setItemAsync("NickName", result.nickname);
       await SecureStore.setItemAsync("IsLogin", "true");
-      navigation.navigate("메인");
+      navigation.reset({ index: 0, routes: [{ name: "메인" }] });
       setErrorMsg("");
     }
   };
@@ -86,7 +101,7 @@ export default function LoginScreen({ navigation }) {
             "Name",
             credential.fullName.familyName + credential.fullName.givenName
           );
-          navigation.navigate("추가입력");
+          navigation.reset({ index: 0, routes: [{ name: "추가입력" }] });
         } else {
           //회원이 있을 경우(기존 로컬 회원)
           console.log("이미 존재하는 회원");
@@ -95,7 +110,7 @@ export default function LoginScreen({ navigation }) {
           await SecureStore.setItemAsync("NickName", response.nickname);
           await SecureStore.setItemAsync("IsLogin", "true");
           await SecureStore.setItemAsync("LoginType", "Local");
-          navigation.navigate("메인");
+          navigation.reset({ index: 0, routes: [{ name: "메인" }] });
         }
       }
     } catch (e) {
