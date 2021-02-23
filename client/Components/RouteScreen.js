@@ -1,27 +1,38 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment, useEffect, useState } from "react";
 import { View, SafeAreaView, Platform, Text } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import styles from "../assets/styles";
+import { getDistance } from 'geolib';
+
 
 export default function RouteScreen() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [polyLine, setPolyLine] = useState([]);
+  const [prevLine, setPrevLine] = useState(null);
+  const [count, setCount] = useState(0);
+  const [output, setOutput] = useState(null);
+  var smooth = require("smooth-polyline");
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
       setErrorMsg(null);
-      console.log(status);
+      //console.log(status);
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      console.log(location);
+      //console.log(location);
       setLocation(location);
+      setPrevLine({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      });
     })();
   }, []);
 
@@ -30,6 +41,10 @@ export default function RouteScreen() {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
+  }
+
+  onUserLocationChange = (coordinate) => {
+    console.log(coordinate);
   }
 
   if (Platform.OS === "ios") {
@@ -54,10 +69,42 @@ export default function RouteScreen() {
                   longitudeDelta: 0.01,
                 }}
                 rotateEnabled={false}
+                showsUserLocation={true}
+                followsUserLocation={false}
                 onRegionChangeComplete={(Region) => {
-                  console.log(Region);
+
                 }}
+                onUserLocationChange={e => {
+                  const newLine = [e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude];
+                  console.log("distance : " + getDistance(prevLine, { ...newLine }))
+
+                  if (getDistance(prevLine, { ...newLine }) >= 10) {
+                    console.log("count : " + count);
+                    if (count == 0) {
+                      setPolyLine([...polyLine, [
+                        location.coords.latitude,
+                        location.coords.longitude
+                      ]]);
+                    }
+                    setPolyLine([...polyLine, newLine]);
+                    console.log(smooth(polyLine));
+
+                    setOutput(smooth(smooth(polyLine)).map(([latitude, longitude]) => ({ latitude, longitude })));
+                    console.log(output);
+
+                    setPrevLine(newLine);
+                    var temp = count + 1;
+                    setCount(temp);
+                  }
+
+                }
+                }
               >
+                <Polyline
+                  coordinates={output}
+                  strokeColor="#ff0000" // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeWidth={8}
+                />
                 <Marker
                   draggable
                   coordinate={{
@@ -69,7 +116,7 @@ export default function RouteScreen() {
             )}
           </View>
         </SafeAreaView>
-      </Fragment>
+      </Fragment >
     );
   } else {
     return null;
