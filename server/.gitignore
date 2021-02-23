@@ -39,3 +39,4 @@ out/
 
 ## my ignore ###
 src/main/resources/application.yml
+src/main/java/livingin/steptheater/initDB.java
