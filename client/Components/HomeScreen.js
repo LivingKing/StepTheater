@@ -1,10 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Text, View, SafeAreaView, Platform } from "react-native";
 import styles from "../assets/styles";
 
 export default function HomeScreen({ navigation }) {
-  console.log(navigation);
   if (Platform.OS === "ios") {
     return (
       <Fragment>
