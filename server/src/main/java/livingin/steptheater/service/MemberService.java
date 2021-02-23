@@ -56,8 +56,16 @@ public class MemberService {
         return memberRepository.findOneByNickName(nickname);
     }
 
+    public Member findOneByOAuth(String oauthid){
+        return memberRepository.findOneByOauthId(oauthid);
+    }
+
     public Member findOneEmail(String nickname, String name) {
         return memberRepository.findOneEmail(nickname, name);
+    }
+
+    public Member findOnePassword(String email, String nickname, String name) {
+        return memberRepository.findOnePassword(email, nickname, name);
     }
 
     public List<Member> findMembersByEmail(String email) {
@@ -91,5 +99,13 @@ public class MemberService {
             throw new memberException("이메일 인증을 먼저 진행해주세요!");
         }
         return "성공";
+    }
+
+    @Transactional
+    public void updateOAuth(Long id, String nickname, boolean privacy, boolean location) {
+        Member findMember = memberRepository.findOne(id);
+        findMember.setNickname(nickname);
+        findMember.setPrivacy_Checked(privacy);
+        findMember.setLocation_Checked(location);
     }
 }

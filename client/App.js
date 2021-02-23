@@ -7,6 +7,7 @@ import LoginScreen from "./Components/LoginScreen";
 import MainScreen from "./Components/MainScreen";
 import FindScreen from "./Components/FindScreen";
 import RegisterScreen from "./Components/RegisterScreen";
+import AdditionScreen from "./Components/AdditionScreen";
 import { Provider as PaperProvider } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import theme from "./assets/theme";
@@ -16,6 +17,7 @@ const loginName = "로그인";
 const mainName = "메인";
 const findName = "찾기";
 const regiName = "회원가입";
+const addName = "추가입력";
 export default function App() {
   const [isLogin, setIsLogin] = useState();
   const [loaded] = Font.useFonts({
@@ -46,11 +48,15 @@ export default function App() {
           <Stack.Screen name={mainName} component={MainScreen} />
           <Stack.Screen name={findName} component={FindScreen} />
           <Stack.Screen name={regiName} component={RegisterScreen} />
+          <Stack.Screen
+            options={{ gestureEnabled: false }}
+            name={addName}
+            component={AdditionScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
-  // return <NavigationContainer>{switchNav()}</NavigationContainer>;
 }
 
 const styles = StyleSheet.create({

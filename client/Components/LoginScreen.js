@@ -15,29 +15,33 @@ export default function LoginScreen({ navigation }) {
   const passwordRef = useRef();
 
   const localLogin = async () => {
-    const response = await fetch("http://192.168.0.26:8080/api/member/login", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: await Crypto.digestStringAsync(
-          Crypto.CryptoDigestAlgorithm.SHA256,
-          password
-        ),
-      }),
-    });
+    const response = await fetch(
+      "http://203.241.228.112:11200/api/member/login",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: await Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA256,
+            password
+          ),
+        }),
+      }
+    );
     const result = await response.json();
     if (result.status === 500) {
       setErrorMsg(result.message);
     } else {
       console.log(result);
       await SecureStore.setItemAsync("Email", result.email);
-      await SecureStore.setItemAsync("userId", String(result.id));
+      await SecureStore.setItemAsync("UserId", String(result.id));
       await SecureStore.setItemAsync("LoginType", result.memberType);
-      await SecureStore.setItemAsync("isLogin", "true");
+      await SecureStore.setItemAsync("NickName", result.nickname);
+      await SecureStore.setItemAsync("IsLogin", "true");
       navigation.navigate("메인");
       setErrorMsg("");
     }
@@ -50,44 +54,52 @@ export default function LoginScreen({ navigation }) {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-
-      // 회원 정보 조회
-      // 없을 경우 가입 로직
-      // 있을 경우 추가 정보 입력 여부 확인 (닉네임 설정 여부)
-      // 추가 정보 입력했을 경우 로그인 작업
-      let data = new Object();
-      data.oAuthUserId = credential.user;
+      let response;
+      let data;
       if (credential.email !== null) {
-        data.email = credential.email;
-        data.name =
-          credential.fullName.familyName + credential.fullName.givenName;
-        await SecureStore.setItemAsync("Email", credential.email);
-      } else {
-        data.email = await SecureStore.getItemAsync("Email");
+        // 최초 로그인
+        response = await fetch(
+          `http://203.241.228.112:11200/api/member?email=${credential.email}`
+        );
+        data = await response.json();
+        if (data.id === 0) {
+          // 회원이 없을 경우
+          response = await fetch("http://203.241.228.112:11200/api/members", {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credential.email,
+              name:
+                credential.fullName.familyName + credential.fullName.givenName,
+              oauthuserid: credential.user,
+              type: "Apple",
+            }),
+          });
+          const result = await response.json();
+          console.log(result);
+          await SecureStore.setItemAsync("UserId", String(result.id));
+          await SecureStore.setItemAsync("Email", result.email);
+          await SecureStore.setItemAsync(
+            "Name",
+            credential.fullName.familyName + credential.fullName.givenName
+          );
+          navigation.navigate("추가입력");
+        } else {
+          //회원이 있을 경우(기존 로컬 회원)
+          console.log("이미 존재하는 회원");
+          await SecureStore.setItemAsync("UserId", String(response.id));
+          await SecureStore.setItemAsync("Email", response.email);
+          await SecureStore.setItemAsync("NickName", response.nickname);
+          await SecureStore.setItemAsync("IsLogin", "true");
+          await SecureStore.setItemAsync("LoginType", "Local");
+          navigation.navigate("메인");
+        }
       }
-
-      const response = await fetch("http://192.168.0.26:8080/api/members", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          name: data.name,
-          oauthuserid: data.oAuthUserId,
-          type: "Apple",
-        }),
-      });
-      const result = await response.json();
-      console.log(result);
-      await SecureStore.setItemAsync("userId", String(result.id));
-      await SecureStore.setItemAsync("LoginType", "Apple");
-      await SecureStore.setItemAsync("isLogin", "true");
-      navigation.navigate("메인");
     } catch (e) {
       if (e.code === "ERR_CANCLED") {
-      } else {
       }
     }
   };

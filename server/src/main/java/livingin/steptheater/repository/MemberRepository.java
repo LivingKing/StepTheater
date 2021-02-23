@@ -44,6 +44,17 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    public Member findOneByOauthId(String oauthid) {
+        List<Member> findMembers = em.createQuery(
+                "select m from Member m " +
+                        "where m.oAuthUserId = :oauthid", Member.class)
+                .setParameter("oauthid", oauthid)
+                .setMaxResults(1)
+                .getResultList();
+        if(findMembers.isEmpty()) return null;
+        return findMembers.get(0);
+    }
+
     public Member findOneEmail(String nickname, String name) {
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -51,6 +62,21 @@ public class MemberRepository {
                         "and m.name= :name", Member.class)
                 .setParameter("nickname", nickname)
                 .setParameter("name", name)
+                .setMaxResults(1)
+                .getResultList();
+        if(findMembers.isEmpty()) return null;
+        return findMembers.get(0);
+    }
+
+    public Member findOnePassword(String email, String nickname, String name){
+        List<Member> findMembers = em.createQuery(
+                "select m from Member m " +
+                        "where m.nickname= :nickname " +
+                        "and m.name = :name " +
+                        "and m.email= :email", Member.class)
+                .setParameter("nickname", nickname)
+                .setParameter("name", name)
+                .setParameter("email", email)
                 .setMaxResults(1)
                 .getResultList();
         if(findMembers.isEmpty()) return null;
@@ -69,5 +95,4 @@ public class MemberRepository {
                 .setParameter("email", email)
                 .getResultList();
     }
-
 }

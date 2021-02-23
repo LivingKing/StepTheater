@@ -39,26 +39,24 @@ public class MemberController {
     public GetMemberResponse findMember(
             @RequestParam(value = "id", defaultValue = "0") Long id,
             @RequestParam(value = "email", defaultValue = "") String email,
-            @RequestParam(value = "nickname", defaultValue = "") String nickname
+            @RequestParam(value = "nickname", defaultValue = "") String nickname,
+            @RequestParam(value = "oauth", defaultValue = "") String oauth
     ) {
-        if (id > 0L) {
-            Member findMember = memberService.findOne(id);
-            return new GetMemberResponse(findMember.getId(), findMember.getEmail());
-        } else if (!email.equals("")) {
-            Member findMember = memberService.findOneByEmail(email);
-            if (findMember == null) {
-                return new GetMemberResponse(0L, "none");
-            }
-            return new GetMemberResponse(findMember.getId(), findMember.getEmail());
-        } else if (!nickname.equals((""))) {
+        Member findMember = null;
+        if (id > 0L)
+            findMember = memberService.findOne(id);
+        else if (!email.equals(""))
+            findMember = memberService.findOneByEmail(email);
+        else if (!nickname.equals((""))) {
             String decodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
-            Member findMember = memberService.findOneByNick(decodedNickname);
-            if (findMember == null) {
-                return new GetMemberResponse(0L, "none");
-            }
-            return new GetMemberResponse(findMember.getId(), findMember.getEmail());
-        } else
-            return new GetMemberResponse(0L, "none");
+            findMember = memberService.findOneByNick(decodedNickname);
+        } else if (!oauth.equals(("")))
+            findMember = memberService.findOneByOAuth(oauth);
+
+        if (findMember == null) {
+            return new GetMemberResponse(0L, "none", "none");
+        }
+        return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname());
     }
 
     @RequestMapping("/api/member/certified")
@@ -66,14 +64,26 @@ public class MemberController {
             @RequestParam(value = "email") String email,
             @RequestParam(value = "certified") String certified,
             HttpServletResponse response
-    )throws IOException {
+    ) throws IOException {
         boolean result = memberService.updateCertified(email, certified);
-        if(result){
+        if (result) {
             response.sendRedirect("/email/successCertified.html");
-        }else {
+        } else {
             response.sendRedirect("/email/failCertified.html");
         }
     }
+
+    @RequestMapping("/api/member/findPW")
+    public void findPwEmail(
+            @RequestParam(value = "email") String email,
+            @RequestParam(value = "certified") String certified,
+            HttpServletResponse response
+    ) throws IOException {
+        Member findMember = memberService.findOneByEmail(email);
+        if (findMember.getCertified().equals(certified))
+            response.sendRedirect("/email/findPW.html");
+    }
+
     @GetMapping("/api/member/findEmail")
     public GetFindEmailResponse findEmail(
             @RequestParam(value = "nickname") String nickname,
@@ -82,6 +92,17 @@ public class MemberController {
         Member findMember = memberService.findOneEmail(nickname, name);
         if (findMember == null) throw new memberException("회원 정보가 존재하지 않습니다.");
         return new GetFindEmailResponse(findMember.getEmail());
+    }
+
+    @GetMapping("/api/member/findPw")
+    public GetFindPWResponse findPassword(
+            @RequestParam(value = "email") String email,
+            @RequestParam(value = "nickname") String nickname,
+            @RequestParam(value = "name") String name
+    ) {
+        Member findMember = memberService.findOnePassword(email, nickname, name);
+        if (findMember == null) throw new memberException("회원 정보가 존재하지 않습니다.");
+        return new GetFindPWResponse(findMember.getEmail(), findMember.getNickname(), findMember.getCertified());
     }
 
 
@@ -118,6 +139,16 @@ public class MemberController {
         Member findMember = memberService.findOne(id);
         return new UpdateMemberResponse(findMember.getId(), findMember.getNickname());
     }
+
+    @PutMapping("/api/members/{id}/OAuth")
+    public UpdateOAuthMemberResponse updateOAuthMember(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateOAuthMemberRequest request) {
+        memberService.updateOAuth(id, request.nickname, request.privacy, request.location);
+        Member findMember = memberService.findOne(id);
+        return new UpdateOAuthMemberResponse(findMember.getId(), findMember.getNickname());
+    }
+
 
     @PostMapping("/api/member/login")
     public LoginMemberResponse loginMember(
@@ -182,6 +213,7 @@ public class MemberController {
     static class GetMemberResponse {
         private Long id;
         private String email;
+        private String nickname;
     }
 
     @Data
@@ -216,5 +248,27 @@ public class MemberController {
     @AllArgsConstructor
     static class GetFindEmailResponse {
         private String email;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class GetFindPWResponse {
+        private String email;
+        private String nickname;
+        private String certified;
+    }
+
+    @Data
+    static class UpdateOAuthMemberRequest {
+        private String nickname;
+        private boolean privacy;
+        private boolean location;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class UpdateOAuthMemberResponse {
+        private Long id;
+        private String nickname;
     }
 }

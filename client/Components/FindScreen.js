@@ -70,7 +70,7 @@ export default function FindScreen({ navigation }) {
   const findId = async () => {
     if (nameError === "" && nickNameError === "") {
       const response = await fetch(
-        `http://192.168.0.26:8080/api/member/findEmail?nickname=${nickname}&&name=${name}`
+        `http://203.241.228.112:11200/api/member/findEmail?nickname=${nickname}&&name=${name}`
       );
       const result = await response.json();
       if (result.status === 500) {
@@ -80,6 +80,26 @@ export default function FindScreen({ navigation }) {
       } else {
         setfindEmail(result.email);
         setEmailDialogVis();
+      }
+    }
+  };
+
+  const findPw = async () => {
+    if (nameError === "" && nickNameError === "" && emailError === "") {
+      const response = await fetch(
+        `http://203.241.228.112:11200/api/member/findPw?email=${email}&&nickname=${nickname}&&name=${name}`
+      );
+      const result = await response.json();
+      console.log(result);
+      if (result.status === 500) {
+        setFailDialogVisible(true);
+        setFailMessage(`검색내역이 없습니다!
+입력 정보를 다시 확인해주세요.`);
+      } else {
+        setPwDialogVis();
+        await fetch(
+          `http://203.241.228.112:11200/api/email/send/findPW?email=${result.email}&&nickname=${result.nickname}&&certified=${result.certified}`
+        );
       }
     }
   };
@@ -194,11 +214,7 @@ export default function FindScreen({ navigation }) {
                 >
                   {nameError}
                 </HelperText>
-                <Button
-                  style={{ width: 90 }}
-                  mode="contained"
-                  onPress={setPwDialogVis}
-                >
+                <Button style={{ width: 90 }} mode="contained" onPress={findPw}>
                   찾기
                 </Button>
               </View>
