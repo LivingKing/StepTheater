@@ -11,9 +11,12 @@ import static javax.persistence.FetchType.LAZY;
 @Getter @Setter
 public class DiaryItem {
     @Id @GeneratedValue
+    @Column(name="diary_item_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "diary_id")
-    private Diary diary;
+    private String title;
+
+    private String description;
+
+    private String imageUrl;
 }

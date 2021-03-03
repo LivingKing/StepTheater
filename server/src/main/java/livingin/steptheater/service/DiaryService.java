@@ -1,14 +1,15 @@
 package livingin.steptheater.service;
 
-import livingin.steptheater.domain.DiaryItem;
+import livingin.steptheater.domain.Diary;
 import livingin.steptheater.domain.Member;
-import livingin.steptheater.domain.Route;
 import livingin.steptheater.repository.DiaryRepository;
 import livingin.steptheater.repository.MemberRepository;
-import livingin.steptheater.repository.RouteRepository;
+import livingin.steptheater.repository.diary.DiaryQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -16,14 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiaryService {
     private final MemberRepository memberRepository;
     private final DiaryRepository diaryRepository;
-    private final RouteRepository routeRepository;
-
     @Transactional
-    public Long diary(Long memberId, Long RouteId, int count){
+    public Long diary(Long memberId, String date) {
 
         //엔티티 조회
         Member member = memberRepository.findOne(memberId);
-        Route route = routeRepository.findOne(RouteId);
-        return 1L;
+        Diary diary = Diary.createDiary(member, date);
+
+        diaryRepository.save(diary);
+        return diary.getId();
+    }
+
+    public List<DiaryQueryDto> findDiaryDtos() {
+        return diaryRepository.findDiaryDtos();
+    }
+
+    public List<DiaryQueryDto> findOneDiaryDto(Long userId, String date) {
+        return diaryRepository.findOneDiaryDto(userId, date);
     }
 }

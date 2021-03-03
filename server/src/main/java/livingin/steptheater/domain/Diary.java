@@ -29,14 +29,8 @@ public class Diary {
     private Member member;
 
 
-    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
-    private List<DiaryItem> diaryItems = new ArrayList<>();
-
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "route_id")
-    private Route route;
-
-    private LocalDateTime diaryDate;
+    @Column(name ="diaryDate")
+    private String diaryDate;
 
     //==연관관계 메서드==//
     public void setMember(Member member){
@@ -44,23 +38,19 @@ public class Diary {
         member.getDiaries().add(this);
     }
 
-    public void addDiaryItem(DiaryItem diaryItem){
-        diaryItems.add(diaryItem);
-    }
-
-    public void setRoute(Route route){
-        this.route = route;
-        route.setDiary(this);
-    }
+//    public void addDiaryItem(DiaryItem diaryItem){
+//        diaryItems.add(diaryItem);
+//    }
+//
+//    public void addRoute(Route route){
+//        routes.add(route);
+//    }
 
     //==생성 메서드==//
-    public static Diary createDiary(Member member, Route route, DiaryItem... diaryItems){
+    public static Diary createDiary(Member member, String date){
         Diary diary = new Diary();
         diary.setMember(member);
-        diary.setRoute(route);
-        for (DiaryItem diaryItem : diaryItems) {
-            diary.addDiaryItem(diaryItem);
-        }
+        diary.setDiaryDate(date);
         return diary;
     }
 

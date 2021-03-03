@@ -23,11 +23,22 @@ export default function LoginScreen({ navigation }) {
       "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
     );
-    SetIsLogin(isLogin);
+  };
+  const checkState = async () => {
+    if ((await SecureStore.getItemAsync("IsLogin")) === "true") {
+      const data = await SecureStore.getItemAsync("Email");
+      const response = await fetch(
+        `http://203.241.228.112:11200/api/member?email=${data}`
+      );
+      const result = await response.json();
+      if (result.id) {
+        navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+      }
+    }
   };
   useEffect(() => {
     showState();
-    navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+    checkState();
   });
   const localLogin = async () => {
     const response = await fetch(
@@ -57,7 +68,7 @@ export default function LoginScreen({ navigation }) {
       await SecureStore.setItemAsync("LoginType", result.memberType);
       await SecureStore.setItemAsync("NickName", result.nickname);
       await SecureStore.setItemAsync("IsLogin", "true");
-      navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+
       setErrorMsg("");
     }
   };
@@ -110,7 +121,6 @@ export default function LoginScreen({ navigation }) {
           await SecureStore.setItemAsync("NickName", response.nickname);
           await SecureStore.setItemAsync("IsLogin", "true");
           await SecureStore.setItemAsync("LoginType", "Local");
-          navigation.reset({ index: 0, routes: [{ name: "메인" }] });
         }
       }
     } catch (e) {

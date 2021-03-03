@@ -8,26 +8,30 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Route {
     @Id
     @GeneratedValue
     @Column(name = "route_id")
     private Long id;
 
-    @OneToOne(mappedBy = "route", fetch = LAZY)
-    private Diary diary;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="route_id")
     private List<RouteItem> routeItems = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "diary_id")
+    private Diary diary;
+
+    private String name;
+
+    private String imageUrl;
 
     //==연관관계 메서드==//
-    public void addRouteItem(RouteItem routeItem){
+    public void addRouteItem(RouteItem routeItem) {
         routeItems.add(routeItem);
-        routeItem.setRoute(this);
     }
 }
