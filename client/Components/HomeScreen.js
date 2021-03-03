@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
     );
   };
   useEffect(() => {
-    showState();
+    // showState();
   });
   if (Platform.OS === "ios") {
     return (
