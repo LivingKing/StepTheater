@@ -8,6 +8,8 @@ import {
   Image,
   Dimensions,
   Animated,
+  TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -27,9 +29,11 @@ import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
 import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators";
 import * as ImageManipulator from "expo-image-manipulator";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function RouteScreen() {
   const [image, setImage] = useState(null);
+  const [thumbImage, setThumbImage] = useState("");
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [nickname, setNickname] = useState("");
@@ -116,12 +120,26 @@ export default function RouteScreen() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
-    console.log(result);
+    const form = new FormData();
+
+    form.append("key", "7ea0466a1e47a7bede0c9d28bd16c4db");
+    form.append("image", result.base64);
+    const response = await fetch("https://api.imgbb.com/1/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: form,
+    });
+    const res = await response.json();
+    console.log(res.data.image.url);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setThumbImage(res.data.thumb.url);
+      setImage(res.data.image.url);
     }
   };
   /* 지도 */
@@ -191,7 +209,27 @@ export default function RouteScreen() {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
 
+  const postRoute = async (route) => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const date = await SecureStore.getItemAsync("today");
+
+    const response = await fetch("http://203.241.228.112:11200/api/route", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        date: date,
+        data: route,
+      }),
+    });
+  };
   const stopRecording = () => {
+    console.log("stop");
+    if (nowArr === 0) postRoute(polyLine);
+    else postRoute(polyLine2);
     setRecording(false);
     setNowArr(1);
     setModalVisible(false);
@@ -206,10 +244,26 @@ export default function RouteScreen() {
     //console.log(adding);
   };
 
-  const addPinArray = () => {
-    const file = { image: image, text: textzzz, content: contentzzz };
+  const addPinArray = async () => {
+    const file = { image: thumbImage, text: textzzz, content: contentzzz };
     const nextObject = { ...current, file };
-
+    const response = await fetch(
+      "http://203.241.228.112:11200/api/diary/item",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: await SecureStore.getItemAsync("UserId"),
+          date: await SecureStore.getItemAsync("today"),
+          title: file.text,
+          desc: file.content,
+          thumb_url: thumbImage,
+          image_url: image,
+        }),
+      }
+    );
     setPinArray([...pinArray, nextObject]);
 
     setAdding(false);
@@ -295,6 +349,236 @@ export default function RouteScreen() {
             }
           >
             <Surface style={recording ? styles.surface3 : styles.surface2}>
+              <View>
+                {isModalVisible && (
+                  <View
+                    style={{
+                      margin: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <Modal
+                      style={{
+                        justifyContent: "flex-end",
+                        margin: 0,
+                      }}
+                      isVisible={isModalVisible}
+                      hasBackdrop={true}
+                      coverScreen={false}
+                    >
+                      <View
+                        style={{
+                          flex: 0.34,
+                          backgroundColor: "white",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text>Hello!</Text>
+
+                        <IconButton
+                          icon="stop"
+                          color="#5c6bc0"
+                          size={45}
+                          onPress={stopRecording}
+                        />
+                      </View>
+                    </Modal>
+                  </View>
+                )}
+              </View>
+
+              <View>
+                {isModalVisible2 && (
+                  <View
+                    style={{
+                      margin: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <Modal
+                      style={{
+                        margin: 0,
+                      }}
+                      isVisible={isModalVisible2}
+                      hasBackdrop={true}
+                      coverScreen={false}
+                      animationInTiming={0.1}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: "white",
+                          alignItems: "center",
+                        }}
+                      >
+                        <KeyboardAwareScrollView
+                          style={{
+                            width: "100%",
+                            backgroundColor: "black",
+                          }}
+                          resetScrollToCoords={{ x: 0, y: 0 }}
+                          contentContainerStyle={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                          scrollEnabled={false}
+                        >
+                          <View
+                            style={{
+                              alignItems: "center",
+                              justifyContent: "center",
+                              width: "90%",
+                              flex: 0.3,
+                            }}
+                          >
+                            {image && (
+                              <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={pickImage}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  borderRadius: 10,
+                                  flex: 1,
+                                }}
+                              >
+                                <Image
+                                  source={{ uri: image }}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    borderRadius: 10,
+                                    flex: 1,
+                                  }}
+                                ></Image>
+                              </TouchableOpacity>
+                            )}
+                            {!image && (
+                              <IconButton
+                                style={
+                                  styles.route_safeView_contents_tool_button
+                                }
+                                icon={"plus"}
+                                color="black"
+                                size={80}
+                                onPress={pickImage}
+                              />
+                            )}
+                          </View>
+
+                          <TextInput
+                            mode="outlined"
+                            value={textzzz}
+                            onChangeText={(textzzz) => setTextzzz(textzzz)}
+                            text="black"
+                            theme={{
+                              colors: {
+                                placeholder: "#999999",
+                                text: "#e2e2e2",
+                                primary: "#545454",
+                                background: "white",
+                              },
+                            }}
+                            style={{ width: "90%", flex: 0.3 }}
+                          />
+                          <TextInput
+                            mode="outlined"
+                            value={contentzzz}
+                            multiline="true"
+                            onChangeText={(contentzzz) =>
+                              setContentzzz(contentzzz)
+                            }
+                            text="black"
+                            theme={{
+                              colors: {
+                                placeholder: "#999999",
+                                text: "#e2e2e2",
+                                primary: "#545454",
+                                background: "white",
+                              },
+                            }}
+                            style={{ width: "90%", height: 150 }}
+                          />
+                        </KeyboardAwareScrollView>
+
+                        <View style={styles.zpzpzp}>
+                          <Button
+                            style={styles.bbbccc}
+                            labelStyle={
+                              styles.com_safeView_title_route_total_content_text6
+                            }
+                            mode="outlined"
+                            onPress={addPinArray}
+                          >
+                            추가하기
+                          </Button>
+                          <Button
+                            style={styles.bbbccc}
+                            labelStyle={
+                              styles.com_safeView_title_route_total_content_text6
+                            }
+                            mode="outlined"
+                            onPress={toggleModal2}
+                          >
+                            취소하기
+                          </Button>
+                        </View>
+                      </View>
+                    </Modal>
+                  </View>
+                )}
+              </View>
+
+              <View>
+                {isModalVisible3 && (
+                  <View
+                    style={{
+                      margin: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <Modal
+                      style={{
+                        margin: 0,
+                      }}
+                      isVisible={isModalVisible3}
+                      hasBackdrop={true}
+                      coverScreen={false}
+                      onBackdropPress={() => {
+                        toggleModal3();
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 0.5,
+                          backgroundColor: "white",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text>{infoText}</Text>
+                        <Text>{infoContent}</Text>
+                        <Image
+                          source={{ uri: infoImg }}
+                          style={{ width: "100%", height: "100%" }}
+                        />
+
+                        <Button
+                          icon="camera"
+                          mode="contained"
+                          onPress={() => {
+                            toggleModal3();
+                          }}
+                        >
+                          확인
+                        </Button>
+                      </View>
+                    </Modal>
+                  </View>
+                )}
+              </View>
               <MapView
                 opacity={recording ? 1 : 1}
                 style={
@@ -429,7 +713,7 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                      console.log(route);
+                      // console.log(route);
                       return (
                         <Marker
                           key={index}
@@ -517,200 +801,6 @@ export default function RouteScreen() {
                     동선 기록을 시작합니다.
                 </Snackbar>
                 </View> */}
-
-                <View>
-                  {isModalVisible && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          justifyContent: "flex-end",
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                      >
-                        <View
-                          style={{
-                            flex: 0.34,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text>Hello!</Text>
-
-                          <IconButton
-                            icon="stop"
-                            color="#5c6bc0"
-                            size={45}
-                            onPress={stopRecording}
-                          />
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
-
-                <View>
-                  {isModalVisible2 && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible2}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                        animationInTiming={0.1}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <View
-                            style={{
-                              flex: 1,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {image && (
-                              <Image
-                                source={{ uri: image }}
-                                style={{ width: 150, height: 150 }}
-                              />
-                            )}
-                          </View>
-                          <IconButton
-                            style={styles.route_safeView_contents_tool_button}
-                            icon={"plus"}
-                            color="black"
-                            size={80}
-                            onPress={() => {
-                              pickImage();
-                            }}
-                          />
-                          <TextInput
-                            mode="outlined"
-                            value={textzzz}
-                            onChangeText={(textzzz) => setTextzzz(textzzz)}
-                            text="black"
-                            theme={{
-                              colors: {
-                                placeholder: "#999999",
-                                text: "#e2e2e2",
-                                primary: "#545454",
-                                background: "white",
-                              },
-                            }}
-                            style={{ width: "90%", height: 40 }}
-                          />
-                          <TextInput
-                            mode="outlined"
-                            value={contentzzz}
-                            onChangeText={(contentzzz) =>
-                              setContentzzz(contentzzz)
-                            }
-                            text="black"
-                            theme={{
-                              colors: {
-                                placeholder: "#999999",
-                                text: "#e2e2e2",
-                                primary: "#545454",
-                                background: "white",
-                              },
-                            }}
-                            style={{ width: "90%", height: 160 }}
-                          />
-
-                          <View style={styles.zpzpzp}>
-                            <Button
-                              style={styles.bbbccc}
-                              labelStyle={
-                                styles.com_safeView_title_route_total_content_text6
-                              }
-                              mode="outlined"
-                              onPress={addPinArray}
-                            >
-                              추가하기
-                            </Button>
-                            <Button
-                              style={styles.bbbccc}
-                              labelStyle={
-                                styles.com_safeView_title_route_total_content_text6
-                              }
-                              mode="outlined"
-                              onPress={toggleModal2}
-                            >
-                              취소하기
-                            </Button>
-                          </View>
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
-
-                <View>
-                  {isModalVisible3 && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible3}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                      >
-                        <View
-                          style={{
-                            flex: 0.5,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text>{infoText}</Text>
-                          <Text>{infoContent}</Text>
-                          <Image
-                            source={{ uri: infoImg }}
-                            style={{ width: "100%", height: "100%" }}
-                          />
-
-                          <Button
-                            icon="camera"
-                            mode="contained"
-                            onPress={() => {
-                              toggleModal3();
-                            }}
-                          >
-                            확인
-                          </Button>
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
 
                 {/* <Provider>
                   <Portal>

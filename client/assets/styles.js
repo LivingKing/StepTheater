@@ -90,7 +90,8 @@ const styles = StyleSheet.create({
   route_safeView_contents_tool_button: {
     backgroundColor: "white",
     width: "100%",
-    borderRadius: 50,
+    height: "100%",
+    borderRadius: 15,
   },
   route_safeView_contents_tool_button_label: {},
   surface: {
