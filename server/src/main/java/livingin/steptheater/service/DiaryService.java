@@ -28,6 +28,7 @@ public class DiaryService {
         return diary.getId();
     }
 
+    public Diary findOne(Long id) {return diaryRepository.findOne(id);}
     public List<DiaryQueryDto> findDiaryDtos() {
         return diaryRepository.findDiaryDtos();
     }

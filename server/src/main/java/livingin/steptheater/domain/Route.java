@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -18,11 +20,10 @@ public class Route {
     private Long id;
 
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="route_id")
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<RouteItem> routeItems = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "diary_id")
     private Diary diary;
 

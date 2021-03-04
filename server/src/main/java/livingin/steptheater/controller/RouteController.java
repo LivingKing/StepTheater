@@ -1,6 +1,8 @@
 package livingin.steptheater.controller;
 
+import livingin.steptheater.domain.Route;
 import livingin.steptheater.domain.RouteItem;
+import livingin.steptheater.repository.RouteRepository;
 import livingin.steptheater.service.RouteItemService;
 import livingin.steptheater.service.RouteService;
 import lombok.AllArgsConstructor;
@@ -25,11 +27,13 @@ public class RouteController {
             @RequestBody @Valid CreateRouteRequest request
     ){
         System.out.println("request = " + request);
+        Long routeId = routeService.join(request.id, request.date);
+        Route route = routeService.findOne(routeId);
         List<RouteItem> routeItems = new ArrayList<>();
         for (double[] location : request.data) {
-            routeItems.add(routeItemService.save(location[0], location[1]));
+            routeItems.add(routeItemService.save(location[0], location[1], route));
         }
-        routeService.join(request.id, request.date, routeItems, request.url);
+
         return new CreateRouteResponse(1);
     }
 
@@ -44,6 +48,5 @@ public class RouteController {
         private Long id;
         private String date;
         private double[][] data;
-        private String url;
     }
 }
