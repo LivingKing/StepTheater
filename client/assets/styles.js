@@ -145,6 +145,37 @@ const styles = StyleSheet.create({
   },
   route_contents_pinModal_concanButton_wrap: { flexDirection: "row" },
 
+  route_contents_pause_title: {
+    width: "100%", backgroundColor: "white", paddingTop: "5%", borderTopLeftRadius: 15, borderTopRightRadius: 15, paddingLeft: "4%",
+  },
+  route_contents_pause_title_text: { fontFamily: "NotoMedium", fontSize: windowHeight / 40 },
+  route_contents_pause_info: {
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: "5%",
+    paddingRight: "5%",
+    marginTop: "5%",
+    width: "100%"
+  },
+  route_contents_pause_tool: { width: "100%", backgroundColor: "white", marginTop: "1%", flexDirection: "row", marginTop: "5%" },
+  route_contents_pause_tool_button: {
+    width: "42%",
+    marginLeft: "4%",
+    marginRight: "4%",
+    borderRadius: 50,
+    borderColor: "#555555",
+    borderWidth: 1,
+    backgroundColor: "white",
+  },
+  route_contents_pause_tool_button_label: {
+    fontSize: windowHeight / 50,
+    fontFamily: "NotoMedium",
+    textAlign: "right",
+    color: "black",
+    marginTop: windowHeight / 100,
+  },
+
   route_tool: { flex: 0.3, backgroundColor: "#f6f6f6", alignItems: "center" },
   route_tool_shadow: {
     width: "100%",

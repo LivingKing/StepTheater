@@ -156,9 +156,10 @@ export default function RouteScreen() {
   /* 마커 */
   const [adding, setAdding] = useState(false); // 현재 마커 추가 중인지 여부
   const [pinArray, setPinArray] = useState([]); // 마커들이 저장된 배열
+  const [tempPinCount, setTempPinCount] = useState(0);
 
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const [pause, setPause] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -258,6 +259,8 @@ export default function RouteScreen() {
     );
     console.log("nextObject", nextObject);
     setPinArray([...pinArray, nextObject]);
+    var temp = tempPinCount + 1;
+    setTempPinCount(temp);
 
     setAdding(false);
     toggleModal2();
@@ -361,23 +364,86 @@ export default function RouteScreen() {
                   coverScreen={false}
                   onBackdropPress={toggleModal}
                 >
-                  <View
+                  <Surface
                     style={{
                       flex: 0.34,
-                      backgroundColor: "white",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text>Hello!</Text>
+                      borderTopLeftRadius: 15,
+                      borderTopRightRadius: 15,
+                    }}>
+                    <View
+                      style={{
+                        borderTopLeftRadius: 15,
+                        borderTopRightRadius: 15,
+                        width: "100%", height: "100%",
+                        backgroundColor: "white",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View style={styles.route_contents_pause_title}>
+                        <Text style={styles.route_contents_pause_title_text}>현재 동선 정보</Text>
+                      </View>
+                      <View style={styles.route_contents_pause_info}>
+                        <View style={styles.route_tool_routeInfo_wrap}>
+                          <Text style={styles.route_tool_routeInfo_text}>
+                            걸은 거리
+                            </Text>
+                          <Text style={styles.route_tool_routeInfo_textBold}>
+                            0.0{polyLine.length * 1}{" "}
+                            <Text style={styles.route_tool_routeInfo_text}>
+                              km
+                          </Text>
+                          </Text>
+                        </View>
+                        <View style={styles.route_tool_routeInfo_wrap}>
+                          <Text style={styles.route_tool_routeInfo_text}>
+                            걸은 시간
+                          </Text>
+                          <Text style={styles.route_tool_routeInfo_textBold}>
+                            0:00{" "}
+                            <Text style={styles.route_tool_routeInfo_text}>
+                              분
+                          </Text>
+                          </Text>
+                        </View>
+                        <View style={styles.route_tool_routeInfo_wrap}>
+                          <Text style={styles.route_tool_routeInfo_text}>
+                            추가한 마커
+                        </Text>
+                          <Text style={styles.route_tool_routeInfo_textBold}>
+                            {tempPinCount}
+                            <Text style={styles.route_tool_routeInfo_text}>
+                              {" "}
+                            개
+                          </Text>
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.route_contents_pause_tool}>
 
-                    <IconButton
-                      icon="stop"
-                      color="#5c6bc0"
-                      size={45}
-                      onPress={stopRecording}
-                    />
-                  </View>
+                        <Button
+                          style={styles.route_contents_pause_tool_button}
+                          labelStyle={styles.route_contents_pause_tool_button_label}
+                          icon="run"
+                          mode="outlined"
+                          onPress={toggleModal}
+                        >
+                          재개하기
+                        </Button>
+                        <Button
+                          style={styles.route_contents_pause_tool_button}
+                          labelStyle={styles.route_contents_pause_tool_button_label}
+                          icon="stop"
+                          mode="outlined"
+                          onPress={stopRecording}
+                        >
+                          정지하기
+                        </Button>
+                      </View>
+
+                    </View>
+                  </Surface>
                 </Modal>
+
               )}
               {isModalVisible2 && (
                 <Modal
@@ -900,7 +966,7 @@ export default function RouteScreen() {
             </View>
           )}
         </SafeAreaView>
-      </Fragment>
+      </Fragment >
     );
   } else {
     return null;
