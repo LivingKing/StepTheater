@@ -40,6 +40,7 @@
     "react-native-view-shot": "^3.1.2",
     "react-native-web": "~0.13.12",
     "react-native-webview": "^11.2.3",
+    "save": "^2.4.0",
     "smooth-polyline": "^1.0.8"
   },
   "devDependencies": {
