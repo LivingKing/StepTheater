@@ -1,7 +1,13 @@
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import React, { Fragment, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, View, SafeAreaView, Platform } from "react-native";
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   Button,
   HelperText,
@@ -365,8 +371,8 @@ export default function RegisterScreen({ navigation }) {
                   <Paragraph style={styles.regi_dialog_contents}>
                     {`걸음 한 편의 회원이 되신 것을 환영합니다.
                 
-인증 메일을 발송하였습니다.
-이메일 인증 후 로그인이 가능합니다.`}
+                인증 메일을 발송하였습니다.
+                이메일 인증 후 로그인이 가능합니다.`}
                   </Paragraph>
                 </Dialog.Content>
                 <Dialog.Actions>

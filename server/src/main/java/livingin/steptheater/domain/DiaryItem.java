@@ -19,4 +19,10 @@ public class DiaryItem {
     private String description;
 
     private String imageUrl;
+
+    private String thumbUrl;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "diary_id")
+    private Diary diary;
 }

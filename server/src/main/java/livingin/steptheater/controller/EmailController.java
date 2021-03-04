@@ -128,7 +128,7 @@ public class EmailController {
                         "아래의 링크를 클릭하면 비밀번호 변경 창으로 이동됩니다." +
                         "</p>" +
                         "<p style='color: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif; font-size: 14px; line-height: 24px;'>" +
-                        "<a href='http://192.168.0.26:8080/api/member/findPW?email=" + email + "&certified=" + certified +
+                        "<a href='http://203.241.228.112:11200/api/member/findPW?email=" + email + "&certified=" + certified +
                         "'style='color: #067df7; text-decoration: none' target='_blank'>변경하기</a>" +
                         "</p>" +
                         "</div>" +

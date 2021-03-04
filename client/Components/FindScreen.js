@@ -10,6 +10,7 @@ import {
   Dialog,
   Paragraph,
 } from "react-native-paper";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../assets/styles";
 
 export default function FindScreen({ navigation }) {
@@ -119,190 +120,208 @@ export default function FindScreen({ navigation }) {
             />
           </View>
           <View style={styles.com_safeView_contents}>
-            <View style={styles.find_safeView_contents_FindView}>
-              <View style={styles.find_safeView_contents_FindView_IdView}>
-                <Text style={styles.find_safeView_contents_FindView_title}>
-                  이메일 찾기
-                </Text>
-                <TextInput
-                  label="닉네임"
-                  ref={nickNameRef}
-                  value={nickname}
-                  textContentType="nickname"
-                  style={{ width: "100%", marginTop: 10, marginBottom: 10 }}
-                  onChangeText={(val) => checkNickNameErrors(val)}
-                  mode="outlined"
-                />
-                <HelperText
-                  type="error"
-                  visible={nickNameError !== ""}
-                  style={{ fontSize: 13 }}
-                >
-                  {nickNameError}
-                </HelperText>
-                <TextInput
-                  label="이름"
-                  ref={nameRef}
-                  value={name}
-                  textContentType="name"
-                  style={{ width: "100%", marginBottom: 10 }}
-                  onChangeText={(val) => checkNameErrors(val)}
-                  mode="outlined"
-                />
-                <HelperText
-                  type="error"
-                  visible={nameError !== ""}
-                  style={{ fontSize: 13 }}
-                >
-                  {nameError}
-                </HelperText>
-                <Button style={{ width: 90 }} mode="contained" onPress={findId}>
-                  찾기
-                </Button>
+            <KeyboardAwareScrollView
+              style={{ width: "100%", height: "100%" }}
+              contentContainerStyle={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              resetScrollToCoords={{ x: 0, y: 0 }}
+              scrollEnabled={false}
+            >
+              <View style={styles.find_safeView_contents_FindView}>
+                <View style={styles.find_safeView_contents_FindView_IdView}>
+                  <Text style={styles.find_safeView_contents_FindView_title}>
+                    이메일 찾기
+                  </Text>
+                  <TextInput
+                    label="닉네임"
+                    ref={nickNameRef}
+                    value={nickname}
+                    textContentType="nickname"
+                    style={{ width: "100%", marginTop: 10, marginBottom: 10 }}
+                    onChangeText={(val) => checkNickNameErrors(val)}
+                    mode="outlined"
+                  />
+                  <HelperText
+                    type="error"
+                    visible={nickNameError !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {nickNameError}
+                  </HelperText>
+                  <TextInput
+                    label="이름"
+                    ref={nameRef}
+                    value={name}
+                    textContentType="name"
+                    style={{ width: "100%", marginBottom: 10 }}
+                    onChangeText={(val) => checkNameErrors(val)}
+                    mode="outlined"
+                  />
+                  <HelperText
+                    type="error"
+                    visible={nameError !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {nameError}
+                  </HelperText>
+                  <Button
+                    style={{ width: 90, marginBottom: 20 }}
+                    mode="contained"
+                    onPress={findId}
+                  >
+                    찾기
+                  </Button>
+                </View>
+                <View style={styles.find_safeView_contents_FindView_PwView}>
+                  <Text style={styles.find_safeView_contents_FindView_title}>
+                    비밀번호 찾기
+                  </Text>
+                  <TextInput
+                    label="이메일"
+                    ref={emailRef}
+                    value={email}
+                    textContentType="emailAddress"
+                    style={{ width: "100%", marginTop: 10, marginBottom: 10 }}
+                    onChangeText={(val) => {
+                      checkEmailErrors(val);
+                    }}
+                    mode="outlined"
+                  />
+                  <HelperText
+                    type="error"
+                    visible={emailError !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {emailError}
+                  </HelperText>
+                  <TextInput
+                    label="닉네임"
+                    ref={nickNameRef}
+                    value={nickname}
+                    textContentType="nickname"
+                    style={{ width: "100%", marginBottom: 10 }}
+                    onChangeText={(val) => checkNickNameErrors(val)}
+                    mode="outlined"
+                  />
+                  <HelperText
+                    type="error"
+                    visible={nickNameError !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {nickNameError}
+                  </HelperText>
+                  <TextInput
+                    label="이름"
+                    ref={nameRef}
+                    value={name}
+                    textContentType="name"
+                    style={{ width: "100%", marginBottom: 10 }}
+                    onChangeText={(val) => checkNameErrors(val)}
+                    mode="outlined"
+                  />
+                  <HelperText
+                    type="error"
+                    visible={nameError !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {nameError}
+                  </HelperText>
+                  <Button
+                    style={{ width: 90 }}
+                    mode="contained"
+                    onPress={findPw}
+                  >
+                    찾기
+                  </Button>
+                </View>
               </View>
-              <View style={styles.find_safeView_contents_FindView_PwView}>
-                <Text style={styles.find_safeView_contents_FindView_title}>
-                  비밀번호 찾기
-                </Text>
-                <TextInput
-                  label="이메일"
-                  ref={emailRef}
-                  value={email}
-                  textContentType="emailAddress"
-                  style={{ width: "100%", marginTop: 10, marginBottom: 10 }}
-                  onChangeText={(val) => {
-                    checkEmailErrors(val);
-                  }}
-                  mode="outlined"
-                />
-                <HelperText
-                  type="error"
-                  visible={emailError !== ""}
-                  style={{ fontSize: 13 }}
+              <Portal>
+                <Dialog
+                  visible={sucEmailDialogVisible}
+                  onDismiss={() => setSucEmailDialogVisible(false)}
                 >
-                  {emailError}
-                </HelperText>
-                <TextInput
-                  label="닉네임"
-                  ref={nickNameRef}
-                  value={nickname}
-                  textContentType="nickname"
-                  style={{ width: "100%", marginBottom: 10 }}
-                  onChangeText={(val) => checkNickNameErrors(val)}
-                  mode="outlined"
-                />
-                <HelperText
-                  type="error"
-                  visible={nickNameError !== ""}
-                  style={{ fontSize: 13 }}
-                >
-                  {nickNameError}
-                </HelperText>
-                <TextInput
-                  label="이름"
-                  ref={nameRef}
-                  value={name}
-                  textContentType="name"
-                  style={{ width: "100%", marginBottom: 10 }}
-                  onChangeText={(val) => checkNameErrors(val)}
-                  mode="outlined"
-                />
-                <HelperText
-                  type="error"
-                  visible={nameError !== ""}
-                  style={{ fontSize: 13 }}
-                >
-                  {nameError}
-                </HelperText>
-                <Button style={{ width: 90 }} mode="contained" onPress={findPw}>
-                  찾기
-                </Button>
-              </View>
-            </View>
-            <Portal>
-              <Dialog
-                visible={sucEmailDialogVisible}
-                onDismiss={() => setSucEmailDialogVisible(false)}
-              >
-                <Dialog.Title style={{ textAlign: "center" }}>
-                  <Text style={styles.regi_dialog_title}>찾기 성공</Text>
-                </Dialog.Title>
-                <Dialog.Content>
-                  <Paragraph style={styles.regi_dialog_contents}>
-                    {`찾은 이메일 : ${findEmail}
+                  <Dialog.Title style={{ textAlign: "center" }}>
+                    <Text style={styles.regi_dialog_title}>찾기 성공</Text>
+                  </Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph style={styles.regi_dialog_contents}>
+                      {`찾은 이메일 : ${findEmail}
 이어서 비밀번호를 찾으실건가요?`}
-                  </Paragraph>
-                </Dialog.Content>
-                <Dialog.Actions>
-                  <Button
-                    onPress={() => {
-                      setSucEmailDialogVisible(false);
-                      navigation.navigate("로그인");
-                    }}
-                  >
-                    <Text style={styles.regi_dialog_btn}>아니오</Text>
-                  </Button>
-                  <Button
-                    onPress={() => {
-                      setSucEmailDialogVisible(false);
-                      setEmail(findEmail);
-                    }}
-                  >
-                    <Text style={styles.regi_dialog_btn}>네</Text>
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
-            <Portal>
-              <Dialog
-                visible={sucPwDialogVisible}
-                onDismiss={() => setSucPwDialogVisible(false)}
-              >
-                <Dialog.Title style={{ textAlign: "center" }}>
-                  <Text style={styles.regi_dialog_title}>찾기 성공</Text>
-                </Dialog.Title>
-                <Dialog.Content>
-                  <Paragraph style={styles.regi_dialog_contents}>
-                    {`입력하신 이메일로
+                    </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+                    <Button
+                      onPress={() => {
+                        setSucEmailDialogVisible(false);
+                        navigation.navigate("로그인");
+                      }}
+                    >
+                      <Text style={styles.regi_dialog_btn}>아니오</Text>
+                    </Button>
+                    <Button
+                      onPress={() => {
+                        setSucEmailDialogVisible(false);
+                        setEmail(findEmail);
+                      }}
+                    >
+                      <Text style={styles.regi_dialog_btn}>네</Text>
+                    </Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
+              <Portal>
+                <Dialog
+                  visible={sucPwDialogVisible}
+                  onDismiss={() => setSucPwDialogVisible(false)}
+                >
+                  <Dialog.Title style={{ textAlign: "center" }}>
+                    <Text style={styles.regi_dialog_title}>찾기 성공</Text>
+                  </Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph style={styles.regi_dialog_contents}>
+                      {`입력하신 이메일로
 비밀번호 변경 메일을 발송하였습니다.`}
-                  </Paragraph>
-                </Dialog.Content>
-                <Dialog.Actions>
-                  <Button
-                    onPress={() => {
-                      setSucPwDialogVisible(false);
-                      navigation.navigate("로그인");
-                    }}
-                  >
-                    <Text style={styles.regi_dialog_btn}>확인</Text>
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
-            <Portal>
-              <Dialog
-                visible={failDialogVisible}
-                onDismiss={() => setFailDialogVisible(false)}
-              >
-                <Dialog.Title style={{ textAlign: "center" }}>
-                  <Text style={styles.regi_dialog_title}>찾기 실패</Text>
-                </Dialog.Title>
-                <Dialog.Content>
-                  <Paragraph style={styles.regi_dialog_contents}>
-                    {failMessage}
-                  </Paragraph>
-                </Dialog.Content>
-                <Dialog.Actions>
-                  <Button
-                    onPress={() => {
-                      setFailDialogVisible(false);
-                    }}
-                  >
-                    <Text style={styles.regi_dialog_btn}>확인</Text>
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
+                    </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+                    <Button
+                      onPress={() => {
+                        setSucPwDialogVisible(false);
+                        navigation.navigate("로그인");
+                      }}
+                    >
+                      <Text style={styles.regi_dialog_btn}>확인</Text>
+                    </Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
+              <Portal>
+                <Dialog
+                  visible={failDialogVisible}
+                  onDismiss={() => setFailDialogVisible(false)}
+                >
+                  <Dialog.Title style={{ textAlign: "center" }}>
+                    <Text style={styles.regi_dialog_title}>찾기 실패</Text>
+                  </Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph style={styles.regi_dialog_contents}>
+                      {failMessage}
+                    </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+                    <Button
+                      onPress={() => {
+                        setFailDialogVisible(false);
+                      }}
+                    >
+                      <Text style={styles.regi_dialog_btn}>확인</Text>
+                    </Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
+            </KeyboardAwareScrollView>
           </View>
         </SafeAreaView>
       </Fragment>

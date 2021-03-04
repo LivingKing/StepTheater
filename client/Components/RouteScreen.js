@@ -8,6 +8,10 @@ import {
   Image,
   Dimensions,
   Animated,
+  TouchableOpacity,
+  ImageBackground,
+  KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -27,13 +31,15 @@ import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
 import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators";
 import * as ImageManipulator from "expo-image-manipulator";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function RouteScreen() {
-
   const [image, setImage] = useState(null);
+  const [thumbImage, setThumbImage] = useState("");
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [nickname, setNickname] = useState("");
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const captureRef = useRef();
   const polyColor = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
 
@@ -115,14 +121,29 @@ export default function RouteScreen() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
-
-    console.log(result);
-
     if (!result.cancelled) {
-      setImage(result.uri);
+      setIsImageLoading(true);
+      const form = new FormData();
+
+      form.append("key", "7ea0466a1e47a7bede0c9d28bd16c4db");
+      form.append("image", result.base64);
+      const response = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: form,
+      });
+      const res = await response.json();
+      console.log(res.data.image.url);
+      setThumbImage(res.data.thumb.url);
+      setImage(res.data.medium.url);
     }
+    setIsImageLoading(false);
   };
+
   /* 지도 */
   const [polyLine, setPolyLine] = useState([]); // 경로저장
 
@@ -138,6 +159,7 @@ export default function RouteScreen() {
 
   const [isModalVisible, setModalVisible] = useState(false);
 
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -151,7 +173,7 @@ export default function RouteScreen() {
   const [isModalVisible3, setModalVisible3] = useState(false);
 
   const toggleModal3 = () => {
-    setModalVisible3(!isModalVisible3);
+    if (recording) setModalVisible3(!isModalVisible3);
   };
 
   const [infoImg, setInfoImg] = useState(null);
@@ -169,7 +191,27 @@ export default function RouteScreen() {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
 
+  const postRoute = async (route) => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const date = await SecureStore.getItemAsync("today");
+
+    const response = await fetch("http://203.241.228.112:11200/api/route", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        date: date,
+        data: route,
+      }),
+    });
+  };
   const stopRecording = () => {
+    console.log("stop");
+    postRoute(polyLine);
+
     setRecording(false);
     setModalVisible(false);
     setModalVisible2(false);
@@ -189,10 +231,32 @@ export default function RouteScreen() {
     //console.log(adding);
   };
 
-  const addPinArray = () => {
-    const file = { image: image, text: textzzz, content: contentzzz };
+  const addPinArray = async () => {
+    const file = {
+      image: image,
+      thumbImage: thumbImage,
+      text: textzzz,
+      content: contentzzz,
+    };
     const nextObject = { ...current, file };
-
+    const response = await fetch(
+      "http://203.241.228.112:11200/api/diary/item",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: await SecureStore.getItemAsync("UserId"),
+          date: await SecureStore.getItemAsync("today"),
+          title: file.text,
+          desc: file.content,
+          thumb_url: thumbImage,
+          image_url: image,
+        }),
+      }
+    );
+    console.log("nextObject", nextObject);
     setPinArray([...pinArray, nextObject]);
 
     setAdding(false);
@@ -223,11 +287,7 @@ export default function RouteScreen() {
         </SafeAreaView>
         <SafeAreaView style={styles.route}>
           <View
-            style={
-              recording
-                ? styles.route_title_after
-                : styles.route_title
-            }
+            style={recording ? styles.route_title_after : styles.route_title}
           >
             <Text style={styles.route_title_text}>걸음 한 편</Text>
           </View>
@@ -243,46 +303,240 @@ export default function RouteScreen() {
               </View>
             </View>
           ) : (
-              <View style={styles.route_info}>
-                <View style={styles.route_info_user}>
-                  <Avatar.Icon
-                    style={{ backgroundColor: "white", paddingTop: windowHeight / 200 }}
-                    size={windowHeight / 20}
-                    color="#b4b4b4"
-                    icon="account-circle"
-                  />
-                  <Text style={styles.route_info_text}>
-                    {nickname}님, 총{" "}
-                    <Text
-                      style={{
-                        color: "black",
-                        fontFamily: "NotoBold",
-                        fontSize: windowHeight / 45,
-                      }}
-                    >
-                      10
-                </Text>
-                편의 동선 책을 만드셨네요 !
-                </Text>
-                </View>
-                <IconButton
-                  style={{ marginTop: windowHeight / 130 }}
-                  icon="menu"
-                  color="#555555"
-                  size={windowHeight / 40}
-                  onPress={() => console.log("Pressed")}
+            <View style={styles.route_info}>
+              <View style={styles.route_info_user}>
+                <Avatar.Icon
+                  style={{
+                    backgroundColor: "white",
+                    paddingTop: windowHeight / 200,
+                  }}
+                  size={windowHeight / 20}
+                  color="#b4b4b4"
+                  icon="account-circle"
                 />
+                <Text style={styles.route_info_text}>
+                  {nickname}님, 총{" "}
+                  <Text
+                    style={{
+                      color: "black",
+                      fontFamily: "NotoBold",
+                      fontSize: windowHeight / 45,
+                    }}
+                  >
+                    10
+                  </Text>
+                  편의 동선을 만드셨네요 !
+                </Text>
               </View>
-            )}
+              <IconButton
+                style={{ marginTop: windowHeight / 130 }}
+                icon="menu"
+                color="#555555"
+                size={windowHeight / 40}
+              // onPress={() => console.log("Pressed")}
+              />
+            </View>
+          )}
 
           <View
             style={
-              recording
-                ? styles.route_contents_after
-                : styles.route_contents
+              recording ? styles.route_contents_after : styles.route_contents
             }
           >
-            <Surface style={recording ? styles.route_contents_shadow_after : styles.route_contents_shadow}>
+            <Surface
+              style={
+                recording
+                  ? styles.route_contents_shadow_after
+                  : styles.route_contents_shadow
+              }
+            >
+              {isModalVisible && (
+                <Modal
+                  style={{
+                    justifyContent: "flex-end",
+                    margin: 0,
+                  }}
+                  isVisible={isModalVisible}
+                  hasBackdrop={true}
+                  coverScreen={false}
+                  onBackdropPress={toggleModal}
+                >
+                  <View
+                    style={{
+                      flex: 0.34,
+                      backgroundColor: "white",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>Hello!</Text>
+
+                    <IconButton
+                      icon="stop"
+                      color="#5c6bc0"
+                      size={45}
+                      onPress={stopRecording}
+                    />
+                  </View>
+                </Modal>
+              )}
+              {isModalVisible2 && (
+                <Modal
+                  style={{
+                    margin: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "white",
+                  }}
+                  isVisible={isModalVisible2}
+                  hasBackdrop={true}
+                  coverScreen={false}
+                  animationInTiming={0.1}
+                >
+                  <KeyboardAwareScrollView
+                    contentContainerStyle={{ flex: 1 }}
+                    resetScrollToCoords={{ x: 0, y: 0 }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "90%",
+                          flex: 0.5,
+                        }}
+                      >
+                        {isImageLoading && <ActivityIndicator size="large" />}
+                        {image && (
+                          <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={pickImage}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 10,
+                            }}
+                          >
+                            <Image
+                              source={{ uri: image }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 10,
+                              }}
+                            ></Image>
+                          </TouchableOpacity>
+                        )}
+                        {!image && !isImageLoading && (
+                          <IconButton
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                            }}
+                            icon={"plus"}
+                            color="black"
+                            size={80}
+                            onPress={pickImage}
+                          />
+                        )}
+                      </View>
+
+                      <TextInput
+                        mode="outlined"
+                        value={textzzz}
+                        onChangeText={(textzzz) => setTextzzz(textzzz)}
+                        text="black"
+                        theme={{
+                          colors: {
+                            placeholder: "#999999",
+                            text: "#e2e2e2",
+                            primary: "#545454",
+                            background: "white",
+                          },
+                        }}
+                        style={{ width: "90%", flex: 0.2 }}
+                      />
+                      <TextInput
+                        mode="outlined"
+                        value={contentzzz}
+                        onChangeText={(contentzzz) => setContentzzz(contentzzz)}
+                        text="black"
+                        theme={{
+                          colors: {
+                            placeholder: "#999999",
+                            text: "#e2e2e2",
+                            primary: "#545454",
+                            background: "white",
+                          },
+                        }}
+                        style={{ width: "90%", flex: 0.4 }}
+                      />
+
+                      <View style={{ flexDirection: "row" }}>
+                        <Button
+                          style={{ margin: 10 }}
+                          labelStyle={
+                            styles.com_safeView_title_route_total_content_text6
+                          }
+                          mode="outlined"
+                          onPress={addPinArray}
+                        >
+                          추가하기
+                        </Button>
+                        <Button
+                          style={{ margin: 10 }}
+                          labelStyle={
+                            styles.com_safeView_title_route_total_content_text6
+                          }
+                          mode="outlined"
+                          onPress={toggleModal2}
+                        >
+                          취소하기
+                        </Button>
+                      </View>
+                    </View>
+                  </KeyboardAwareScrollView>
+                </Modal>
+              )}
+              {isModalVisible3 && (
+                <Modal
+                  style={{
+                    margin: 0,
+                  }}
+                  isVisible={isModalVisible3}
+                  hasBackdrop={true}
+                  coverScreen={false}
+                  onBackdropPress={toggleModal3}
+                >
+                  <View
+                    style={{
+                      flex: 0.7,
+                      backgroundColor: "white",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>{infoText}</Text>
+                    <Text>{infoContent}</Text>
+                    <Image
+                      source={{ uri: infoImg }}
+                      style={{
+                        width: "80%",
+                        height: "80%",
+                        marginBottom: 10,
+                        borderRadius: 15,
+                      }}
+                    />
+
+                    <Button mode="contained" onPress={toggleModal3}>
+                      확인
+                    </Button>
+                  </View>
+                </Modal>
+              )}
               <MapView
                 opacity={recording ? 1 : 1}
                 style={
@@ -342,7 +596,6 @@ export default function RouteScreen() {
                       }
                       else {
                         if (getDistance(prevLine, newLine) >= 10) {
-
                           if (arrCount != 0) {
                             const now = [];
                             now.push([...polyLine, Object.values(newLine)]);
@@ -365,7 +618,7 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                    //console.log(route);
+                    // console.log(route);
                     return (
                       <Marker
                         key={index}
@@ -382,10 +635,12 @@ export default function RouteScreen() {
                         }}
                         centerOffset={{ x: 0, y: -22 }}
                       >
-                        <Surface style={styles.route_contents_map_marker_shadow}>
+                        <Surface
+                          style={styles.route_contents_map_marker_shadow}
+                        >
                           <View style={styles.route_contents_map_marker_wrap}>
                             <Image
-                              source={{ uri: route.file.image }}
+                              source={{ uri: route.file.thumbImage }}
                               style={styles.route_contents_map_marker_image}
                             />
                           </View>
@@ -425,8 +680,8 @@ export default function RouteScreen() {
                     </MapView.Callout>
                   </Marker>
                 ) : (
-                    <></>
-                  )}
+                  <></>
+                )}
 
 
                 {routeM.map((route, index) => {
@@ -458,8 +713,8 @@ export default function RouteScreen() {
                     strokeWidth={8}
                   />
                 ) : (
-                    <></>
-                  )}
+                  <></>
+                )}
 
                 {/* <View style={styles.route_safeView_contents_tool_record2}>
                   <Snackbar
@@ -470,200 +725,6 @@ export default function RouteScreen() {
                     동선 기록을 시작합니다.
                 </Snackbar>
                 </View> */}
-
-                <View>
-                  {isModalVisible && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          justifyContent: "flex-end",
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                      >
-                        <View
-                          style={{
-                            flex: 0.34,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text>Hello!</Text>
-
-                          <IconButton
-                            icon="stop"
-                            color="#5c6bc0"
-                            size={45}
-                            onPress={stopRecording}
-                          />
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
-
-                <View>
-                  {isModalVisible2 && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible2}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                        animationInTiming={0.1}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <View
-                            style={{
-                              flex: 1,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {image && (
-                              <Image
-                                source={{ uri: image }}
-                                style={{ width: 150, height: 150 }}
-                              />
-                            )}
-                          </View>
-                          <IconButton
-                            style={styles.route_contents_pinModal_imageButton}
-                            icon={"plus"}
-                            color="black"
-                            size={80}
-                            onPress={() => {
-                              pickImage();
-                            }}
-                          />
-                          <TextInput
-                            mode="outlined"
-                            value={textzzz}
-                            onChangeText={(textzzz) => setTextzzz(textzzz)}
-                            text="black"
-                            theme={{
-                              colors: {
-                                placeholder: "#999999",
-                                text: "#e2e2e2",
-                                primary: "#545454",
-                                background: "white",
-                              },
-                            }}
-                            style={{ width: "90%", height: 40 }}
-                          />
-                          <TextInput
-                            mode="outlined"
-                            value={contentzzz}
-                            onChangeText={(contentzzz) =>
-                              setContentzzz(contentzzz)
-                            }
-                            text="black"
-                            theme={{
-                              colors: {
-                                placeholder: "#999999",
-                                text: "#e2e2e2",
-                                primary: "#545454",
-                                background: "white",
-                              },
-                            }}
-                            style={{ width: "90%", height: 160 }}
-                          />
-
-                          <View style={styles.route_contents_pinModal_concanButton_wrap}>
-                            <Button
-                              style={styles.route_contents_pinModal_concanButton}
-                              labelStyle={
-                                styles.com_safeView_title_route_total_content_text6
-                              }
-                              mode="outlined"
-                              onPress={addPinArray}
-                            >
-                              추가하기
-                            </Button>
-                            <Button
-                              style={styles.route_contents_pinModal_concanButton}
-                              labelStyle={
-                                styles.com_safeView_title_route_total_content_text6
-                              }
-                              mode="outlined"
-                              onPress={toggleModal2}
-                            >
-                              취소하기
-                            </Button>
-                          </View>
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
-
-                <View>
-                  {isModalVisible3 && (
-                    <View
-                      style={{
-                        margin: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                    >
-                      <Modal
-                        style={{
-                          margin: 0,
-                        }}
-                        isVisible={isModalVisible3}
-                        hasBackdrop={true}
-                        coverScreen={false}
-                      >
-                        <View
-                          style={{
-                            flex: 0.5,
-                            backgroundColor: "white",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text>{infoText}</Text>
-                          <Text>{infoContent}</Text>
-                          <Image
-                            source={{ uri: infoImg }}
-                            style={{ width: "100%", height: "100%" }}
-                          />
-
-                          <Button
-                            icon="camera"
-                            mode="contained"
-                            onPress={() => {
-                              toggleModal3();
-                            }}
-                          >
-                            확인
-                          </Button>
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                </View>
 
                 {/* <Provider>
                   <Portal>
@@ -736,95 +797,43 @@ export default function RouteScreen() {
                     <View style={styles.route_tool_phrase_wrap}>
                       {/* <Text style={styles.com_safeView_title_route_total_content_text4}>걷는 것이 바로 최고의 약이다.</Text>
                 <Text style={styles.com_safeView_title_route_total_content_text5}>- 히포크라테스 -</Text> */}
-                      <Text
-                        style={
-                          styles.route_tool_phrase
-                        }
-                      >
+                      <Text style={styles.route_tool_phrase}>
                         진정으로 모든 위대한 생각은{"\n"}걷는 것으로부터 나온다.
                       </Text>
-                      <Text
-                        style={
-                          styles.route_tool_who
-                        }
-                      >
-                        - F. 니체 -
-                      </Text>
+                      <Text style={styles.route_tool_who}>- F. 니체 -</Text>
                     </View>
                   </View>
                   <View style={{ width: windowWidth }}>
                     <View style={styles.route_tool_routeInfo}>
-                      <View
-                        style={styles.route_tool_routeInfo_wrap}
-                      >
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_text
-                          }
-                        >
+                      <View style={styles.route_tool_routeInfo_wrap}>
+                        <Text style={styles.route_tool_routeInfo_text}>
                           총 거리
                         </Text>
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_textBold
-                          }
-                        >
+                        <Text style={styles.route_tool_routeInfo_textBold}>
                           0.0{polyLine.length * 1}{" "}
-                          <Text
-                            style={
-                              styles.route_tool_routeInfo_text
-                            }
-                          >
+                          <Text style={styles.route_tool_routeInfo_text}>
                             km
                           </Text>
                         </Text>
                       </View>
-                      <View
-                        style={styles.route_tool_routeInfo_wrap}
-                      >
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_text
-                          }
-                        >
+                      <View style={styles.route_tool_routeInfo_wrap}>
+                        <Text style={styles.route_tool_routeInfo_text}>
                           총 시간
                         </Text>
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_textBold
-                          }
-                        >
+                        <Text style={styles.route_tool_routeInfo_textBold}>
                           0:00{" "}
-                          <Text
-                            style={
-                              styles.route_tool_routeInfo_text
-                            }
-                          >
+                          <Text style={styles.route_tool_routeInfo_text}>
                             분
                           </Text>
                         </Text>
                       </View>
-                      <View
-                        style={styles.route_tool_routeInfo_wrap}
-                      >
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_text
-                          }
-                        >
+                      <View style={styles.route_tool_routeInfo_wrap}>
+                        <Text style={styles.route_tool_routeInfo_text}>
                           마커 갯수
                         </Text>
-                        <Text
-                          style={
-                            styles.route_tool_routeInfo_textBold
-                          }
-                        >
+                        <Text style={styles.route_tool_routeInfo_textBold}>
                           {pinArray.length}
-                          <Text
-                            style={
-                              styles.route_tool_routeInfo_text
-                            }
-                          >
+                          <Text style={styles.route_tool_routeInfo_text}>
                             {" "}
                             개
                           </Text>
@@ -836,9 +845,7 @@ export default function RouteScreen() {
 
                 <Button
                   style={styles.route_tool_button}
-                  labelStyle={
-                    styles.route_tool_button_label
-                  }
+                  labelStyle={styles.route_tool_button_label}
                   icon="run"
                   mode="outlined"
                   onPress={routeStateChange}
@@ -848,35 +855,35 @@ export default function RouteScreen() {
               </Surface>
             </View>
           ) : (
-              <View style={styles.route_tool_after}>
-                {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                  <Surface style={styles.route_tool_after_button_shadow}>
-                    <IconButton
-                      style={styles.route_tool_after_button}
-                      icon={"pause"}
-                      color="#3f3f3f"
-                      size={30}
-                      onPress={toggleModal}
-                    />
-                  </Surface>
-                ) : (
-                    <></>
-                  )}
-                {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                  <Surface style={styles.route_tool_after_button_shadow}>
-                    <IconButton
-                      style={styles.route_tool_after_button}
-                      icon={adding ? "close" : "pin"}
-                      color="#3f3f3f"
-                      size={30}
-                      onPress={addPin}
-                    />
-                  </Surface>
-                ) : (
-                    <></>
-                  )}
+            <View style={styles.route_tool_after}>
+              {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
+                <Surface style={styles.route_tool_after_button_shadow}>
+                  <IconButton
+                    style={styles.route_tool_after_button}
+                    icon={"pause"}
+                    color="#3f3f3f"
+                    size={30}
+                    onPress={toggleModal}
+                  />
+                </Surface>
+              ) : (
+                <></>
+              )}
+              {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
+                <Surface style={styles.route_tool_after_button_shadow}>
+                  <IconButton
+                    style={styles.route_tool_after_button}
+                    icon={adding ? "close" : "pin"}
+                    color="#3f3f3f"
+                    size={30}
+                    onPress={addPin}
+                  />
+                </Surface>
+              ) : (
+                <></>
+              )}
 
-                {/* <IconButton
+              {/* <IconButton
                 style={styles.route_safeView_contents_tool_record_button}
                 icon="stop"
                 color="#5c6bc0"
@@ -890,8 +897,8 @@ export default function RouteScreen() {
                 size={45}
                 onPress={addPin}
               /> */}
-              </View>
-            )}
+            </View>
+          )}
         </SafeAreaView>
       </Fragment>
     );

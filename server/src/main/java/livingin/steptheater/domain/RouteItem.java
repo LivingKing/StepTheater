@@ -15,4 +15,8 @@ public class RouteItem {
     private Long id;
     private double latitude;
     private double longitude;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
 }

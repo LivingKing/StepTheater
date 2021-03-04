@@ -19,21 +19,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RouteService {
     private final RouteRepository routeRepository;
-    private final MemberRepository memberRepository;
     private final DiaryRepository diaryRepository;
 
     @Transactional
-    public Long join(Long id, String date, List<RouteItem> routeItems, String url){
+    public Long join(Long id, String date) {
         Route route = new Route();
 
         Diary diary = diaryRepository.findOne(diaryRepository.findOneDiaryDto(id, date).get(0).getDiaryId());
         route.setDiary(diary);
-        for (RouteItem routeItem : routeItems) {
-            route.addRouteItem(routeItem);
-        }
-        route.setImageUrl(url);
         routeRepository.save(route);
 
         return route.getId();
+    }
+
+    public Route findOne(Long id) {
+        return routeRepository.findOne(id);
     }
 }

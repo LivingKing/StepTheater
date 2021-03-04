@@ -29,6 +29,9 @@ public class Diary {
     private Member member;
 
 
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+    private List<DiaryItem> diaryItem = new ArrayList<>();
+
     @Column(name ="diaryDate")
     private String diaryDate;
 
