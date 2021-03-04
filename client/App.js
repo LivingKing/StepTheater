@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import * as Font from "expo-font";
@@ -11,6 +11,9 @@ import AdditionScreen from "./Components/AdditionScreen";
 import { Provider as PaperProvider } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import theme from "./assets/theme";
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
 
 const Stack = createStackNavigator();
 const loginName = "로그인";

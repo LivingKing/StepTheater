@@ -29,6 +29,7 @@ import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators"
 import * as ImageManipulator from "expo-image-manipulator";
 
 export default function RouteScreen() {
+
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -242,56 +243,58 @@ export default function RouteScreen() {
             style={
               recording
                 ? styles.com_safeView_title_route2
-                : styles.com_safeView_title_route
+                : styles.route_title
             }
           >
-            <Text style={styles.com_safeView_title_route_text}>걸음 한 편</Text>
+            <Text style={styles.route_title_text}>걸음 한 편</Text>
           </View>
 
           {recording ? (
             <View style={styles.com_safeView_title_route_total3}>
-              <Text style={styles.textzz}>
+              <Text style={styles.route_info_text}>
                 {isModalVisible
                   ? "일시정지 되었습니다."
                   : "동선을 기록하고 있습니다 ..."}
               </Text>
             </View>
           ) : (
-            <View style={styles.com_safeView_title_route_total}>
-              <Avatar.Icon
-                style={{ backgroundColor: "white", marginTop: 4 }}
-                size={50}
-                color="#b4b4b4"
-                icon="account-circle"
-              />
-              <Text style={styles.textzz}>
-                {nickname}님, 총{" "}
-                <Text
-                  style={{
-                    color: "black",
-                    fontFamily: "NotoBold",
-                    fontSize: 21,
-                  }}
-                >
-                  10
+              <View style={styles.route_info}>
+                <View style={styles.route_info_user}>
+                  <Avatar.Icon
+                    style={{ backgroundColor: "white", paddingTop: windowHeight / 200 }}
+                    size={windowHeight / 20}
+                    color="#b4b4b4"
+                    icon="account-circle"
+                  />
+                  <Text style={styles.route_info_text}>
+                    {nickname}님, 총{" "}
+                    <Text
+                      style={{
+                        color: "black",
+                        fontFamily: "NotoBold",
+                        fontSize: windowHeight / 45,
+                      }}
+                    >
+                      10
                 </Text>
                 편의 동선 책을 만드셨네요 !
-              </Text>
-              <IconButton
-                style={{ marginLeft: 38 }}
-                icon="menu"
-                color="#555555"
-                size={30}
-                onPress={() => console.log("Pressed")}
-              />
-            </View>
-          )}
+                </Text>
+                </View>
+                <IconButton
+                  style={{ marginTop: windowHeight / 130 }}
+                  icon="menu"
+                  color="#555555"
+                  size={windowHeight / 40}
+                  onPress={() => console.log("Pressed")}
+                />
+              </View>
+            )}
 
           <View
             style={
               recording
                 ? styles.com_safeView_contents2
-                : styles.com_safeView_contents
+                : styles.route_contents
             }
           >
             <Surface style={recording ? styles.surface3 : styles.surface2}>
@@ -429,34 +432,34 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                      console.log(route);
-                      return (
-                        <Marker
-                          key={index}
-                          draggable
-                          coordinate={{
-                            latitude: route.latitude,
-                            longitude: route.longitude,
-                          }}
-                          onPress={() => {
-                            setInfoImg(route.file.image);
-                            setInfoText(route.file.text);
-                            setInfoContent(route.file.content);
-                            toggleModal3();
-                          }}
-                          centerOffset={{ x: 0, y: -22 }}
-                        >
-                          <Surface style={styles.circle_shadow}>
-                            <View style={styles.circle2}>
-                              <Image
-                                source={{ uri: route.file.image }}
-                                style={styles.circle}
-                              />
-                            </View>
-                          </Surface>
-                        </Marker>
-                      );
-                    })
+                    console.log(route);
+                    return (
+                      <Marker
+                        key={index}
+                        draggable
+                        coordinate={{
+                          latitude: route.latitude,
+                          longitude: route.longitude,
+                        }}
+                        onPress={() => {
+                          setInfoImg(route.file.image);
+                          setInfoText(route.file.text);
+                          setInfoContent(route.file.content);
+                          toggleModal3();
+                        }}
+                        centerOffset={{ x: 0, y: -22 }}
+                      >
+                        <Surface style={styles.circle_shadow}>
+                          <View style={styles.circle2}>
+                            <Image
+                              source={{ uri: route.file.image }}
+                              style={styles.circle}
+                            />
+                          </View>
+                        </Surface>
+                      </Marker>
+                    );
+                  })
                   : null}
 
                 {adding ? (
@@ -489,8 +492,8 @@ export default function RouteScreen() {
                     </MapView.Callout>
                   </Marker>
                 ) : (
-                  <></>
-                )}
+                    <></>
+                  )}
 
                 <Polyline
                   coordinates={output}
@@ -505,8 +508,8 @@ export default function RouteScreen() {
                     strokeWidth={8}
                   />
                 ) : (
-                  <></>
-                )}
+                    <></>
+                  )}
 
                 {/* <View style={styles.route_safeView_contents_tool_record2}>
                   <Snackbar
@@ -748,8 +751,8 @@ export default function RouteScreen() {
           </View>
 
           {recording == false ? (
-            <View style={styles.route_safeView_contents_tool}>
-              <Surface style={styles.qwer}>
+            <View style={styles.route_tool}>
+              <Surface style={styles.route_tool_shadow}>
                 <View
                   style={{
                     left: 0,
@@ -780,19 +783,19 @@ export default function RouteScreen() {
                   )}
                 >
                   <View style={{ width: windowWidth }}>
-                    <View style={styles.com_safeView_title_route_total2}>
+                    <View style={styles.route_tool_phrase_wrap}>
                       {/* <Text style={styles.com_safeView_title_route_total_content_text4}>걷는 것이 바로 최고의 약이다.</Text>
                 <Text style={styles.com_safeView_title_route_total_content_text5}>- 히포크라테스 -</Text> */}
                       <Text
                         style={
-                          styles.com_safeView_title_route_total_content_text4
+                          styles.route_tool_phrase
                         }
                       >
                         진정으로 모든 위대한 생각은{"\n"}걷는 것으로부터 나온다.
                       </Text>
                       <Text
                         style={
-                          styles.com_safeView_title_route_total_content_text5
+                          styles.route_tool_who
                         }
                       >
                         - F. 니체 -
@@ -800,26 +803,26 @@ export default function RouteScreen() {
                     </View>
                   </View>
                   <View style={{ width: windowWidth }}>
-                    <View style={styles.com_safeView_title_route_total4}>
+                    <View style={styles.route_tool_routeInfo}>
                       <View
-                        style={styles.com_safeView_title_route_total_content}
+                        style={styles.route_tool_routeInfo_wrap}
                       >
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text
+                            styles.route_tool_routeInfo_text
                           }
                         >
                           총 거리
                         </Text>
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text2
+                            styles.route_tool_routeInfo_textBold
                           }
                         >
                           0.0{polyLine.length * 1}{" "}
                           <Text
                             style={
-                              styles.com_safeView_title_route_total_content_text
+                              styles.route_tool_routeInfo_text
                             }
                           >
                             km
@@ -827,24 +830,24 @@ export default function RouteScreen() {
                         </Text>
                       </View>
                       <View
-                        style={styles.com_safeView_title_route_total_content}
+                        style={styles.route_tool_routeInfo_wrap}
                       >
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text
+                            styles.route_tool_routeInfo_text
                           }
                         >
                           총 시간
                         </Text>
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text2
+                            styles.route_tool_routeInfo_textBold
                           }
                         >
                           0:00{" "}
                           <Text
                             style={
-                              styles.com_safeView_title_route_total_content_text
+                              styles.route_tool_routeInfo_text
                             }
                           >
                             분
@@ -852,24 +855,24 @@ export default function RouteScreen() {
                         </Text>
                       </View>
                       <View
-                        style={styles.com_safeView_title_route_total_content}
+                        style={styles.route_tool_routeInfo_wrap}
                       >
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text
+                            styles.route_tool_routeInfo_text
                           }
                         >
                           마커 갯수
                         </Text>
                         <Text
                           style={
-                            styles.com_safeView_title_route_total_content_text2
+                            styles.route_tool_routeInfo_textBold
                           }
                         >
                           {pinArray.length}
                           <Text
                             style={
-                              styles.com_safeView_title_route_total_content_text
+                              styles.route_tool_routeInfo_text
                             }
                           >
                             {" "}
@@ -882,9 +885,9 @@ export default function RouteScreen() {
                 </Animated.ScrollView>
 
                 <Button
-                  style={styles.bbbb}
+                  style={styles.route_tool_button}
                   labelStyle={
-                    styles.com_safeView_title_route_total_content_text6
+                    styles.route_tool_button_label
                   }
                   icon="run"
                   mode="outlined"
@@ -895,35 +898,35 @@ export default function RouteScreen() {
               </Surface>
             </View>
           ) : (
-            <View style={styles.route_safeView_contents_tool_record}>
-              {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                <Surface style={styles.surface4}>
-                  <IconButton
-                    style={styles.route_safeView_contents_tool_record_button}
-                    icon={"pause"}
-                    color="#3f3f3f"
-                    size={30}
-                    onPress={toggleModal}
-                  />
-                </Surface>
-              ) : (
-                <></>
-              )}
-              {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                <Surface style={styles.surface4}>
-                  <IconButton
-                    style={styles.route_safeView_contents_tool_record_button}
-                    icon={adding ? "close" : "pin"}
-                    color="#3f3f3f"
-                    size={30}
-                    onPress={addPin}
-                  />
-                </Surface>
-              ) : (
-                <></>
-              )}
+              <View style={styles.route_safeView_contents_tool_record}>
+                {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
+                  <Surface style={styles.surface4}>
+                    <IconButton
+                      style={styles.route_safeView_contents_tool_record_button}
+                      icon={"pause"}
+                      color="#3f3f3f"
+                      size={30}
+                      onPress={toggleModal}
+                    />
+                  </Surface>
+                ) : (
+                    <></>
+                  )}
+                {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
+                  <Surface style={styles.surface4}>
+                    <IconButton
+                      style={styles.route_safeView_contents_tool_record_button}
+                      icon={adding ? "close" : "pin"}
+                      color="#3f3f3f"
+                      size={30}
+                      onPress={addPin}
+                    />
+                  </Surface>
+                ) : (
+                    <></>
+                  )}
 
-              {/* <IconButton
+                {/* <IconButton
                 style={styles.route_safeView_contents_tool_record_button}
                 icon="stop"
                 color="#5c6bc0"
@@ -937,8 +940,8 @@ export default function RouteScreen() {
                 size={45}
                 onPress={addPin}
               /> */}
-            </View>
-          )}
+              </View>
+            )}
         </SafeAreaView>
       </Fragment>
     );
