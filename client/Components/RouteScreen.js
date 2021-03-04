@@ -35,6 +35,7 @@ export default function RouteScreen() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [nickname, setNickname] = useState("");
   const captureRef = useRef();
+  const polyColor = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
 
   const getPhotoUrl = async () => {
     const url = await captureRef.current.capture();
@@ -57,10 +58,7 @@ export default function RouteScreen() {
     let location = await Location.getCurrentPositionAsync({});
     //console.log(location);
     setLocation(location);
-    setPrevLine({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
+
   };
 
   const getDate = async () => {
@@ -127,37 +125,16 @@ export default function RouteScreen() {
   };
   /* 지도 */
   const [polyLine, setPolyLine] = useState([]); // 경로저장
-  const [polyLine2, setPolyLine2] = useState([]); // 경로2 저장 (임시)
-  const [output, setOutput] = useState(null); // polyLine을 그리기 위한 바뀐 경로
-  const [output2, setOutput2] = useState(null); // polyLine을 그리기 위한 바뀐 경로2 (임시)
+
   const [prevLine, setPrevLine] = useState(null); // 이전 위치 좌표
   const [current, setCurrent] = useState(null); // 현재 위치 좌표
   const [count, setCount] = useState(0); // 경로(polyLine)내 좌표(prevLine)들의 갯수
-  const [nowArr, setNowArr] = useState(0); // 현재 몇번째 경로인지
   const [recording, setRecording] = useState(false); // 현재 경로 기록 여부
-
+  const [routeM, setRouteM] = useState([]);
+  const [prevRouteM, setPrevRouteM] = useState(null);
   /* 마커 */
   const [adding, setAdding] = useState(false); // 현재 마커 추가 중인지 여부
   const [pinArray, setPinArray] = useState([]); // 마커들이 저장된 배열
-
-  /* 모달 */
-  // const [visible, setVisible] = React.useState(false);
-  // const showModal = () => setVisible(true);
-  // const hideModal = () => setVisible(false);
-  // const containerStyle = {
-
-  //   flex: 11.3,
-  //   width: "100%",
-  //   height: "110%",
-
-  //   backgroundColor: '#FFF',
-
-  // };
-  // // 핀추가용 모달 설정
-
-  // const [visible2, setVisible2] = React.useState(false);
-  // const showModal2 = () => setVisible2(true);
-  // const hideModal2 = () => setVisible2(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -194,11 +171,16 @@ export default function RouteScreen() {
 
   const stopRecording = () => {
     setRecording(false);
-    setNowArr(1);
     setModalVisible(false);
     setModalVisible2(false);
     setAdding(false);
     onToggleSnackBar();
+
+
+    var temp = arrCount + 1;
+    setArrCount(temp);
+    setCount(0);
+    setPolyLine([]);
   };
 
   const addPin = () => {
@@ -231,6 +213,7 @@ export default function RouteScreen() {
 
   const [textzzz, setTextzzz] = useState("");
   const [contentzzz, setContentzzz] = useState("");
+  const [arrCount, setArrCount] = useState(0);
 
   if (Platform.OS === "ios") {
     return (
@@ -349,83 +332,31 @@ export default function RouteScreen() {
                     };
 
                     if (recording == true) {
-                      // console.log(
-                      //   "distance : " + getDistance(prevLine, newLine)
-                      // );
-
                       if (count == 0) {
-                        //console.log("nowArr : " + nowArr);
-                        //console.log("count : " + count);
-
-                        if (nowArr == 0) {
-                          setPolyLine([...polyLine, Object.values(newLine)]);
-                          setOutput(
-                            smooth(smooth(polyLine)).map(
-                              ([latitude, longitude]) => ({
-                                latitude,
-                                longitude,
-                              })
-                            )
-                          );
-                        } else {
-                          if (count == 0)
-                            setPolyLine2([
-                              ...polyLine2,
-                              Object.values(prevLine),
-                            ]);
-                          setPolyLine2([...polyLine2, Object.values(newLine)]);
-                          setOutput2(
-                            smooth(smooth(polyLine2)).map(
-                              ([latitude, longitude]) => ({
-                                latitude,
-                                longitude,
-                              })
-                            )
-                          );
-                          //console.log(output2)
+                        setPolyLine([...polyLine, Object.values(newLine)]);
+                        if (arrCount != 0) {
+                          setPrevRouteM(routeM);
                         }
-
                         setPrevLine(newLine);
-                        var temp = count + 1;
-                        setCount(temp);
-                      } else {
-                        //console.log("nowArr : " + nowArr);
-                        //console.log("count : " + count);
+                        setCount(1);
+                      }
+                      else {
                         if (getDistance(prevLine, newLine) >= 10) {
-                          if (nowArr == 0) {
-                            setPolyLine([...polyLine, Object.values(newLine)]);
-                            setOutput(
-                              smooth(smooth(polyLine)).map(
-                                ([latitude, longitude]) => ({
-                                  latitude,
-                                  longitude,
-                                })
-                              )
-                            );
-                          } else {
-                            if (count == 0)
-                              setPolyLine2([
-                                ...polyLine2,
-                                Object.values(prevLine),
-                              ]);
-                            setPolyLine2([
-                              ...polyLine2,
-                              Object.values(newLine),
-                            ]);
-                            setOutput2(
-                              smooth(smooth(polyLine2)).map(
-                                ([latitude, longitude]) => ({
-                                  latitude,
-                                  longitude,
-                                })
-                              )
-                            );
-                            //console.log(output2)
-                          }
 
+                          if (arrCount != 0) {
+                            const now = [];
+                            now.push([...polyLine, Object.values(newLine)]);
+                            console.log(now);
+                            if (prevRouteM.concat(now) != null) {
+                              setRouteM(prevRouteM.concat(now));
+                            }
+                          }
+                          else {
+                            console.log([[...polyLine, Object.values(newLine)]]);
+                            setRouteM([[...polyLine, Object.values(newLine)]]);
+                          }
                           setPrevLine(newLine);
-                          var temp = count + 1;
-                          setCount(temp);
+                          setPolyLine([...polyLine, Object.values(newLine)]);
                         }
                       }
                     }
@@ -434,7 +365,7 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                    console.log(route);
+                    //console.log(route);
                     return (
                       <Marker
                         key={index}
@@ -497,13 +428,30 @@ export default function RouteScreen() {
                     <></>
                   )}
 
-                <Polyline
-                  coordinates={output}
-                  strokeColor="#ff0000" // fallback for when `strokeColors` is not supported by the map-provider
-                  strokeWidth={8}
-                />
 
-                {nowArr == 1 ? (
+                {routeM.map((route, index) => {
+                  if (route != null) {
+                    if (route != undefined) {
+                      return (
+                        <Polyline
+                          key={index}
+                          coordinates={
+                            smooth(smooth(route)).map(([latitude, longitude]) => ({
+                              latitude, longitude,
+                            }))
+                          }
+                          strokeColor={polyColor[index % 6]} // fallback for when `strokeColors` is not supported by the map-provider
+                          strokeWidth={8}
+                        />
+                      )
+                    }
+                  }
+                }
+                )
+                }
+
+
+                {/* {nowArr == 1 ? (
                   <Polyline
                     coordinates={output2}
                     strokeColor="#0000ff" // fallback for when `strokeColors` is not supported by the map-provider

@@ -41,20 +41,20 @@ const styles = StyleSheet.create({
   route_contents_map_marker_wrap: { width: 34, height: 34, backgroundColor: "white", borderTopLeftRadius: 17, borderTopRightRadius: 17, borderBottomRightRadius: 17, },
 
   route_contents_pinModal_imageButton: { backgroundColor: "white", width: "100%", borderRadius: 50, },
-  route_contents_pinModal_concanButton: { marginTop: 18, bottom: 0, width: "40%", marginLeft: "4%", marginBottom: "4%", borderRadius: 50, borderColor: "#555555", borderWidth: 1, backgroundColor: "white", },
+  route_contents_pinModal_concanButton: { marginTop: 18, bottom: 0, width: "42%", marginLeft: "4%", marginRight: "4%", marginBottom: "4%", borderRadius: 50, borderColor: "#555555", borderWidth: 1, backgroundColor: "white", },
   route_contents_pinModal_concanButton_wrap: { flexDirection: "row", },
 
 
   route_tool: { flex: 0.3, backgroundColor: "#f6f6f6", alignItems: "center", },
   route_tool_shadow: { width: "100%", height: "100%", borderTopLeftRadius: 15, borderTopRightRadius: 15, },
   route_tool_phrase_wrap: { borderRadius: 15, backgroundColor: "white", paddingLeft: 20, paddingRight: 20, paddingTop: 41, },
-  route_tool_phrase: { paddingTop: windowHeight / 120, fontSize: windowHeight / 45, fontFamily: "NotoMedium", color: "#2a2a2a", },
+  route_tool_phrase: { paddingTop: windowHeight / 120, fontSize: windowHeight / 45, fontFamily: "NotoMedium", color: "#3f3f3f", },
   route_tool_who: { fontSize: windowHeight / 50, fontFamily: "NotoRegular", textAlign: "right", },
   route_tool_button: { position: "absolute", bottom: 0, width: "92%", marginLeft: "4%", height: windowHeight / 19, marginBottom: "4%", borderRadius: 50, borderColor: "#555555", borderWidth: 1, backgroundColor: "white", },
-  route_tool_button_label: { fontSize: windowHeight / 50, fontFamily: "NotoMedium", textAlign: "right", color: "black", marginTop: windowHeight / 100 },
+  route_tool_button_label: { fontSize: windowHeight / 50, fontFamily: "NotoMedium", textAlign: "right", color: "black", marginTop: windowHeight / 100, },
   route_tool_routeInfo: { backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", paddingLeft: "5%", paddingRight: "5%", marginTop: windowHeight / 15, },
   route_tool_routeInfo_wrap: { width: "30%", },
-  route_tool_routeInfo_text: { fontSize: windowHeight / 50, fontFamily: "NotoRegular", textAlign: "center", },
+  route_tool_routeInfo_text: { fontSize: windowHeight / 50, fontFamily: "NotoRegular", textAlign: "center", color: "#3f3f3f", },
   route_tool_routeInfo_textBold: { fontSize: windowHeight / 30, fontFamily: "NotoBold", textAlign: "center", },
 
   route_tool_after: { width: "100%", position: "absolute", top: windowHeight * 0.7, flexDirection: "row", justifyContent: "space-between", },
