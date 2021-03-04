@@ -238,11 +238,11 @@ export default function RouteScreen() {
         <SafeAreaView style={styles.com_headers}>
           <StatusBar style="dark" />
         </SafeAreaView>
-        <SafeAreaView style={styles.com_safeView_route}>
+        <SafeAreaView style={styles.route}>
           <View
             style={
               recording
-                ? styles.com_safeView_title_route2
+                ? styles.route_title_after
                 : styles.route_title
             }
           >
@@ -250,12 +250,14 @@ export default function RouteScreen() {
           </View>
 
           {recording ? (
-            <View style={styles.com_safeView_title_route_total3}>
-              <Text style={styles.route_info_text}>
-                {isModalVisible
-                  ? "일시정지 되었습니다."
-                  : "동선을 기록하고 있습니다 ..."}
-              </Text>
+            <View style={styles.route_info_after}>
+              <View style={styles.route_info_after_text_wrap}>
+                <Text style={styles.route_info_text_after}>
+                  {isModalVisible
+                    ? "일시정지 되었습니다."
+                    : "동선을 기록하고 있습니다 ..."}
+                </Text>
+              </View>
             </View>
           ) : (
               <View style={styles.route_info}>
@@ -293,17 +295,17 @@ export default function RouteScreen() {
           <View
             style={
               recording
-                ? styles.com_safeView_contents2
+                ? styles.route_contents_after
                 : styles.route_contents
             }
           >
-            <Surface style={recording ? styles.surface3 : styles.surface2}>
+            <Surface style={recording ? styles.route_contents_shadow_after : styles.route_contents_shadow}>
               <MapView
                 opacity={recording ? 1 : 1}
                 style={
                   recording
-                    ? styles.route_safeView_route_contents_map2
-                    : styles.route_safeView_route_contents_map
+                    ? styles.route_contents_map_after
+                    : styles.route_contents_map
                 }
                 rotateEnabled={false}
                 showsUserLocation={true}
@@ -449,11 +451,11 @@ export default function RouteScreen() {
                         }}
                         centerOffset={{ x: 0, y: -22 }}
                       >
-                        <Surface style={styles.circle_shadow}>
-                          <View style={styles.circle2}>
+                        <Surface style={styles.route_contents_map_marker_shadow}>
+                          <View style={styles.route_contents_map_marker_wrap}>
                             <Image
                               source={{ uri: route.file.image }}
-                              style={styles.circle}
+                              style={styles.route_contents_map_marker_image}
                             />
                           </View>
                         </Surface>
@@ -600,7 +602,7 @@ export default function RouteScreen() {
                             )}
                           </View>
                           <IconButton
-                            style={styles.route_safeView_contents_tool_button}
+                            style={styles.route_contents_pinModal_imageButton}
                             icon={"plus"}
                             color="black"
                             size={80}
@@ -641,9 +643,9 @@ export default function RouteScreen() {
                             style={{ width: "90%", height: 160 }}
                           />
 
-                          <View style={styles.zpzpzp}>
+                          <View style={styles.route_contents_pinModal_concanButton_wrap}>
                             <Button
-                              style={styles.bbbccc}
+                              style={styles.route_contents_pinModal_concanButton}
                               labelStyle={
                                 styles.com_safeView_title_route_total_content_text6
                               }
@@ -653,7 +655,7 @@ export default function RouteScreen() {
                               추가하기
                             </Button>
                             <Button
-                              style={styles.bbbccc}
+                              style={styles.route_contents_pinModal_concanButton}
                               labelStyle={
                                 styles.com_safeView_title_route_total_content_text6
                               }
@@ -898,11 +900,11 @@ export default function RouteScreen() {
               </Surface>
             </View>
           ) : (
-              <View style={styles.route_safeView_contents_tool_record}>
+              <View style={styles.route_tool_after}>
                 {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                  <Surface style={styles.surface4}>
+                  <Surface style={styles.route_tool_after_button_shadow}>
                     <IconButton
-                      style={styles.route_safeView_contents_tool_record_button}
+                      style={styles.route_tool_after_button}
                       icon={"pause"}
                       color="#3f3f3f"
                       size={30}
@@ -913,9 +915,9 @@ export default function RouteScreen() {
                     <></>
                   )}
                 {!isModalVisible && !isModalVisible2 && !isModalVisible3 ? (
-                  <Surface style={styles.surface4}>
+                  <Surface style={styles.route_tool_after_button_shadow}>
                     <IconButton
-                      style={styles.route_safeView_contents_tool_record_button}
+                      style={styles.route_tool_after_button}
                       icon={adding ? "close" : "pin"}
                       color="#3f3f3f"
                       size={30}
