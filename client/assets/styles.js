@@ -12,6 +12,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 
+  route: { flex: 1, backgroundColor: "white" },
+
   route_title: {
     marginTop: 10,
     flex: 0.05,
@@ -24,6 +26,13 @@ const styles = StyleSheet.create({
     fontFamily: "NotoMedium",
     color: "#262223",
     marginLeft: 15,
+  },
+
+  route_title_after: {
+    marginTop: 10,
+    flex: 0.05,
+    backgroundColor: "white",
+    justifyContent: "center",
   },
 
   route_info: {
@@ -43,12 +52,98 @@ const styles = StyleSheet.create({
     paddingLeft: windowHeight / 20,
   },
 
+  route_info_after: {
+    flex: 0.065,
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  route_info_after_text_wrap: {
+    width: "100%",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  route_info_text_after: {
+    fontSize: windowHeight / 60,
+    fontFamily: "NotoRegular",
+    color: "#3f3f3f",
+    marginTop: windowHeight / 150,
+  },
+
   route_contents: {
     flex: 0.585,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f6f6f6",
   },
+  route_contents_shadow: {
+    width: "94%",
+    height: "94%",
+    backgroundColor: "black",
+    borderRadius: 15,
+    alignItems: "center",
+    elevation: 4,
+    marginBottom: 3,
+  },
+  route_contents_map: { width: "100%", height: "100%", borderRadius: 15 },
+
+  route_contents_after: {
+    flex: 0.885,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "-2.5%",
+    backgroundColor: "#f6f6f6",
+  },
+  route_contents_shadow_after: { width: "100%", height: "100%" },
+  route_contents_map_after: { width: "100%", height: "100%" },
+
+  route_contents_map_marker_shadow: {
+    width: 34,
+    height: 34,
+    backgroundColor: "white",
+    borderTopLeftRadius: 17,
+    borderTopRightRadius: 17,
+    borderBottomRightRadius: 17,
+    transform: [{ rotate: "-45deg" }],
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 10,
+  },
+  route_contents_map_marker_image: {
+    width: 30,
+    height: 30,
+    borderRadius: 30 / 2,
+    backgroundColor: "white",
+    marginTop: 2,
+    marginLeft: 2,
+    transform: [{ rotate: "45deg" }],
+  },
+  route_contents_map_marker_wrap: {
+    width: 34,
+    height: 34,
+    backgroundColor: "white",
+    borderTopLeftRadius: 17,
+    borderTopRightRadius: 17,
+    borderBottomRightRadius: 17,
+  },
+
+  route_contents_pinModal_imageButton: {
+    backgroundColor: "white",
+    width: "100%",
+    borderRadius: 15,
+  },
+  route_contents_pinModal_concanButton: {
+    marginTop: 18,
+    bottom: 0,
+    width: "40%",
+    marginLeft: "4%",
+    marginBottom: "4%",
+    borderRadius: 50,
+    borderColor: "#555555",
+    borderWidth: 1,
+    backgroundColor: "white",
+  },
+  route_contents_pinModal_concanButton_wrap: { flexDirection: "row" },
 
   route_tool: { flex: 0.3, backgroundColor: "#f6f6f6", alignItems: "center" },
   route_tool_shadow: {
@@ -114,41 +209,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  com_safeView_title_route_total_content_text3: {
-    fontSize: 20,
-    fontFamily: "NotoRegular",
-    textAlign: "center",
-  },
-  com_safeView_title_route2: {
-    marginTop: 10,
-    flex: 0.5,
-    backgroundColor: "white",
-    justifyContent: "center",
-  },
-  com_safeView_title_route_total3: {
-    flex: 1.1,
-    backgroundColor: "white",
+  route_tool_after: {
+    width: "100%",
+    position: "absolute",
+    top: windowHeight * 0.7,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 25,
   },
-  route_safeView_contents_tool_button: {
-    backgroundColor: "white",
-    width: "100%",
-    height: "100%",
-    borderRadius: 50,
-  },
-  route_safeView_contents_tool_button_label: {},
-  surface: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 4,
-    backgroundColor: "yellow",
-  },
-  surface4: {
+  route_tool_after_button_shadow: {
     width: 70,
     height: 50,
     borderRadius: 50,
@@ -157,95 +225,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     elevation: 4,
   },
-  route_safeView_contents_tool_record_buttonaaa: { justifyContent: "center" },
-  route_safeView_contents_tool_record: {
-    width: "100%",
-    height: 90,
-    position: "absolute",
-    top: "82%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  route_safeView_contents_tool_record2: {
-    width: "100%",
-    position: "absolute",
-    top: "10%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  route_safeView_contents_tool_record_button: { backgroundColor: "white" },
-  route_safeView_contents_tool_record_buttonbbb: {
-    backgroundColor: "white",
-    fontSize: 30,
-  },
-  circle: {
-    width: 30,
-    height: 30,
-    borderRadius: 30 / 2,
-    backgroundColor: "white",
-    marginTop: 2,
-    marginLeft: 2,
-    transform: [{ rotate: "45deg" }],
-  },
-  circle2: {
-    width: 34,
-    height: 34,
-    backgroundColor: "white",
-    borderTopLeftRadius: 17,
-    borderTopRightRadius: 17,
-    borderBottomRightRadius: 17,
-  },
-  circle_shadow: {
-    width: 34,
-    height: 34,
-    backgroundColor: "white",
-    borderTopLeftRadius: 17,
-    borderTopRightRadius: 17,
-    borderBottomRightRadius: 17,
-    transform: [{ rotate: "-45deg" }],
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 10,
-  },
-  com_safeView_route: { flex: 1, backgroundColor: "white" },
-  ababab: {
-    width: "93%",
-    height: "93%",
-    backgroundColor: "black",
-    borderRadius: 15,
-    alignItems: "center",
-  },
-  route_safeView_route_contents_map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 15,
-  },
-  route_safeView_route_contents_map2: { width: "100%", height: "100%" },
-  surface2: {
-    width: "94%",
-    height: "94%",
-    backgroundColor: "black",
-    borderRadius: 15,
-    alignItems: "center",
-    elevation: 4,
-    marginBottom: 3,
-  },
-  surface3: { width: "100%", height: "100%" },
-  horhor: { width: "100vw", height: "80%", backgroundColor: "red" },
-  com_safeView_title_route_total_content2: {},
+  route_tool_after_button: { backgroundColor: "white" },
 
-  bbbccc: {
-    marginTop: 18,
-    bottom: 0,
-    width: "40%",
-    marginLeft: "4%",
-    marginBottom: "4%",
-    borderRadius: 50,
-    borderColor: "#555555",
-    borderWidth: 1,
-    backgroundColor: "white",
-  },
-  zpzpzp: { flexDirection: "row" },
   com_safeView_title_text: {
     fontSize: 25,
     fontWeight: "700",
@@ -253,18 +234,10 @@ const styles = StyleSheet.create({
     color: "#262223",
     marginLeft: 15,
   },
-
   com_safeView_contents: {
     flex: 7,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f6f6f6",
-  },
-  com_safeView_contents2: {
-    flex: 11.3,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "-2.5%",
     backgroundColor: "#f6f6f6",
   },
   com_safeView_contents_text: {
@@ -272,7 +245,6 @@ const styles = StyleSheet.create({
     fontFamily: "DoHyeon",
     fontSize: 20,
   },
-
   route_safeView_contents_map: { width: "100%", height: "100%" },
   login_safeView_contents_logoView: {
     flex: 0.2,
