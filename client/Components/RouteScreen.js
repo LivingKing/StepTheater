@@ -26,6 +26,7 @@ import {
   Avatar,
   Snackbar,
   TextInput,
+  Paragraph, Dialog, Portal
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
@@ -185,7 +186,7 @@ export default function RouteScreen() {
 
   const routeStateChange = () => {
     setRecording(!recording);
-    onToggleSnackBar();
+
     //console.log(recording);
   };
 
@@ -211,13 +212,14 @@ export default function RouteScreen() {
   };
   const stopRecording = () => {
     console.log("stop");
+    setVisible(false);
+    showSnackBar("동선기록을 정지합니다.");
     postRoute(polyLine);
 
     setRecording(false);
     setModalVisible(false);
     setModalVisible2(false);
     setAdding(false);
-    onToggleSnackBar();
 
 
     var temp = arrCount + 1;
@@ -271,16 +273,29 @@ export default function RouteScreen() {
   const [hide, setHide] = useState(false);
 
   const [visible, setVisible] = React.useState(false);
+  const [visible2, setVisible2] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const onToggleSnackBar = () => setVisible(!visible);
-
+  const showSnackBar = (message) => { setSnackbarMessage(message); setVisible(true); }
   const onDismissSnackBar = () => setVisible(false);
+
+  const showSnackBar2 = (message) => { setSnackbarMessage(message); setVisible2(true); }
+  const onDismissSnackBar2 = () => setVisible2(false);
 
   const scrollX = new Animated.Value(0);
 
   const [textzzz, setTextzzz] = useState("");
   const [contentzzz, setContentzzz] = useState("");
   const [arrCount, setArrCount] = useState(0);
+
+  const [visibleDialog, setVisibleDialog] = useState(false);
+
+  const showDialog = () => setVisibleDialog(true);
+
+  const hideDialog = () => setVisibleDialog(false);
+
+  const [routeName, setRouteName] = useState("");
+
 
   if (Platform.OS === "ios") {
     return (
@@ -301,7 +316,7 @@ export default function RouteScreen() {
                 <Text style={styles.route_info_text_after}>
                   {isModalVisible
                     ? "일시정지 되었습니다."
-                    : "동선을 기록하고 있습니다 ..."}
+                    : "🏃 " + routeName + " 동선을 기록하고 있어요 !"}
                 </Text>
               </View>
             </View>
@@ -781,16 +796,8 @@ export default function RouteScreen() {
                 ) : (
                   <></>
                 )}
+                */}
 
-                {/* <View style={styles.route_safeView_contents_tool_record2}>
-                  <Snackbar
-                    visible={visible}
-                    duration={1500}
-                    onDismiss={onDismissSnackBar}
-                  >
-                    동선 기록을 시작합니다.
-                </Snackbar>
-                </View> */}
 
                 {/* <Provider>
                   <Portal>
@@ -914,7 +921,7 @@ export default function RouteScreen() {
                   labelStyle={styles.route_tool_button_label}
                   icon="run"
                   mode="outlined"
-                  onPress={routeStateChange}
+                  onPress={() => { setRouteName(""); showDialog(); }}
                 >
                   동선 기록 시작하기
                 </Button>
@@ -965,6 +972,76 @@ export default function RouteScreen() {
               /> */}
             </View>
           )}
+          <View>
+
+            <Portal>
+              <View style={{
+                width: "90%",
+                left: "5%",
+                position: "absolute",
+                top: windowHeight * 0.35,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                zIndex: 999999,
+              }}>
+                {visible2 ?
+                  <Snackbar
+                    visible={true}
+                    duration={1000}
+                    onDismiss={onDismissSnackBar2}
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: 5,
+                      color: "black",
+                    }}
+                  >
+                    <Text style={{ color: "black", }}>❌{"  "}{snackbarMessage}</Text>
+                  </Snackbar>
+                  : <></>}
+              </View>
+              <Dialog visible={visibleDialog} onDismiss={() => { setVisible2(false); hideDialog(); }} style={{ borderRadius: 10 }}>
+                <Dialog.Title>동선 이름</Dialog.Title>
+                <Dialog.Content>
+                  <Paragraph>동선의 이름을 정해주세요</Paragraph>
+                  <TextInput
+                    mode="outlined"
+                    onChangeText={(routeName) => setRouteName(routeName)}
+                    text="black"
+                    theme={{
+                      colors: {
+                        placeholder: "#999999",
+                        text: "#222222",
+                        primary: "#545454",
+                        background: "white",
+                      },
+                    }}
+                    style={{ width: "100%", height: 30 }}
+                  />
+                </Dialog.Content>
+                <Dialog.Actions>
+                  <Button onPress={() => { setVisible2(false); hideDialog(); }}>취소</Button>
+                  <Button onPress={() => { if (routeName == "") { showSnackBar2("동선이름은 필수입니다."); } else { setVisible2(false); showSnackBar("동선기록을 시작합니다."); routeStateChange(); setRouteName(routeName); hideDialog(); } }}>확인</Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
+
+          </View>
+          <View style={{
+            width: "100%",
+            position: "absolute",
+            top: windowHeight * 0.12,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            zIndex: 999999,
+          }}>
+            <Snackbar
+              visible={visible}
+              duration={1000}
+              onDismiss={onDismissSnackBar}
+            >
+              {snackbarMessage}
+            </Snackbar>
+          </View>
         </SafeAreaView>
       </Fragment >
     );

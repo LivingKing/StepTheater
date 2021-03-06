@@ -183,6 +183,13 @@ export default function LoginScreen({ navigation }) {
                   로그인
                 </Button>
                 <Button
+                  style={{ marginRight: 30, width: 90 }}
+                  mode="contained"
+                  onPress={navigation.navigate("메인")}
+                >
+                  홈
+                </Button>
+                <Button
                   style={{ width: 90 }}
                   mode="outlined"
                   onPress={() => {
