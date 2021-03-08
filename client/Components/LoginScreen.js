@@ -1,7 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment, useRef, useState, useEffect } from "react";
 import { View, SafeAreaView, Platform, Text } from "react-native";
-import { NavigationActions, StackActions } from "@react-navigation/native";
+import {
+  NavigationActions,
+  StackActions,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { TextInput, Button, HelperText } from "react-native-paper";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as SecureStore from "expo-secure-store";
@@ -18,7 +22,7 @@ export default function LoginScreen({ navigation }) {
   const showState = async () => {
     console.log(
       "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
-      "\nUserId : " + (await SecureStore.getItemAsync("userId")),
+      "\nUserId : " + (await SecureStore.getItemAsync("UserId")),
       "\nEmail : " + (await SecureStore.getItemAsync("Email")),
       "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
@@ -26,9 +30,9 @@ export default function LoginScreen({ navigation }) {
   };
   const checkState = async () => {
     if ((await SecureStore.getItemAsync("IsLogin")) === "true") {
-      const data = await SecureStore.getItemAsync("Email");
+      const data = await SecureStore.getItemAsync("UserId");
       const response = await fetch(
-        `http://203.241.228.112:11200/api/member?email=${data}`
+        `http://203.241.228.112:11200/api/member?id=${data}`
       );
       const result = await response.json();
       if (result.id) {
@@ -36,7 +40,7 @@ export default function LoginScreen({ navigation }) {
       }
     }
   };
-  useEffect(() => {
+  useFocusEffect(() => {
     showState();
     checkState();
   });
@@ -69,6 +73,7 @@ export default function LoginScreen({ navigation }) {
       await SecureStore.setItemAsync("NickName", result.nickname);
       await SecureStore.setItemAsync("IsLogin", "true");
 
+      navigation.reset({ index: 0, routes: [{ name: "메인" }] });
       setErrorMsg("");
     }
   };
@@ -121,6 +126,7 @@ export default function LoginScreen({ navigation }) {
           await SecureStore.setItemAsync("NickName", response.nickname);
           await SecureStore.setItemAsync("IsLogin", "true");
           await SecureStore.setItemAsync("LoginType", "Local");
+          navigation.reset({ index: 0, routes: [{ name: "메인" }] });
         }
       }
     } catch (e) {

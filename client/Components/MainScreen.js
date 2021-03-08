@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./HomeScreen";
@@ -7,6 +7,8 @@ import RouteScreen from "./RouteScreen";
 import DetailScreen from "./DetailScreen";
 import SettingsScreen from "./SettingsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useFocusEffect } from "@react-navigation/core";
+import * as SecureStore from "expo-secure-store";
 
 const Tab = createBottomTabNavigator();
 const homeName = "홈";
@@ -14,8 +16,29 @@ const routeName = "동선";
 const detailName = "걸음 기록";
 const settingsName = "설정";
 
-export default function SettingsStackScreen() {
+export default function SettingsStackScreen({ navigation }) {
   if (Platform.OS === "ios") {
+    const checkState = async () => {
+      if ((await SecureStore.getItemAsync("IsLogin")) === "true") {
+        const data = await SecureStore.getItemAsync("UserId");
+        const response = await fetch(
+          `http://203.241.228.112:11200/api/member?id=${data}`
+        );
+        const result = await response.json();
+        console.log(result);
+        if (result.id === 0) {
+          await SecureStore.setItemAsync("IsLogin", "false");
+          await SecureStore.deleteItemAsync("UserId");
+          await SecureStore.deleteItemAsync("Email");
+          await SecureStore.deleteItemAsync("NickName");
+          await SecureStore.deleteItemAsync("LoginType");
+          navigation.reset({ index: 0, routes: [{ name: "로그인" }] });
+        }
+      }
+    };
+    useFocusEffect(() => {
+      checkState();
+    });
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({

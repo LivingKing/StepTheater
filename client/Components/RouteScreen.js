@@ -256,10 +256,11 @@ export default function RouteScreen() {
           desc: file.content,
           thumb_url: thumbImage,
           image_url: image,
+          latitude: current.latitude,
+          longitude: current.longitude,
         }),
       }
     );
-    console.log("nextObject", nextObject);
     setPinArray([...pinArray, nextObject]);
     var temp = tempPinCount + 1;
     setTempPinCount(temp);
