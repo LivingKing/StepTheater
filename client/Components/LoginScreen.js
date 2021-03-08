@@ -42,7 +42,7 @@ export default function LoginScreen({ navigation }) {
       );
       const result = await response.json();
       if (result.id) {
-        // navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+        navigation.reset({ index: 0, routes: [{ name: "메인" }] });
       }
     }
   };
