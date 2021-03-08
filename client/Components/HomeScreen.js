@@ -1,10 +1,21 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Text, View, SafeAreaView, Platform } from "react-native";
 import styles from "../assets/styles";
+import MapView, { Marker, Polyline } from "react-native-maps";
+import * as SecureStore from "expo-secure-store";
+import { useFocusEffect } from "@react-navigation/core";
 
 export default function HomeScreen({ navigation }) {
-  console.log(navigation);
+  const showState = async () => {
+    console.log(
+      "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
+      "\nUserId : " + (await SecureStore.getItemAsync("UserId")),
+      "\nEmail : " + (await SecureStore.getItemAsync("Email")),
+      "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
+      "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
+    );
+  };
   if (Platform.OS === "ios") {
     return (
       <Fragment>
@@ -16,16 +27,28 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.com_safeView_title_text}>걸음 한 편</Text>
           </View>
           <View style={styles.com_safeView_contents}>
-            <Text style={styles.com_safeView_contents_text}>
-              {/* {`성공하지 못할 거라는 그릇된 믿음을 버리는 것이
-              성공을 향한 첫걸음이다.
-              
-              -앤드류 매튜스-`} */}
-              {`인생은 한 편의 영화다.
-              
-              -전현근-
-              `}
-            </Text>
+            <MapView>
+              <Polyline
+                coordinates={[
+                  { latitude: 37.8025259, longitude: -122.4351431 },
+                  { latitude: 37.7896386, longitude: -122.421646 },
+                  { latitude: 37.7665248, longitude: -122.4161628 },
+                  { latitude: 37.7734153, longitude: -122.4577787 },
+                  { latitude: 37.7948605, longitude: -122.4596065 },
+                  { latitude: 37.8025259, longitude: -122.4351431 },
+                ]}
+                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                strokeColors={[
+                  "#7F0000",
+                  "#00000000", // no color, creates a "long" gradient between the previous and next coordinate
+                  "#B24112",
+                  "#E5845C",
+                  "#238C23",
+                  "#7F0000",
+                ]}
+                strokeWidth={6}
+              />
+            </MapView>
           </View>
         </SafeAreaView>
       </Fragment>
