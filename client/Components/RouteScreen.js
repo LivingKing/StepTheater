@@ -373,7 +373,7 @@ export default function RouteScreen() {
                 icon="menu"
                 color="#555555"
                 size={windowHeight / 40}
-                // onPress={() => console.log("Pressed")}
+              // onPress={() => console.log("Pressed")}
               />
             </View>
           )}
@@ -726,36 +726,36 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                      // console.log(route);
-                      return (
-                        <Marker
-                          key={index}
-                          draggable
-                          coordinate={{
-                            latitude: route.latitude,
-                            longitude: route.longitude,
-                          }}
-                          onPress={() => {
-                            setInfoImg(route.file.image);
-                            setInfoText(route.file.text);
-                            setInfoContent(route.file.content);
-                            toggleModal3();
-                          }}
-                          centerOffset={{ x: 0, y: -22 }}
+                    // console.log(route);
+                    return (
+                      <Marker
+                        key={index}
+                        draggable
+                        coordinate={{
+                          latitude: route.latitude,
+                          longitude: route.longitude,
+                        }}
+                        onPress={() => {
+                          setInfoImg(route.file.image);
+                          setInfoText(route.file.text);
+                          setInfoContent(route.file.content);
+                          toggleModal3();
+                        }}
+                        centerOffset={{ x: 0, y: -22 }}
+                      >
+                        <Surface
+                          style={styles.route_contents_map_marker_shadow}
                         >
-                          <Surface
-                            style={styles.route_contents_map_marker_shadow}
-                          >
-                            <View style={styles.route_contents_map_marker_wrap}>
-                              <Image
-                                source={{ uri: route.file.thumbImage }}
-                                style={styles.route_contents_map_marker_image}
-                              />
-                            </View>
-                          </Surface>
-                        </Marker>
-                      );
-                    })
+                          <View style={styles.route_contents_map_marker_wrap}>
+                            <Image
+                              source={{ uri: route.file.thumbImage }}
+                              style={styles.route_contents_map_marker_image}
+                            />
+                          </View>
+                        </Surface>
+                      </Marker>
+                    );
+                  })
                   : null}
 
                 {adding ? (
