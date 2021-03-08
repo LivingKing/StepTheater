@@ -62,7 +62,7 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer>
           <Stack.Navigator
-            screenOptions={{ headerShown: false, initScreen: mainName }}
+            screenOptions={{ headerShown: false, initScreen: initScreen }}
           >
             <Stack.Screen name={loginName} component={LoginScreen} />
             <Stack.Screen name={mainName} component={MainScreen} />

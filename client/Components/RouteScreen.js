@@ -1,5 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   SafeAreaView,
@@ -26,13 +32,16 @@ import {
   Avatar,
   Snackbar,
   TextInput,
-  Paragraph, Dialog, Portal
+  Paragraph,
+  Dialog,
+  Portal,
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
 import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators";
 import * as ImageManipulator from "expo-image-manipulator";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useFocusEffect } from "@react-navigation/core";
 
 export default function RouteScreen() {
   const [image, setImage] = useState(null);
@@ -42,7 +51,14 @@ export default function RouteScreen() {
   const [nickname, setNickname] = useState("");
   const [isImageLoading, setIsImageLoading] = useState(false);
   const captureRef = useRef();
-  const polyColor = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
+  const polyColor = [
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+    "#ffff00",
+    "#ff00ff",
+    "#00ffff",
+  ];
 
   const getPhotoUrl = async () => {
     const url = await captureRef.current.capture();
@@ -65,7 +81,6 @@ export default function RouteScreen() {
     let location = await Location.getCurrentPositionAsync({});
     //console.log(location);
     setLocation(location);
-
   };
 
   const getDate = async () => {
@@ -106,15 +121,16 @@ export default function RouteScreen() {
   };
 
   const getSettings = async () => {
-    const temp = await SecureStore.getItemAsync("NickName");
-    setNickname(temp);
+    setNickname(await SecureStore.getItemAsync("NickName"));
   };
-  useEffect(() => {
-    getLocation();
-    getDate();
-    getPermission();
-    getSettings();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getLocation();
+      getDate();
+      getPermission();
+      getSettings();
+    }, [])
+  );
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -205,6 +221,7 @@ export default function RouteScreen() {
       },
       body: JSON.stringify({
         id: id,
+        name: routeName,
         date: date,
         data: route,
       }),
@@ -220,7 +237,6 @@ export default function RouteScreen() {
     setModalVisible(false);
     setModalVisible2(false);
     setAdding(false);
-
 
     var temp = arrCount + 1;
     setArrCount(temp);
@@ -277,10 +293,16 @@ export default function RouteScreen() {
   const [visible2, setVisible2] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const showSnackBar = (message) => { setSnackbarMessage(message); setVisible(true); }
+  const showSnackBar = (message) => {
+    setSnackbarMessage(message);
+    setVisible(true);
+  };
   const onDismissSnackBar = () => setVisible(false);
 
-  const showSnackBar2 = (message) => { setSnackbarMessage(message); setVisible2(true); }
+  const showSnackBar2 = (message) => {
+    setSnackbarMessage(message);
+    setVisible2(true);
+  };
   const onDismissSnackBar2 = () => setVisible2(false);
 
   const scrollX = new Animated.Value(0);
@@ -296,7 +318,6 @@ export default function RouteScreen() {
   const hideDialog = () => setVisibleDialog(false);
 
   const [routeName, setRouteName] = useState("");
-
 
   if (Platform.OS === "ios") {
     return (
@@ -352,7 +373,7 @@ export default function RouteScreen() {
                 icon="menu"
                 color="#555555"
                 size={windowHeight / 40}
-              // onPress={() => console.log("Pressed")}
+                // onPress={() => console.log("Pressed")}
               />
             </View>
           )}
@@ -385,29 +406,33 @@ export default function RouteScreen() {
                       flex: 0.34,
                       borderTopLeftRadius: 15,
                       borderTopRightRadius: 15,
-                    }}>
+                    }}
+                  >
                     <View
                       style={{
                         borderTopLeftRadius: 15,
                         borderTopRightRadius: 15,
-                        width: "100%", height: "100%",
+                        width: "100%",
+                        height: "100%",
                         backgroundColor: "white",
                         alignItems: "center",
                       }}
                     >
                       <View style={styles.route_contents_pause_title}>
-                        <Text style={styles.route_contents_pause_title_text}>현재 동선 정보</Text>
+                        <Text style={styles.route_contents_pause_title_text}>
+                          현재 동선 정보
+                        </Text>
                       </View>
                       <View style={styles.route_contents_pause_info}>
                         <View style={styles.route_tool_routeInfo_wrap}>
                           <Text style={styles.route_tool_routeInfo_text}>
                             걸은 거리
-                            </Text>
+                          </Text>
                           <Text style={styles.route_tool_routeInfo_textBold}>
                             0.0{polyLine.length * 1}{" "}
                             <Text style={styles.route_tool_routeInfo_text}>
                               km
-                          </Text>
+                            </Text>
                           </Text>
                         </View>
                         <View style={styles.route_tool_routeInfo_wrap}>
@@ -418,27 +443,28 @@ export default function RouteScreen() {
                             0:00{" "}
                             <Text style={styles.route_tool_routeInfo_text}>
                               분
-                          </Text>
+                            </Text>
                           </Text>
                         </View>
                         <View style={styles.route_tool_routeInfo_wrap}>
                           <Text style={styles.route_tool_routeInfo_text}>
                             추가한 마커
-                        </Text>
+                          </Text>
                           <Text style={styles.route_tool_routeInfo_textBold}>
                             {tempPinCount}
                             <Text style={styles.route_tool_routeInfo_text}>
                               {" "}
-                            개
-                          </Text>
+                              개
+                            </Text>
                           </Text>
                         </View>
                       </View>
                       <View style={styles.route_contents_pause_tool}>
-
                         <Button
                           style={styles.route_contents_pause_tool_button}
-                          labelStyle={styles.route_contents_pause_tool_button_label}
+                          labelStyle={
+                            styles.route_contents_pause_tool_button_label
+                          }
                           icon="run"
                           mode="outlined"
                           onPress={toggleModal}
@@ -447,7 +473,9 @@ export default function RouteScreen() {
                         </Button>
                         <Button
                           style={styles.route_contents_pause_tool_button}
-                          labelStyle={styles.route_contents_pause_tool_button_label}
+                          labelStyle={
+                            styles.route_contents_pause_tool_button_label
+                          }
                           icon="stop"
                           mode="outlined"
                           onPress={stopRecording}
@@ -455,11 +483,9 @@ export default function RouteScreen() {
                           정지하기
                         </Button>
                       </View>
-
                     </View>
                   </Surface>
                 </Modal>
-
               )}
               {isModalVisible2 && (
                 <Modal
@@ -675,8 +701,7 @@ export default function RouteScreen() {
                         }
                         setPrevLine(newLine);
                         setCount(1);
-                      }
-                      else {
+                      } else {
                         if (getDistance(prevLine, newLine) >= 10) {
                           if (arrCount != 0) {
                             const now = [];
@@ -685,9 +710,10 @@ export default function RouteScreen() {
                             if (prevRouteM.concat(now) != null) {
                               setRouteM(prevRouteM.concat(now));
                             }
-                          }
-                          else {
-                            console.log([[...polyLine, Object.values(newLine)]]);
+                          } else {
+                            console.log([
+                              [...polyLine, Object.values(newLine)],
+                            ]);
                             setRouteM([[...polyLine, Object.values(newLine)]]);
                           }
                           setPrevLine(newLine);
@@ -700,36 +726,36 @@ export default function RouteScreen() {
               >
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                    // console.log(route);
-                    return (
-                      <Marker
-                        key={index}
-                        draggable
-                        coordinate={{
-                          latitude: route.latitude,
-                          longitude: route.longitude,
-                        }}
-                        onPress={() => {
-                          setInfoImg(route.file.image);
-                          setInfoText(route.file.text);
-                          setInfoContent(route.file.content);
-                          toggleModal3();
-                        }}
-                        centerOffset={{ x: 0, y: -22 }}
-                      >
-                        <Surface
-                          style={styles.route_contents_map_marker_shadow}
+                      // console.log(route);
+                      return (
+                        <Marker
+                          key={index}
+                          draggable
+                          coordinate={{
+                            latitude: route.latitude,
+                            longitude: route.longitude,
+                          }}
+                          onPress={() => {
+                            setInfoImg(route.file.image);
+                            setInfoText(route.file.text);
+                            setInfoContent(route.file.content);
+                            toggleModal3();
+                          }}
+                          centerOffset={{ x: 0, y: -22 }}
                         >
-                          <View style={styles.route_contents_map_marker_wrap}>
-                            <Image
-                              source={{ uri: route.file.thumbImage }}
-                              style={styles.route_contents_map_marker_image}
-                            />
-                          </View>
-                        </Surface>
-                      </Marker>
-                    );
-                  })
+                          <Surface
+                            style={styles.route_contents_map_marker_shadow}
+                          >
+                            <View style={styles.route_contents_map_marker_wrap}>
+                              <Image
+                                source={{ uri: route.file.thumbImage }}
+                                style={styles.route_contents_map_marker_image}
+                              />
+                            </View>
+                          </Surface>
+                        </Marker>
+                      );
+                    })
                   : null}
 
                 {adding ? (
@@ -765,28 +791,25 @@ export default function RouteScreen() {
                   <></>
                 )}
 
-
                 {routeM.map((route, index) => {
                   if (route != null) {
                     if (route != undefined) {
                       return (
                         <Polyline
                           key={index}
-                          coordinates={
-                            smooth(smooth(route)).map(([latitude, longitude]) => ({
-                              latitude, longitude,
-                            }))
-                          }
+                          coordinates={smooth(smooth(route)).map(
+                            ([latitude, longitude]) => ({
+                              latitude,
+                              longitude,
+                            })
+                          )}
                           strokeColor={polyColor[index % 6]} // fallback for when `strokeColors` is not supported by the map-provider
                           strokeWidth={8}
                         />
-                      )
+                      );
                     }
                   }
-                }
-                )
-                }
-
+                })}
 
                 {/* {nowArr == 1 ? (
                   <Polyline
@@ -798,7 +821,6 @@ export default function RouteScreen() {
                   <></>
                 )}
                 */}
-
 
                 {/* <Provider>
                   <Portal>
@@ -922,7 +944,10 @@ export default function RouteScreen() {
                   labelStyle={styles.route_tool_button_label}
                   icon="run"
                   mode="outlined"
-                  onPress={() => { setRouteName(""); showDialog(); }}
+                  onPress={() => {
+                    setRouteName("");
+                    showDialog();
+                  }}
                 >
                   동선 기록 시작하기
                 </Button>
@@ -974,20 +999,21 @@ export default function RouteScreen() {
             </View>
           )}
           <View>
-
             <Portal>
-              <View style={{
-                width: "90%",
-                left: "5%",
-                position: "absolute",
-                top: windowHeight * 0.35,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                zIndex: 999999,
-              }}>
-                {visible2 ?
+              <View
+                style={{
+                  width: "90%",
+                  left: "5%",
+                  position: "absolute",
+                  top: windowHeight * 0.35,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  zIndex: 999999,
+                }}
+              >
+                {visible2 ? (
                   <Snackbar
-                    visible={true}
+                    visible={visible2}
                     duration={1000}
                     onDismiss={onDismissSnackBar2}
                     style={{
@@ -996,11 +1022,23 @@ export default function RouteScreen() {
                       color: "black",
                     }}
                   >
-                    <Text style={{ color: "black", }}>❌{"  "}{snackbarMessage}</Text>
+                    <Text style={{ color: "black" }}>
+                      ❌{"  "}
+                      {snackbarMessage}
+                    </Text>
                   </Snackbar>
-                  : <></>}
+                ) : (
+                  <></>
+                )}
               </View>
-              <Dialog visible={visibleDialog} onDismiss={() => { setVisible2(false); hideDialog(); }} style={{ borderRadius: 10 }}>
+              <Dialog
+                visible={visibleDialog}
+                onDismiss={() => {
+                  setVisible2(false);
+                  hideDialog();
+                }}
+                style={{ borderRadius: 10 }}
+              >
                 <Dialog.Title>동선 이름</Dialog.Title>
                 <Dialog.Content>
                   <Paragraph>동선의 이름을 정해주세요</Paragraph>
@@ -1020,21 +1058,42 @@ export default function RouteScreen() {
                   />
                 </Dialog.Content>
                 <Dialog.Actions>
-                  <Button onPress={() => { setVisible2(false); hideDialog(); }}>취소</Button>
-                  <Button onPress={() => { if (routeName == "") { showSnackBar2("동선이름은 필수입니다."); } else { setVisible2(false); showSnackBar("동선기록을 시작합니다."); routeStateChange(); setRouteName(routeName); hideDialog(); } }}>확인</Button>
+                  <Button
+                    onPress={() => {
+                      setVisible2(false);
+                      hideDialog();
+                    }}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      if (routeName == "") {
+                        showSnackBar2("동선이름은 필수입니다.");
+                      } else {
+                        showSnackBar("동선기록을 시작합니다.");
+                        routeStateChange();
+                        setRouteName(routeName);
+                        hideDialog();
+                      }
+                    }}
+                  >
+                    확인
+                  </Button>
                 </Dialog.Actions>
               </Dialog>
             </Portal>
-
           </View>
-          <View style={{
-            width: "100%",
-            position: "absolute",
-            top: windowHeight * 0.12,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            zIndex: 999999,
-          }}>
+          <View
+            style={{
+              width: "100%",
+              position: "absolute",
+              top: windowHeight * 0.12,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              zIndex: 999999,
+            }}
+          >
             <Snackbar
               visible={visible}
               duration={1000}
@@ -1044,7 +1103,7 @@ export default function RouteScreen() {
             </Snackbar>
           </View>
         </SafeAreaView>
-      </Fragment >
+      </Fragment>
     );
   } else {
     return null;

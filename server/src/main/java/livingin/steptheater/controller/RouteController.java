@@ -27,7 +27,7 @@ public class RouteController {
             @RequestBody @Valid CreateRouteRequest request
     ){
         System.out.println("request = " + request);
-        Long routeId = routeService.join(request.id, request.date);
+        Long routeId = routeService.join(request.id, request.date, request.name);
         Route route = routeService.findOne(routeId);
         List<RouteItem> routeItems = new ArrayList<>();
         for (double[] location : request.data) {
@@ -47,6 +47,7 @@ public class RouteController {
     static class CreateRouteRequest<T> {
         private Long id;
         private String date;
+        private String name;
         private double[][] data;
     }
 }

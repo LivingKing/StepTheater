@@ -22,11 +22,12 @@ public class RouteService {
     private final DiaryRepository diaryRepository;
 
     @Transactional
-    public Long join(Long id, String date) {
+    public Long join(Long id, String date, String name) {
         Route route = new Route();
 
         Diary diary = diaryRepository.findOne(diaryRepository.findOneDiaryDto(id, date).get(0).getDiaryId());
         route.setDiary(diary);
+        route.setName(name);
         routeRepository.save(route);
 
         return route.getId();

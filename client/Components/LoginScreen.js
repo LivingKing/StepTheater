@@ -1,5 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useRef, useState, useEffect } from "react";
+import React, {
+  Fragment,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { View, SafeAreaView, Platform, Text } from "react-native";
 import {
   NavigationActions,
@@ -36,14 +42,16 @@ export default function LoginScreen({ navigation }) {
       );
       const result = await response.json();
       if (result.id) {
-        navigation.reset({ index: 0, routes: [{ name: "메인" }] });
+        // navigation.reset({ index: 0, routes: [{ name: "메인" }] });
       }
     }
   };
-  useFocusEffect(() => {
-    showState();
-    checkState();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      showState();
+      checkState();
+    }, [])
+  );
   const localLogin = async () => {
     const response = await fetch(
       "http://203.241.228.112:11200/api/member/login",
@@ -191,7 +199,7 @@ export default function LoginScreen({ navigation }) {
                 <Button
                   style={{ marginRight: 30, width: 90 }}
                   mode="contained"
-                  onPress={navigation.navigate("메인")}
+                  onPress={() => navigation.navigate("메인")}
                 >
                   홈
                 </Button>
