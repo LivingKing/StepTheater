@@ -4,20 +4,18 @@ import { Text, View, SafeAreaView, Platform } from "react-native";
 import styles from "../assets/styles";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as SecureStore from "expo-secure-store";
+import { useFocusEffect } from "@react-navigation/core";
 
 export default function HomeScreen({ navigation }) {
   const showState = async () => {
     console.log(
       "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
-      "\nUserId : " + (await SecureStore.getItemAsync("userId")),
+      "\nUserId : " + (await SecureStore.getItemAsync("UserId")),
       "\nEmail : " + (await SecureStore.getItemAsync("Email")),
       "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
     );
   };
-  useEffect(() => {
-    // showState();
-  });
   if (Platform.OS === "ios") {
     return (
       <Fragment>
