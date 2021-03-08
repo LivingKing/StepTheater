@@ -15,7 +15,14 @@ public class DiaryItemService {
     private final DiaryService diaryService;
 
     @Transactional
-    public Long join(Long id, String date, String title, String desc, String thumb_url, String image_url) {
+    public Long join(Long id,
+                     String date,
+                     String title,
+                     String desc,
+                     String thumb_url,
+                     String image_url,
+                     Double latitude,
+                     Double longitude) {
         DiaryItem diaryItem = new DiaryItem();
         DiaryQueryDto diaryQueryDto = diaryService.findOneDiaryDto(id, date).get(0);
         diaryItem.setDiary(diaryService.findOne(diaryQueryDto.getDiaryId()));
@@ -23,6 +30,8 @@ public class DiaryItemService {
         diaryItem.setDescription(desc);
         diaryItem.setThumbUrl(thumb_url);
         diaryItem.setImageUrl(image_url);
+        diaryItem.setLatitude(latitude);
+        diaryItem.setLongitude(longitude);
         diaryItemRepository.save(diaryItem);
         return diaryItem.getId();
     }

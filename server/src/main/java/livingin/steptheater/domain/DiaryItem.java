@@ -22,6 +22,10 @@ public class DiaryItem {
 
     private String thumbUrl;
 
+    private Double latitude;
+
+    private Double longitude;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "diary_id")
     private Diary diary;
