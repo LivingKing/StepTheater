@@ -209,7 +209,7 @@ export default function RouteScreen() {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
 
-  const postRoute = async (route) => {
+  const postRoute = async () => {
     const id = await SecureStore.getItemAsync("UserId");
     const date = await SecureStore.getItemAsync("today");
 
@@ -223,15 +223,44 @@ export default function RouteScreen() {
         id: id,
         name: routeName,
         date: date,
-        data: route,
       }),
     });
   };
+
+  const postRouteItem = async (route) => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const date = await SecureStore.getItemAsync("today");
+
+    const response = await fetch(
+      "http://203.241.228.112:11200/api/route/item",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          date: date,
+          data: route,
+          order: arrCount,
+        }),
+      }
+    );
+  };
+
+  const startRecording = () => {
+    showSnackBar("동선기록을 시작합니다.");
+    routeStateChange();
+    hideDialog();
+    postRoute();
+  };
+
   const stopRecording = () => {
     console.log("stop");
     setVisible(false);
     showSnackBar("동선기록을 정지합니다.");
-    postRoute(polyLine);
+    postRouteItem(polyLine);
 
     setRecording(false);
     setModalVisible(false);
@@ -258,6 +287,7 @@ export default function RouteScreen() {
       content: contentzzz,
     };
     const nextObject = { ...current, file };
+    console.log(arrCount);
     const response = await fetch(
       "http://203.241.228.112:11200/api/diary/item",
       {
@@ -274,6 +304,7 @@ export default function RouteScreen() {
           image_url: image,
           latitude: current.latitude,
           longitude: current.longitude,
+          order: arrCount,
         }),
       }
     );
@@ -363,7 +394,7 @@ export default function RouteScreen() {
                       fontSize: windowHeight / 45,
                     }}
                   >
-                    10
+                    {arrCount}
                   </Text>
                   편의 동선을 만드셨네요 !
                 </Text>
@@ -1071,10 +1102,7 @@ export default function RouteScreen() {
                       if (routeName == "") {
                         showSnackBar2("동선이름은 필수입니다.");
                       } else {
-                        showSnackBar("동선기록을 시작합니다.");
-                        routeStateChange();
-                        setRouteName(routeName);
-                        hideDialog();
+                        startRecording();
                       }
                     }}
                   >

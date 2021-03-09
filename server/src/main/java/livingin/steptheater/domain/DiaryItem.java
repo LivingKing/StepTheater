@@ -27,6 +27,10 @@ public class DiaryItem {
     private Double longitude;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name ="route_id")
+    private Route route;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "diary_id")
     private Diary diary;
 }

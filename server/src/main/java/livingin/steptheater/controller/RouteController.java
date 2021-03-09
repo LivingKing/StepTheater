@@ -1,19 +1,14 @@
 package livingin.steptheater.controller;
 
 import livingin.steptheater.domain.Route;
-import livingin.steptheater.domain.RouteItem;
-import livingin.steptheater.repository.RouteRepository;
-import livingin.steptheater.service.RouteItemService;
+import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
 import livingin.steptheater.service.RouteService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,20 +16,33 @@ import java.util.List;
 public class RouteController {
 
     private final RouteService routeService;
-    private final RouteItemService routeItemService;
+
     @PostMapping("/api/route")
     public CreateRouteResponse saveRoute(
             @RequestBody @Valid CreateRouteRequest request
     ){
         System.out.println("request = " + request);
         Long routeId = routeService.join(request.id, request.date, request.name);
-        Route route = routeService.findOne(routeId);
-        List<RouteItem> routeItems = new ArrayList<>();
-        for (double[] location : request.data) {
-            routeItems.add(routeItemService.save(location[0], location[1], route));
-        }
 
         return new CreateRouteResponse(1);
+    }
+
+    @GetMapping("/api/route/duplicate")
+    public FindRouteResponse findRoute(
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "date") String date,
+            @RequestParam(value = "name") String name
+    ){
+        return new FindRouteResponse(routeService.duplicateCheck(id, date, name));
+    }
+
+    @GetMapping("/api/route/exist")
+    public Result findExistRoute(
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "date") String date)
+    {
+        List<RouteExistDiaryQueryDto> routeByDate = routeService.findExistRouteByDate(id, date);
+        return new Result(routeByDate.size(),routeByDate);
     }
 
     @Data
@@ -48,6 +56,18 @@ public class RouteController {
         private Long id;
         private String date;
         private String name;
-        private double[][] data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class FindRouteResponse {
+        private Boolean result;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{
+        private int count;
+        private T data;
     }
 }

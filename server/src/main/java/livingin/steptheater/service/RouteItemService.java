@@ -1,24 +1,33 @@
 package livingin.steptheater.service;
 
+import livingin.steptheater.domain.Diary;
 import livingin.steptheater.domain.Route;
 import livingin.steptheater.domain.RouteItem;
 import livingin.steptheater.repository.RouteItemRepository;
+import livingin.steptheater.repository.diary.DiaryQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RouteItemService {
     private final RouteItemRepository routeItemRepository;
+    private final RouteService routeService;
+    private final DiaryService diaryService;
 
     @Transactional
-    public RouteItem save(double latitude, double longitude, Route route){
+    public RouteItem save(double latitude, double longitude, Long id, String date, int order){
         RouteItem routeItem = new RouteItem();
         routeItem.setLatitude(latitude);
         routeItem.setLongitude(longitude);
-        routeItem.setRoute(route);
+        List<DiaryQueryDto> oneDiaryDto = diaryService.findOneDiaryDto(id, date);
+        Diary diary = diaryService.findOne(oneDiaryDto.get(0).getDiaryId());
+        List<Route> routeList = routeService.findByDiary(diary);
+        routeItem.setRoute(routeList.get(order));
         routeItemRepository.save(routeItem);
         return routeItem;
     }
