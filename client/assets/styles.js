@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     paddingLeft: 7,
     paddingRight: 23,
     justifyContent: "space-between",
+    zIndex: 99
   },
   route_info_user: { height: windowHeight / 10, width: "93%" },
   route_info_text: {
