@@ -34,6 +34,8 @@ export default function SettingsStackScreen({ navigation }) {
           await SecureStore.deleteItemAsync("LoginType");
           navigation.reset({ index: 0, routes: [{ name: "로그인" }] });
         }
+      } else {
+        navigation.reset({ index: 0, routes: [{ name: "로그인" }] });
       }
     };
     useFocusEffect(() => {

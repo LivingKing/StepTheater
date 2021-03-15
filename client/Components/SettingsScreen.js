@@ -1,25 +1,41 @@
-import { StatusBar } from "expo-status-bar";
-import React, { Fragment } from "react";
-import { Text, View, SafeAreaView, Platform, Button } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import styles from "../assets/styles";
+import { useFocusEffect } from "@react-navigation/core";
+import * as SecureStore from "expo-secure-store";
 
-const SettingsStack = createStackNavigator();
+import memberScreen from "./MemberScreen";
+import settingScreen from "./SettingScreen";
+import serviceScreen from "./ServiceScreen";
+import preferencensScreen from "./PreferencesScreen";
+const Stack = createStackNavigator();
+const memberName = "회원정보";
+const settingName = "상세설정";
+const serviceName = "고객센터";
+const preferencesName = "환경설정";
+
 export default function SettingsScreen({ navigation }) {
+  const [nickname, setNickname] = useState("");
+
+  const getNickname = async () => {
+    setNickname(await SecureStore.getItemAsync("NickName"));
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getNickname();
+    }, [])
+  );
   if (Platform.OS === "ios") {
     return (
-      <Fragment>
-        <SafeAreaView style={styles.com_headers}>
-          <StatusBar style="dark" />
-        </SafeAreaView>
-        <SafeAreaView style={styles.com_safeView}>
-          <View style={styles.com_safeView_title}>
-            <Text style={styles.com_safeView_title_text}>설정</Text>
-          </View>
-          <View style={styles.com_safeView_contents}></View>
-        </SafeAreaView>
-      </Fragment>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false, initScreen: settingScreen }}
+      >
+        <Stack.Screen name={settingName} component={settingScreen} />
+        <Stack.Screen name={memberName} component={memberScreen} />
+        <Stack.Screen name={serviceName} component={serviceScreen} />
+        <Stack.Screen name={preferencesName} component={preferencensScreen} />
+      </Stack.Navigator>
     );
   } else {
     return null;

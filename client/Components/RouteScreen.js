@@ -50,6 +50,7 @@ export default function RouteScreen() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [nickname, setNickname] = useState("");
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [routeCnt, setRouteCnt] = useState(0);
   const captureRef = useRef();
   const polyColor = [
     "#ff0000",
@@ -88,7 +89,7 @@ export default function RouteScreen() {
       .then(async (date) => {
         const id = await SecureStore.getItemAsync("UserId");
         const response = await fetch(
-          `http://203.241.228.112:11200/api/diary?id=${id}&&date=${date}`
+          `http://203.241.228.112:11200/api/diary?id=${id}&date=${date}`
         );
         const data = await response.json();
         if (data.count === 0) {
@@ -123,12 +124,23 @@ export default function RouteScreen() {
   const getSettings = async () => {
     setNickname(await SecureStore.getItemAsync("NickName"));
   };
+
+  const getRouteCount = async () => {
+    const response = await fetch(
+      `http://203.241.228.112:11200/api/route?id=${await SecureStore.getItemAsync(
+        "UserId"
+      )}&date=${await SecureStore.getItemAsync("today")}`
+    );
+    const result = await response.json();
+    setRouteCnt(result.count);
+  };
   useFocusEffect(
     useCallback(() => {
       getLocation();
       getDate();
       getPermission();
       getSettings();
+      getRouteCount();
     }, [])
   );
 
@@ -243,7 +255,7 @@ export default function RouteScreen() {
           id: id,
           date: date,
           data: route,
-          order: arrCount,
+          route_name: routeName,
         }),
       }
     );
@@ -304,7 +316,7 @@ export default function RouteScreen() {
           image_url: image,
           latitude: current.latitude,
           longitude: current.longitude,
-          order: arrCount,
+          route_name: routeName,
         }),
       }
     );
@@ -394,7 +406,7 @@ export default function RouteScreen() {
                       fontSize: windowHeight / 45,
                     }}
                   >
-                    {arrCount}
+                    {routeCnt}
                   </Text>
                   편의 동선을 만드셨네요 !
                 </Text>
