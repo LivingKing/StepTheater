@@ -15,6 +15,7 @@ import { Divider, List } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/core";
 import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
+import { expo } from "../app.json";
 
 export default function SettingScreen({ navigation }) {
   const [nickname, setNickname] = useState("");
@@ -146,7 +147,10 @@ export default function SettingScreen({ navigation }) {
                   onPress={() => {}}
                 />
                 <Divider />
-                <List.Item title="현재 버전" onPress={() => {}} />
+                <List.Item
+                  title={`현재 버전 ${expo.version}`}
+                  onPress={() => {}}
+                />
                 <Divider />
               </View>
               <Text

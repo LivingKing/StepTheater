@@ -29,13 +29,12 @@ public class DiaryItemService {
                      String image_url,
                      Double latitude,
                      Double longitude,
-                   Integer order) {
+                   String name) {
         DiaryItem diaryItem = new DiaryItem();
         DiaryQueryDto diaryQueryDto = diaryService.findOneDiaryDto(id, date).get(0);
         Diary diary = diaryService.findOne(diaryQueryDto.getDiaryId());
         diaryItem.setDiary(diary);
-        List<Route> routeList = routeService.findByDiary(diary);
-        diaryItem.setRoute(routeList.get(order));
+        diaryItem.setRoute(routeService.findOneByName(diary.getId(), name));
         diaryItem.setTitle(title);
         diaryItem.setDescription(desc);
         diaryItem.setThumbUrl(thumb_url);

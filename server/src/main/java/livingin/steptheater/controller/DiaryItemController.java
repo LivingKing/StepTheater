@@ -30,7 +30,7 @@ public class DiaryItemController {
                 request.image_url,
                 request.latitude,
                 request.longitude,
-                request.order);
+                request.route_name);
     }
 
     @Data
@@ -43,6 +43,6 @@ public class DiaryItemController {
         private String image_url;
         private Double latitude;
         private Double longitude;
-        private Integer order;
+        private String route_name;
     }
 }

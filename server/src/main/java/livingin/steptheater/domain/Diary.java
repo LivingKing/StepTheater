@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Diary {
     private List<DiaryItem> diaryItem = new ArrayList<>();
 
     @Column(name ="diaryDate")
-    private String diaryDate;
+    private LocalDate diaryDate;
 
     //==연관관계 메서드==//
     public void setMember(Member member){
@@ -50,7 +51,7 @@ public class Diary {
 //    }
 
     //==생성 메서드==//
-    public static Diary createDiary(Member member, String date){
+    public static Diary createDiary(Member member, LocalDate date){
         Diary diary = new Diary();
         diary.setMember(member);
         diary.setDiaryDate(date);

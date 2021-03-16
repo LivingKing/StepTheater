@@ -1,12 +1,12 @@
 package livingin.steptheater.repository;
 
-import livingin.steptheater.domain.Diary;
 import livingin.steptheater.domain.Route;
 import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.*;
 
 @Repository
@@ -30,9 +30,22 @@ public class RouteRepository {
                 .getResultList();
         if(routeList.isEmpty()) return null;
         else return routeList.get(0);
+    }
 
-    }public List<Route> findByDiaryId(Long id){
-        List resultList = em.createQuery("select r from Route r " +
+    public Route findOneByName(Long id, String name){
+        List<Route> resultList = em.createQuery("select r from Route r " +
+                "join r.diary d " +
+                "where r.name = :name " +
+                "and d.id = :id", Route.class)
+                .setParameter("name", name)
+                .setParameter("id", id)
+                .getResultList();
+        if(resultList.isEmpty()) return null;
+        return resultList.get(0);
+    }
+
+    public List<Route> findByDiaryId(Long id){
+        List<Route> resultList = em.createQuery("select r from Route r " +
                 "join r.diary d " +
                 "where d.id = :id")
                 .setParameter("id", id)
@@ -40,15 +53,17 @@ public class RouteRepository {
         if(resultList.isEmpty()) return null;
         return resultList;
     }
-    public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long userId, String date){
+    public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long userId, String startDate, String endDate){
         return em.createQuery("select new livingin.steptheater.repository.diary.RouteExistDiaryQueryDto(d.diaryDate) " +
                 "from Route r " +
                 "join r.diary d " +
                 "join d.member m " +
                 "where m.id = :userId " +
-                "and d.diaryDate like :date", RouteExistDiaryQueryDto.class)
+                "and d.diaryDate >= :sDate " +
+                "and d.diaryDate <= :eDate", RouteExistDiaryQueryDto.class)
                 .setParameter("userId",userId)
-                .setParameter("date", date+'%')
+                .setParameter("sDate", LocalDate.parse(startDate))
+                .setParameter("eDate", LocalDate.parse(endDate))
                 .getResultList();
     }
 }

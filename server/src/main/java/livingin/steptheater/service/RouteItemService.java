@@ -20,14 +20,13 @@ public class RouteItemService {
     private final DiaryService diaryService;
 
     @Transactional
-    public RouteItem save(double latitude, double longitude, Long id, String date, int order){
+    public RouteItem save(double latitude, double longitude, Long id, String date, String name){
         RouteItem routeItem = new RouteItem();
         routeItem.setLatitude(latitude);
         routeItem.setLongitude(longitude);
         List<DiaryQueryDto> oneDiaryDto = diaryService.findOneDiaryDto(id, date);
         Diary diary = diaryService.findOne(oneDiaryDto.get(0).getDiaryId());
-        List<Route> routeList = routeService.findByDiary(diary);
-        routeItem.setRoute(routeList.get(order));
+        routeItem.setRoute(routeService.findOneByName(diary.getId(), name));
         routeItemRepository.save(routeItem);
         return routeItem;
     }

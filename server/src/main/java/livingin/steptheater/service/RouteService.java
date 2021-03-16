@@ -42,6 +42,8 @@ public class RouteService {
         return routeRepository.findOneByDiaryId(id);
     }
 
+    public Route findOneByName(Long id, String name) {return  routeRepository.findOneByName(id, name);}
+
     public List<Route> findByDiary(Diary d) {
         return routeRepository.findByDiaryId(d.getId());
     }
@@ -68,7 +70,7 @@ public class RouteService {
         }
     }
 
-    public List<RouteExistDiaryQueryDto> findExistRouteByDate (Long id, String date){
-        return routeRepository.findExistRouteByDate(id, date);
+    public List<RouteExistDiaryQueryDto> findRouteByDate(Long id, String startDate, String endDate){
+        return routeRepository.findExistRouteByDate(id, startDate, endDate);
     }
 }

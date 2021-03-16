@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,7 +21,7 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
 
     @Transactional
-    public Long diary(Long memberId, String date) {
+    public Long diary(Long memberId, LocalDate date) {
 
         //엔티티 조회
         Member member = memberRepository.findOne(memberId);
@@ -47,8 +48,8 @@ public class DiaryService {
         return diaryRepository.findOneDiary(userId, date);
     }
 
-    public List<DiaryInfoDto> findDiaryByDate(Long userId, String date, String type) {
-        return diaryRepository.findDiaryByDate(userId, date);
+    public List<DiaryInfoDto> findDiaryByDate(Long userId, String startDate, String endDate) {
+        return diaryRepository.findDiaryByDate(userId, startDate, endDate);
     }
 
 }

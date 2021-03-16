@@ -1,6 +1,5 @@
 package livingin.steptheater.controller;
 
-import livingin.steptheater.domain.Route;
 import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
 import livingin.steptheater.service.RouteService;
 import lombok.AllArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,6 +27,13 @@ public class RouteController {
         return new CreateRouteResponse(1);
     }
 
+    @GetMapping("/api/route")
+    public GetRouteResponse findRoute(
+            @RequestParam(value="id") Long id,
+            @RequestParam(value="date") String date
+    ){
+        return new GetRouteResponse(routeService.findRouteByDate(id, date, date).size());
+    }
     @GetMapping("/api/route/duplicate")
     public FindRouteResponse findRoute(
             @RequestParam(value = "id") Long id,
@@ -39,9 +46,28 @@ public class RouteController {
     @GetMapping("/api/route/exist")
     public Result findExistRoute(
             @RequestParam(value = "id") Long id,
-            @RequestParam(value = "date") String date)
+            @RequestParam(value = "date") String date,
+            @RequestParam(value = "type") String type)
     {
-        List<RouteExistDiaryQueryDto> routeByDate = routeService.findExistRouteByDate(id, date);
+        String startDate = "";
+        String endDate = "";
+        String[] sDate = date.split("-");
+        LocalDate localDate = LocalDate.of(Integer.parseInt(sDate[0]),
+                Integer.parseInt(sDate[1]),
+                Integer.parseInt(sDate[2]));
+        System.out.println("localDate = " + localDate);
+        if (type.equals("day")) {
+            startDate = endDate = date;
+        } else if (type.equals("week")) {
+            LocalDate temp = localDate.minusDays(localDate.getDayOfWeek().getValue()-1);
+            startDate = temp.toString();
+            endDate = temp.plusDays(6).toString();
+        } else if (type.equals("month")) {
+            LocalDate temp = localDate.minusDays(localDate.getDayOfMonth()-1);
+            startDate = temp.toString();
+            endDate = temp.plusMonths(1).minusDays(1).toString();
+        }
+        List<RouteExistDiaryQueryDto> routeByDate = routeService.findRouteByDate(id, startDate, endDate);
         return new Result(routeByDate.size(),routeByDate);
     }
 
@@ -69,5 +95,11 @@ public class RouteController {
     static class Result<T>{
         private int count;
         private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class GetRouteResponse {
+        private int count;
     }
 }

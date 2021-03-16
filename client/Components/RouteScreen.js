@@ -599,6 +599,7 @@ export default function RouteScreen() {
                       <TextInput
                         mode="outlined"
                         value={textzzz}
+                        placeholder="제목"
                         onChangeText={(textzzz) => setTextzzz(textzzz)}
                         text="black"
                         theme={{
@@ -611,10 +612,23 @@ export default function RouteScreen() {
                         }}
                         style={{ width: "90%", flex: 0.2 }}
                       />
+                      <Text
+                        style={{
+                          width: "90%",
+                          textAlign: "right",
+                        }}
+                      >
+                        {contentzzz.length}/100
+                      </Text>
                       <TextInput
                         mode="outlined"
+                        placeholder="내용"
                         value={contentzzz}
-                        onChangeText={(contentzzz) => setContentzzz(contentzzz)}
+                        multiline={true}
+                        maxLength={100}
+                        onChangeText={(contentzzz) => {
+                          setContentzzz(contentzzz);
+                        }}
                         text="black"
                         theme={{
                           colors: {
@@ -626,7 +640,6 @@ export default function RouteScreen() {
                         }}
                         style={{ width: "90%", flex: 0.4 }}
                       />
-
                       <View style={{ flexDirection: "row" }}>
                         <Button
                           style={{ margin: 10 }}
@@ -665,24 +678,49 @@ export default function RouteScreen() {
                 >
                   <View
                     style={{
-                      flex: 0.7,
+                      flex: 0.98,
                       backgroundColor: "white",
                       alignItems: "center",
                     }}
                   >
-                    <Text>{infoText}</Text>
-                    <Text>{infoContent}</Text>
+                    <Text
+                      style={{
+                        marginTop: 10,
+                        flex: 0.04,
+                        fontSize: 20,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {infoText}
+                    </Text>
                     <Image
+                      resizeMode="stretch"
                       source={{ uri: infoImg }}
                       style={{
-                        width: "80%",
-                        height: "80%",
-                        marginBottom: 10,
+                        width: "90%",
+                        flex: 0.6,
+                        margin: 10,
                         borderRadius: 15,
                       }}
                     />
+                    <Text
+                      style={{
+                        width: "90%",
+                        flex: 0.3,
+                        borderWidth: 1,
+                        borderColor: "black",
+                        textAlign: "center",
+                        padding: 10,
+                      }}
+                    >
+                      {infoContent.trim()}
+                    </Text>
 
-                    <Button mode="contained" onPress={toggleModal3}>
+                    <Button
+                      style={{ margin: 10, flex: 0.065 }}
+                      mode="contained"
+                      onPress={toggleModal3}
+                    >
                       확인
                     </Button>
                   </View>

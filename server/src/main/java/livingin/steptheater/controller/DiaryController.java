@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -44,10 +46,28 @@ public class DiaryController {
     @GetMapping("/api/diary/date")
     public DateResult findDiariesByDate(
             @RequestParam(value = "id") Long userId,
-            @RequestParam(value = "date")String date,
+            @RequestParam(value = "date") String date,
             @RequestParam(value = "type") String type
-    ){
-        return new DateResult(type, date, diaryService.findDiaryByDate(userId,date,type));
+    ) {
+        String startDate = "";
+        String endDate = "";
+        String[] sDate = date.split("-");
+        LocalDate localDate = LocalDate.of(Integer.parseInt(sDate[0]),
+                Integer.parseInt(sDate[1]),
+                Integer.parseInt(sDate[2]));
+        System.out.println("localDate = " + localDate);
+        if (type.equals("day")) {
+            startDate = endDate = date;
+        } else if (type.equals("week")) {
+            LocalDate temp = localDate.minusDays(localDate.getDayOfWeek().getValue()-1);
+            startDate = temp.toString();
+            endDate = temp.plusDays(6).toString();
+        } else if (type.equals("month")) {
+            LocalDate temp = localDate.minusDays(localDate.getDayOfMonth()-1);
+            startDate = temp.toString();
+            endDate = temp.plusMonths(1).minusDays(1).toString();
+        }
+        return new DateResult(type, date, diaryService.findDiaryByDate(userId, startDate, endDate));
     }
 
     @PostMapping("/api/diary")
@@ -56,7 +76,7 @@ public class DiaryController {
     ) {
         System.out.println(request);
         Member member = memberService.findOne(request.id);
-        return diaryService.diary(member.getId(), request.date);
+        return diaryService.diary(member.getId(), LocalDate.parse(request.date));
     }
 
     @Data

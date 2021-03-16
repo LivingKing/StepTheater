@@ -23,7 +23,7 @@ public class RouteItemController {
     ){
         System.out.println("request = " + request);
         for (double[] location : request.data){
-            routeItemService.save(location[0],location[1], request.id, request.date, request.order);
+            routeItemService.save(location[0],location[1], request.id, request.date, request.route_name);
         }
         return new CreateRouteItemResponse(1);
     }
@@ -39,6 +39,6 @@ public class RouteItemController {
         private Long id;
         private String date;
         private double[][] data;
-        private Integer order;
+        private String route_name;
     }
 }
