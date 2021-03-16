@@ -131,7 +131,7 @@ public class MemberController {
     }
 
 
-    @PutMapping("/api/members/{id}")
+    @PutMapping("/api/member/{id}")
     public UpdateMemberResponse updateMember(
             @PathVariable("id") Long id,
             @RequestBody @Valid UpdateMemberRequest request) {
@@ -140,7 +140,7 @@ public class MemberController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getNickname());
     }
 
-    @PutMapping("/api/members/{id}/OAuth")
+    @PutMapping("/api/member/{id}/OAuth")
     public UpdateOAuthMemberResponse updateOAuthMember(
             @PathVariable("id") Long id,
             @RequestBody @Valid UpdateOAuthMemberRequest request) {

@@ -41,6 +41,15 @@ public class DiaryController {
         return new Result(diaryDto.size(), diaryDto);
     }
 
+    @GetMapping("/api/diary/date")
+    public DateResult findDiariesByDate(
+            @RequestParam(value = "id") Long userId,
+            @RequestParam(value = "date")String date,
+            @RequestParam(value = "type") String type
+    ){
+        return new DateResult(type, date, diaryService.findDiaryByDate(userId,date,type));
+    }
+
     @PostMapping("/api/diary")
     public Long diaries(
             @RequestBody @Valid CreateDiaryRequest request
@@ -60,6 +69,14 @@ public class DiaryController {
     @AllArgsConstructor
     static class Result<T> {
         private int count;
+        private T Data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class DateResult<T> {
+        private String type;
+        private String dairyDate;
         private T Data;
     }
 }

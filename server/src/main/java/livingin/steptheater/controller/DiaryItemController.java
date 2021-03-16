@@ -29,7 +29,8 @@ public class DiaryItemController {
                 request.thumb_url,
                 request.image_url,
                 request.latitude,
-                request.longitude);
+                request.longitude,
+                request.order);
     }
 
     @Data
@@ -42,5 +43,6 @@ public class DiaryItemController {
         private String image_url;
         private Double latitude;
         private Double longitude;
+        private Integer order;
     }
 }

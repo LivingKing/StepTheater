@@ -2,6 +2,7 @@ package livingin.steptheater.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.*;
 
@@ -13,6 +14,13 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"name", "diary_id"}
+                )
+        }
+)
 public class Route {
     @Id
     @GeneratedValue
@@ -22,6 +30,9 @@ public class Route {
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<RouteItem> routeItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    private List<DiaryItem> diaryItems = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "diary_id")
@@ -34,5 +45,9 @@ public class Route {
     //==연관관계 메서드==//
     public void addRouteItem(RouteItem routeItem) {
         routeItems.add(routeItem);
+    }
+
+    public void addDiaryItem(DiaryItem diaryItem) {
+        diaryItems.add(diaryItem);
     }
 }
