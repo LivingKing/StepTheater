@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { LogBox, StyleSheet, Text } from "react-native";
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import * as Font from "expo-font";
@@ -23,6 +23,7 @@ const findName = "찾기";
 const regiName = "회원가입";
 const addName = "추가입력";
 export default function App() {
+  LogBox.ignoreLogs(["__expo"]);
   const [stackLoading, setStackLoading] = useState(false);
   const [initScreen, setInitScreen] = useState("");
   const [fontsLoad, setFontsLoad] = useState(false);
