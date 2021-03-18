@@ -8,6 +8,7 @@ import DetailScreen from "./DetailScreen";
 import SettingsScreen from "./SettingsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/core";
+import { server } from "../app.json";
 import * as SecureStore from "expo-secure-store";
 
 const Tab = createBottomTabNavigator();
@@ -21,9 +22,7 @@ export default function SettingsStackScreen({ navigation }) {
     const checkState = async () => {
       if ((await SecureStore.getItemAsync("IsLogin")) === "true") {
         const data = await SecureStore.getItemAsync("UserId");
-        const response = await fetch(
-          `http://203.241.228.112:11200/api/member?id=${data}`
-        );
+        const response = await fetch(`${server.address}/api/member?id=${data}`);
         const result = await response.json();
         console.log(result);
         if (result.id === 0) {

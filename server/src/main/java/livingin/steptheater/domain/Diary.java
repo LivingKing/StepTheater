@@ -17,7 +17,6 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "diaries")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Diary {
 
     @Id

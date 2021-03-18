@@ -5,6 +5,7 @@ import livingin.steptheater.domain.Member;
 import livingin.steptheater.domain.Route;
 import livingin.steptheater.repository.DiaryItemRepository;
 import livingin.steptheater.repository.RouteRepository;
+import livingin.steptheater.repository.diary.DiaryInfoDto;
 import livingin.steptheater.repository.diary.DiaryQueryDto;
 import livingin.steptheater.service.DiaryItemService;
 import livingin.steptheater.service.DiaryService;
@@ -13,6 +14,7 @@ import livingin.steptheater.service.RouteService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -59,9 +61,15 @@ public class DiaryController {
         if (type.equals("day")) {
             startDate = endDate = date;
         } else if (type.equals("week")) {
-            LocalDate temp = localDate.minusDays(localDate.getDayOfWeek().getValue()-1);
+            LocalDate temp;
+            if(localDate.getDayOfWeek().getValue() == 7)
+                temp = localDate;
+            else
+                temp = localDate.minusDays(localDate.getDayOfWeek().getValue());
             startDate = temp.toString();
             endDate = temp.plusDays(6).toString();
+            System.out.println("startDate = " + startDate);
+            System.out.println("endDate = " + endDate);
         } else if (type.equals("month")) {
             LocalDate temp = localDate.minusDays(localDate.getDayOfMonth()-1);
             startDate = temp.toString();

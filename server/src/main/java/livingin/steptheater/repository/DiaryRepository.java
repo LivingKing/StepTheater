@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -27,7 +28,7 @@ public class DiaryRepository {
         return em.createQuery(
                 "select new livingin.steptheater.repository.diary.DiaryQueryDto(d.id,m.nickname,d.diaryDate) " +
                         "from Diary d " +
-                        "join d.member m", DiaryQueryDto.class)
+                        "join d.member m ", DiaryQueryDto.class)
                 .getResultList();
     }
 
@@ -66,7 +67,7 @@ public class DiaryRepository {
                 "join d.member m " +
                 "where m.id = :id " +
                 "and d.diaryDate >= :sDate " +
-                "and d.diaryDate <= :eDate", DiaryInfoDto.class)
+                "and d.diaryDate <= :eDate ", DiaryInfoDto.class)
                 .setParameter("id", id)
                 .setParameter("sDate", LocalDate.parse(startDate))
                 .setParameter("eDate", LocalDate.parse(endDate))
@@ -79,7 +80,12 @@ public class DiaryRepository {
                     "where d.id = :id ", RouteInfoDto.class)
                     .setParameter("id", o.getId())
                     .getResultList();
-
+            resultList.sort(new Comparator<RouteInfoDto>() {
+                @Override
+                public int compare(RouteInfoDto o1, RouteInfoDto o2) {
+                    return Long.compare(o2.getId(), o1.getId());
+                }
+            });
             resultList.forEach(o1 -> {
                 List<DiaryItemInfoDto> diaryItems = em.createQuery("select new livingin.steptheater.repository.diary.DiaryItemInfoDto(di.id, di.title, di.description, di.latitude, di.longitude, di.imageUrl, di.thumbUrl) " +
                         "from DiaryItem di " +
@@ -89,7 +95,7 @@ public class DiaryRepository {
                         .getResultList();
                 o1.setDiaryItems(diaryItems);
 
-                List<RouteItemInfoDto> routeItems = em.createQuery("select new livingin.steptheater.repository.diary.RouteItemInfoDto(ri.longitude, ri.longitude) " +
+                List<RouteItemInfoDto> routeItems = em.createQuery("select new livingin.steptheater.repository.diary.RouteItemInfoDto(ri.latitude, ri.longitude) " +
                         "from RouteItem ri " +
                         "join ri.route r " +
                         "where r.id = :id ", RouteItemInfoDto.class)

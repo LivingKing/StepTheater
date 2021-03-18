@@ -9,6 +9,7 @@ import livingin.steptheater.repository.MemberRepository;
 import livingin.steptheater.repository.RouteRepository;
 import livingin.steptheater.repository.diary.DiaryQueryDto;
 import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
+import livingin.steptheater.repository.diary.RouteQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,28 @@ public class RouteService {
         }
     }
 
-    public List<RouteExistDiaryQueryDto> findRouteByDate(Long id, String startDate, String endDate){
+    public List<RouteQueryDto> findRouteByDate(Long id, String date){
+        return routeRepository.findRouteByDate(id, date);
+    }
+    public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long id, String startDate, String endDate) {
         return routeRepository.findExistRouteByDate(id, startDate, endDate);
     }
+    @Transactional
+    public void updateName(Long id, String date, String name, String newName){
+        Diary diary = diaryService.findOne(diaryService.findOneDiaryDto(id, date).get(0).getDiaryId());
+        Route route = routeRepository.findOneByName(diary.getId(), name);
+        route.setName(newName);
+    }
+
+    @Transactional
+    public void updateRouteTimeAndDis(Long id, String date, String name, Double distance, Integer hours, Integer minutes, Integer markers) {
+        Diary diary = diaryService.findOne(diaryService.findOneDiaryDto(id, date).get(0).getDiaryId());
+        Route route = routeRepository.findOneByName(diary.getId(), name);
+        route.setDistance(distance);
+        route.setHours(hours);
+        route.setMinutes(minutes);
+        route.setMarkers(markers);
+    }
+
+
 }

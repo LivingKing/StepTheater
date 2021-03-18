@@ -13,6 +13,7 @@ import {
 } from "react-native-paper";
 import * as SecureStore from "expo-secure-store";
 import styles from "../assets/styles";
+import { server } from "../app.json";
 
 export default function AdditionScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -68,7 +69,7 @@ export default function AdditionScreen({ navigation }) {
   };
   const checkNickName = async (nickname) => {
     const response = await fetch(
-      `http://203.241.228.112:11200/api/member?nickname=${encodeURI(
+      `${server.address}/api/member?nickname=${encodeURI(
         encodeURIComponent(nickname)
       )}`
     );
@@ -90,7 +91,7 @@ export default function AdditionScreen({ navigation }) {
       form.nickname = nickname;
 
       const response = await fetch(
-        `http://203.241.228.112:11200/api/members/${id}/OAuth`,
+        `${server.address}/api/members/${id}/OAuth`,
         {
           method: "PUT",
           headers: {

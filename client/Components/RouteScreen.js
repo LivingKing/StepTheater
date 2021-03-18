@@ -15,8 +15,6 @@ import {
   Dimensions,
   Animated,
   TouchableOpacity,
-  ImageBackground,
-  KeyboardAvoidingView,
   ActivityIndicator,
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
@@ -35,6 +33,7 @@ import {
   Paragraph,
   Dialog,
   Portal,
+  HelperText,
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
@@ -42,6 +41,7 @@ import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators"
 import * as ImageManipulator from "expo-image-manipulator";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from "@react-navigation/core";
+import { server } from "../app.json";
 
 export default function RouteScreen() {
   const [image, setImage] = useState(null);
@@ -51,6 +51,14 @@ export default function RouteScreen() {
   const [nickname, setNickname] = useState("");
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [routeCnt, setRouteCnt] = useState(0);
+  const [currentTime, setCurrentTime] = useState([]);
+  const [markersCnt, setMarkersCnt] = useState(0);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [totalHours, setTotalHours] = useState(0);
+  const [totalMinutes, setTotalMinutes] = useState(0);
+  const [totalMarkers, setTotalMarkers] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinute] = useState(0);
   const captureRef = useRef();
   const polyColor = [
     "#ff0000",
@@ -89,11 +97,11 @@ export default function RouteScreen() {
       .then(async (date) => {
         const id = await SecureStore.getItemAsync("UserId");
         const response = await fetch(
-          `http://203.241.228.112:11200/api/diary?id=${id}&date=${date}`
+          `${server.address}/api/diary?id=${id}&date=${date}`
         );
         const data = await response.json();
         if (data.count === 0) {
-          await fetch("http://203.241.228.112:11200/api/diary", {
+          await fetch(`${server.address}/api/diary`, {
             method: "POST",
             headers: {
               Accept: "application/json",
@@ -125,13 +133,36 @@ export default function RouteScreen() {
     setNickname(await SecureStore.getItemAsync("NickName"));
   };
 
-  const getRouteCount = async () => {
-    const response = await fetch(
-      `http://203.241.228.112:11200/api/route?id=${await SecureStore.getItemAsync(
-        "UserId"
-      )}&date=${await SecureStore.getItemAsync("today")}`
+  const getRouteData = async () => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const today = await SecureStore.getItemAsync("today");
+
+    let response = await fetch(
+      `${server.address}/api/diary/date?id=${id}&date=${today}&type=day`
     );
-    const result = await response.json();
+    let result = await response.json();
+
+    const totalRoute = [];
+
+    result.data[0].routes.map((route) => {
+      const tempRoute = [];
+      route.routeItems.map((items) => {
+        tempRoute.push(Array(items.latitude, items.longitude));
+      });
+      totalRoute.push(tempRoute);
+    });
+    // console.log(totalRoute);
+    setRouteM(totalRoute);
+
+    response = await fetch(
+      `${server.address}/api/routes?id=${id}&date=${today}`
+    );
+    result = await response.json();
+    // console.log(result);
+    setTotalDistance(result.totalDistance);
+    setTotalHours(result.totalHours);
+    setTotalMinutes(result.totalMinutes);
+    setTotalMarkers(result.totalMarkers);
     setRouteCnt(result.count);
   };
   useFocusEffect(
@@ -140,7 +171,7 @@ export default function RouteScreen() {
       getDate();
       getPermission();
       getSettings();
-      getRouteCount();
+      getRouteData();
     }, [])
   );
 
@@ -166,7 +197,7 @@ export default function RouteScreen() {
         body: form,
       });
       const res = await response.json();
-      console.log(res.data.image.url);
+      // console.log(res.data.image.url);
       setThumbImage(res.data.thumb.url);
       setImage(res.data.medium.url);
     }
@@ -185,12 +216,14 @@ export default function RouteScreen() {
   /* 마커 */
   const [adding, setAdding] = useState(false); // 현재 마커 추가 중인지 여부
   const [pinArray, setPinArray] = useState([]); // 마커들이 저장된 배열
-  const [tempPinCount, setTempPinCount] = useState(0);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [pause, setPause] = useState(false);
+  const [timerId, setTimerId] = useState("");
 
   const toggleModal = () => {
+    if (isModalVisible === false) checkTime();
+    else addTime();
     setModalVisible(!isModalVisible);
   };
 
@@ -212,6 +245,21 @@ export default function RouteScreen() {
 
   var smooth = require("smooth-polyline");
 
+  const addTime = () => {
+    setCurrentTime([{ start: new Date().getTime(), end: 0 }, ...currentTime]);
+  };
+
+  const checkTime = () => {
+    let totaltime = 0;
+    currentTime.map((time) => {
+      if (time.end == 0) time.end = new Date().getTime();
+      totaltime += time.end - time.start;
+    });
+    totaltime /= 60000;
+    setHours(Math.floor(totaltime / 60));
+    setMinute(Math.floor(totaltime % 60));
+    setCurrentTime(currentTime);
+  };
   const routeStateChange = () => {
     setRecording(!recording);
 
@@ -225,7 +273,7 @@ export default function RouteScreen() {
     const id = await SecureStore.getItemAsync("UserId");
     const date = await SecureStore.getItemAsync("today");
 
-    const response = await fetch("http://203.241.228.112:11200/api/route", {
+    const response = await fetch(`${server.address}/api/route`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -238,41 +286,78 @@ export default function RouteScreen() {
       }),
     });
   };
-
+  const updateRoute = async () => {
+    const distance = (polyLine.length * 10) / 1000;
+    const id = await SecureStore.getItemAsync("UserId");
+    const date = await SecureStore.getItemAsync("today");
+    const response = await fetch(`${server.address}/api/route`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        date: date,
+        name: routeName,
+        distance: distance,
+        hours: hours,
+        minutes: minutes,
+        markers: markersCnt,
+      }),
+    });
+  };
   const postRouteItem = async (route) => {
     const id = await SecureStore.getItemAsync("UserId");
     const date = await SecureStore.getItemAsync("today");
 
-    const response = await fetch(
-      "http://203.241.228.112:11200/api/route/item",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: id,
-          date: date,
-          data: route,
-          route_name: routeName,
-        }),
-      }
-    );
+    const response = await fetch(`${server.address}/api/route/item`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        date: date,
+        data: route,
+        route_name: routeName,
+      }),
+    });
   };
 
+  const checkRouteName = async (routeName) => {
+    const response = await fetch(
+      `${
+        server.address
+      }/api/route/duplicate?id=${await SecureStore.getItemAsync(
+        "UserId"
+      )}&date=${await SecureStore.getItemAsync("today")}&name=${routeName}`
+    );
+    const res = await response.json();
+    // console.log(res.result);
+    return res.result;
+  };
   const startRecording = () => {
     showSnackBar("동선기록을 시작합니다.");
+    setCurrentTime([{ start: new Date().getTime(), end: 0 }]);
     routeStateChange();
     hideDialog();
     postRoute();
   };
 
-  const stopRecording = () => {
-    console.log("stop");
+  const stopRecording = async () => {
+    // console.log("stop");
     setVisible(false);
     showSnackBar("동선기록을 정지합니다.");
+    const distance = (polyLine.length * 10) / 1000;
+    updateRoute();
     postRouteItem(polyLine);
+    setTotalHours(totalHours + hours);
+    setTotalMinutes(totalMinutes + minutes);
+    setTotalDistance(distance + totalDistance);
+    setTotalMarkers(totalMarkers + markersCnt);
+    setMarkersCnt(0);
+    setCurrentTime([]);
 
     setRecording(false);
     setModalVisible(false);
@@ -299,30 +384,26 @@ export default function RouteScreen() {
       content: contentzzz,
     };
     const nextObject = { ...current, file };
-    console.log(arrCount);
-    const response = await fetch(
-      "http://203.241.228.112:11200/api/diary/item",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: await SecureStore.getItemAsync("UserId"),
-          date: await SecureStore.getItemAsync("today"),
-          title: file.text,
-          desc: file.content,
-          thumb_url: thumbImage,
-          image_url: image,
-          latitude: current.latitude,
-          longitude: current.longitude,
-          route_name: routeName,
-        }),
-      }
-    );
+    // console.log(arrCount);
+    const response = await fetch(`${server.address}/api/diary/item`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: await SecureStore.getItemAsync("UserId"),
+        date: await SecureStore.getItemAsync("today"),
+        title: file.text,
+        desc: file.content,
+        thumb_url: thumbImage,
+        image_url: image,
+        latitude: current.latitude,
+        longitude: current.longitude,
+        route_name: routeName,
+      }),
+    });
+    setMarkersCnt(markersCnt + 1);
     setPinArray([...pinArray, nextObject]);
-    var temp = tempPinCount + 1;
-    setTempPinCount(temp);
 
     setAdding(false);
     toggleModal2();
@@ -472,7 +553,7 @@ export default function RouteScreen() {
                             걸은 거리
                           </Text>
                           <Text style={styles.route_tool_routeInfo_textBold}>
-                            0.0{polyLine.length * 1}{" "}
+                            {((polyLine.length * 10) / 1000).toFixed(2)}{" "}
                             <Text style={styles.route_tool_routeInfo_text}>
                               km
                             </Text>
@@ -483,7 +564,7 @@ export default function RouteScreen() {
                             걸은 시간
                           </Text>
                           <Text style={styles.route_tool_routeInfo_textBold}>
-                            0:00{" "}
+                            {hours}:{minutes.toString().padStart(2, "0")}{" "}
                             <Text style={styles.route_tool_routeInfo_text}>
                               분
                             </Text>
@@ -494,7 +575,7 @@ export default function RouteScreen() {
                             추가한 마커
                           </Text>
                           <Text style={styles.route_tool_routeInfo_textBold}>
-                            {tempPinCount}
+                            {markersCnt}
                             <Text style={styles.route_tool_routeInfo_text}>
                               {" "}
                               개
@@ -605,7 +686,7 @@ export default function RouteScreen() {
                         theme={{
                           colors: {
                             placeholder: "#999999",
-                            text: "#e2e2e2",
+                            text: "black",
                             primary: "#545454",
                             background: "white",
                           },
@@ -633,7 +714,7 @@ export default function RouteScreen() {
                         theme={{
                           colors: {
                             placeholder: "#999999",
-                            text: "#e2e2e2",
+                            text: "black",
                             primary: "#545454",
                             background: "white",
                           },
@@ -787,14 +868,14 @@ export default function RouteScreen() {
                           if (arrCount != 0) {
                             const now = [];
                             now.push([...polyLine, Object.values(newLine)]);
-                            console.log(now);
+                            // console.log(now);
                             if (prevRouteM.concat(now) != null) {
                               setRouteM(prevRouteM.concat(now));
                             }
                           } else {
-                            console.log([
-                              [...polyLine, Object.values(newLine)],
-                            ]);
+                            // console.log([
+                            // [...polyLine, Object.values(newLine)],
+                            // ]);
                             setRouteM([[...polyLine, Object.values(newLine)]]);
                           }
                           setPrevLine(newLine);
@@ -828,10 +909,18 @@ export default function RouteScreen() {
                             style={styles.route_contents_map_marker_shadow}
                           >
                             <View style={styles.route_contents_map_marker_wrap}>
-                              <Image
-                                source={{ uri: route.file.thumbImage }}
-                                style={styles.route_contents_map_marker_image}
-                              />
+                              {route.file.thumbImage !== "" ? (
+                                <Image
+                                  source={{ url: route.file.thumbImage }}
+                                  style={styles.route_contents_map_marker_image}
+                                />
+                              ) : (
+                                <Image
+                                  source={require("../assets/marker_icon.png")}
+                                  resizeMode="stretch"
+                                  style={styles.route_contents_map_marker_image}
+                                ></Image>
+                              )}
                             </View>
                           </Surface>
                         </Marker>
@@ -858,7 +947,7 @@ export default function RouteScreen() {
                       onPress={() => {
                         toggleModal2();
                         setImage(null);
-                        setTextzzz(null), setContentzzz(null);
+                        setTextzzz(""), setContentzzz("");
                       }}
                     >
                       <View style={{ backgroundColor: "white" }}>
@@ -875,6 +964,7 @@ export default function RouteScreen() {
                 {routeM.map((route, index) => {
                   if (route != null) {
                     if (route != undefined) {
+                      // console.log(index);
                       return (
                         <Polyline
                           key={index}
@@ -987,7 +1077,7 @@ export default function RouteScreen() {
                           총 거리
                         </Text>
                         <Text style={styles.route_tool_routeInfo_textBold}>
-                          0.0{polyLine.length * 1}{" "}
+                          {totalDistance}{" "}
                           <Text style={styles.route_tool_routeInfo_text}>
                             km
                           </Text>
@@ -998,7 +1088,8 @@ export default function RouteScreen() {
                           총 시간
                         </Text>
                         <Text style={styles.route_tool_routeInfo_textBold}>
-                          0:00{" "}
+                          {totalHours}:
+                          {totalMinutes.toString().padStart(2, "0")}{" "}
                           <Text style={styles.route_tool_routeInfo_text}>
                             분
                           </Text>
@@ -1009,7 +1100,7 @@ export default function RouteScreen() {
                           마커 갯수
                         </Text>
                         <Text style={styles.route_tool_routeInfo_textBold}>
-                          {pinArray.length}
+                          {totalMarkers}
                           <Text style={styles.route_tool_routeInfo_text}>
                             {" "}
                             개
@@ -1120,12 +1211,12 @@ export default function RouteScreen() {
                 }}
                 style={{ borderRadius: 10 }}
               >
-                <Dialog.Title>동선 이름</Dialog.Title>
+                <Dialog.Title>동선 이름을 정해주세요!</Dialog.Title>
                 <Dialog.Content>
-                  <Paragraph>동선의 이름을 정해주세요</Paragraph>
                   <TextInput
+                    label="이름"
                     mode="outlined"
-                    onChangeText={(routeName) => setRouteName(routeName)}
+                    onChangeText={(val) => setRouteName(val)}
                     text="black"
                     theme={{
                       colors: {
@@ -1137,22 +1228,35 @@ export default function RouteScreen() {
                     }}
                     style={{ width: "100%", height: 30 }}
                   />
+                  <HelperText
+                    type="error"
+                    visible={errorMsg !== ""}
+                    style={{ fontSize: 13 }}
+                  >
+                    {errorMsg}
+                  </HelperText>
                 </Dialog.Content>
                 <Dialog.Actions>
                   <Button
                     onPress={() => {
                       setVisible2(false);
+                      setErrorMsg("");
                       hideDialog();
                     }}
                   >
                     취소
                   </Button>
                   <Button
-                    onPress={() => {
+                    onPress={async () => {
                       if (routeName == "") {
                         showSnackBar2("동선이름은 필수입니다.");
                       } else {
-                        startRecording();
+                        if (await checkRouteName(routeName)) {
+                          setErrorMsg("");
+                          startRecording();
+                        } else {
+                          setErrorMsg("이미 존재하는 동선입니다.");
+                        }
                       }
                     }}
                   >

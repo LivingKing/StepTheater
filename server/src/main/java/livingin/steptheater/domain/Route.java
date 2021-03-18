@@ -40,7 +40,13 @@ public class Route {
 
     private String name;
 
-    private String imageUrl;
+    private double distance;
+
+    private int hours;
+
+    private int minutes;
+
+    private int markers;
 
     //==연관관계 메서드==//
     public void addRouteItem(RouteItem routeItem) {

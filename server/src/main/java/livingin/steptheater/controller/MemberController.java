@@ -37,20 +37,20 @@ public class MemberController {
 
     @GetMapping("/api/member")
     public GetMemberResponse findMember(
-            @RequestParam(value = "id", defaultValue = "0") Long id,
-            @RequestParam(value = "email", defaultValue = "") String email,
-            @RequestParam(value = "nickname", defaultValue = "") String nickname,
-            @RequestParam(value = "oauth", defaultValue = "") String oauth
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "oauth", required = false) String oauth
     ) {
         Member findMember = null;
-        if (id > 0L)
+        if (id != null)
             findMember = memberService.findOne(id);
-        else if (!email.equals(""))
+        else if (email != null)
             findMember = memberService.findOneByEmail(email);
-        else if (!nickname.equals((""))) {
+        else if (nickname != null) {
             String decodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
             findMember = memberService.findOneByNick(decodedNickname);
-        } else if (!oauth.equals(("")))
+        } else if (oauth != null)
             findMember = memberService.findOneByOAuth(oauth);
 
         if (findMember == null) {

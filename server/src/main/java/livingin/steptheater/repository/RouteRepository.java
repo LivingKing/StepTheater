@@ -2,6 +2,7 @@ package livingin.steptheater.repository;
 
 import livingin.steptheater.domain.Route;
 import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
+import livingin.steptheater.repository.diary.RouteQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -53,14 +54,26 @@ public class RouteRepository {
         if(resultList.isEmpty()) return null;
         return resultList;
     }
-    public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long userId, String startDate, String endDate){
+    public List<RouteQueryDto> findRouteByDate(Long userId, String date){
+        return em.createQuery("select new livingin.steptheater.repository.diary.RouteQueryDto(r.id, r.name,r.distance, r.hours, r.minutes, r.markers) " +
+                "from Route r " +
+                "join r.diary d " +
+                "join d.member m " +
+                "where m.id = :userId " +
+                "and d.diaryDate = :date ", RouteQueryDto.class)
+                .setParameter("userId", userId)
+                .setParameter("date", LocalDate.parse(date))
+                .getResultList();
+    }
+
+    public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long userId, String startDate, String endDate) {
         return em.createQuery("select new livingin.steptheater.repository.diary.RouteExistDiaryQueryDto(d.diaryDate) " +
                 "from Route r " +
                 "join r.diary d " +
                 "join d.member m " +
                 "where m.id = :userId " +
-                "and d.diaryDate >= :sDate " +
-                "and d.diaryDate <= :eDate", RouteExistDiaryQueryDto.class)
+                "and d.diaryDate >= : sDate " +
+                "and d.diaryDate <= : eDate", RouteExistDiaryQueryDto.class)
                 .setParameter("userId",userId)
                 .setParameter("sDate", LocalDate.parse(startDate))
                 .setParameter("eDate", LocalDate.parse(endDate))

@@ -16,6 +16,7 @@ import { TextInput, Button, HelperText } from "react-native-paper";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as SecureStore from "expo-secure-store";
 import * as Crypto from "expo-crypto";
+import { server } from "../app.json";
 import styles from "../assets/styles";
 
 export default function LoginScreen({ navigation }) {
@@ -37,9 +38,7 @@ export default function LoginScreen({ navigation }) {
   const checkState = async () => {
     if ((await SecureStore.getItemAsync("IsLogin")) === "true") {
       const data = await SecureStore.getItemAsync("UserId");
-      const response = await fetch(
-        `http://203.241.228.112:11200/api/member?id=${data}`
-      );
+      const response = await fetch(`${server.address}/api/member?id=${data}`);
       const result = await response.json();
       if (result.id) {
         navigation.reset({ index: 0, routes: [{ name: "메인" }] });
@@ -53,23 +52,20 @@ export default function LoginScreen({ navigation }) {
     }, [])
   );
   const localLogin = async () => {
-    const response = await fetch(
-      "http://203.241.228.112:11200/api/member/login",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: await Crypto.digestStringAsync(
-            Crypto.CryptoDigestAlgorithm.SHA256,
-            password
-          ),
-        }),
-      }
-    );
+    const response = await fetch(`${server.address}/api/member/login`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.SHA256,
+          password
+        ),
+      }),
+    });
     const result = await response.json();
     if (result.status === 500) {
       setErrorMsg(result.message);
@@ -98,12 +94,12 @@ export default function LoginScreen({ navigation }) {
       if (credential.email !== null) {
         // 최초 로그인
         response = await fetch(
-          `http://203.241.228.112:11200/api/member?email=${credential.email}`
+          `${server.address}/api/member?email=${credential.email}`
         );
         data = await response.json();
         if (data.id === 0) {
           // 회원이 없을 경우
-          response = await fetch("http://203.241.228.112:11200/api/members", {
+          response = await fetch(`${server.address}/api/members`, {
             method: "POST",
             headers: {
               Accept: "application/json",

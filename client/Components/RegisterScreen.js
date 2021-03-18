@@ -127,9 +127,7 @@ export default function RegisterScreen({ navigation }) {
     else setNameError("");
   };
   const checkEmail = async (email) => {
-    const response = await fetch(
-      `http://203.241.228.112:11200/api/member?email=${email}`
-    );
+    const response = await fetch(`${server.address}/api/member?email=${email}`);
     const result = await response.json();
     console.log(result);
     if (result.email !== "none") {
@@ -142,7 +140,7 @@ export default function RegisterScreen({ navigation }) {
   };
   const checkNickName = async (nickname) => {
     const response = await fetch(
-      `http://203.241.228.112:11200/api/member?nickname=${encodeURI(
+      `${server.address}/api/member?nickname=${encodeURI(
         encodeURIComponent(nickname)
       )}`
     );
@@ -168,7 +166,7 @@ export default function RegisterScreen({ navigation }) {
       form.location = locationChecked;
       form.nickname = nickname;
 
-      const response = await fetch("http://203.241.228.112:11200/api/members", {
+      const response = await fetch(`${server.address}/api/members`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -190,7 +188,7 @@ export default function RegisterScreen({ navigation }) {
         const data = await response.json();
         console.log(data);
         await fetch(
-          `http://203.241.228.112:11200/api/email/send/certified?email=${data.email}&&nickname=${data.nickname}&&certified=${data.certified}`
+          `${server.address}/api/email/send/certified?email=${data.email}&&nickname=${data.nickname}&&certified=${data.certified}`
         );
       } else {
         setFailDialogVisible(true);
