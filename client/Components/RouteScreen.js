@@ -154,7 +154,7 @@ export default function RouteScreen() {
         body: form,
       });
       const res = await response.json();
-      console.log(res.data.image.url);
+      // console.log(res.data.image.url);
       setThumbImage(res.data.thumb.url);
       setImage(res.data.medium.url);
     }
@@ -212,7 +212,6 @@ export default function RouteScreen() {
   const postRoute = async () => {
     const id = await SecureStore.getItemAsync("UserId");
     const date = await SecureStore.getItemAsync("today");
-
     const response = await fetch("http://203.241.228.112:11200/api/route", {
       method: "POST",
       headers: {
@@ -230,6 +229,9 @@ export default function RouteScreen() {
   const postRouteItem = async (route) => {
     const id = await SecureStore.getItemAsync("UserId");
     const date = await SecureStore.getItemAsync("today");
+    // console.log('------------------------------');
+    // console.log([current]);
+    // console.log('------------------------------');
 
     const response = await fetch(
       "http://203.241.228.112:11200/api/route/item",
@@ -242,12 +244,13 @@ export default function RouteScreen() {
         body: JSON.stringify({
           id: id,
           date: date,
-          data: route,
-          order: arrCount,
+          data: polyLine,
+          route_name: routeName
         }),
       }
     );
   };
+
 
   const startRecording = () => {
     showSnackBar("동선기록을 시작합니다.");
@@ -257,7 +260,7 @@ export default function RouteScreen() {
   };
 
   const stopRecording = () => {
-    console.log("stop");
+    // console.log("stop");
     setVisible(false);
     showSnackBar("동선기록을 정지합니다.");
     postRouteItem(polyLine);
@@ -287,7 +290,6 @@ export default function RouteScreen() {
       content: contentzzz,
     };
     const nextObject = { ...current, file };
-    console.log(arrCount);
     const response = await fetch(
       "http://203.241.228.112:11200/api/diary/item",
       {
@@ -304,10 +306,12 @@ export default function RouteScreen() {
           image_url: image,
           latitude: current.latitude,
           longitude: current.longitude,
-          order: arrCount,
+          route_name: routeName
         }),
       }
     );
+    // console.log(await SecureStore.getItemAsync("today"));
+    // console.log(await SecureStore.getItemAsync("UserId"));
     setPinArray([...pinArray, nextObject]);
     var temp = tempPinCount + 1;
     setTempPinCount(temp);
@@ -404,7 +408,7 @@ export default function RouteScreen() {
                 icon="menu"
                 color="#555555"
                 size={windowHeight / 40}
-                // onPress={() => console.log("Pressed")}
+              // onPress={() => console.log("Pressed")}
               />
             </View>
           )}
@@ -676,6 +680,7 @@ export default function RouteScreen() {
                   </View>
                 </Modal>
               )}
+
               <MapView
                 opacity={recording ? 1 : 1}
                 style={
@@ -683,6 +688,7 @@ export default function RouteScreen() {
                     ? styles.route_contents_map_after
                     : styles.route_contents_map
                 }
+
                 rotateEnabled={false}
                 showsUserLocation={true}
                 followsUserLocation={adding ? false : true}
@@ -691,7 +697,7 @@ export default function RouteScreen() {
                     latitude: Region.latitude,
                     longitude: Region.longitude,
                   });
-                  //console.log(current);
+                  // console.log(current);
                 }}
                 onPanDrag={(Region) => {
                   if (markerRef.current != null) {
@@ -718,6 +724,7 @@ export default function RouteScreen() {
                   }
                 }}
                 onUserLocationChange={(e) => {
+
                   if (e.nativeEvent.coordinate.accuracy <= 15) {
                     const newLine = {
                       latitude: e.nativeEvent.coordinate.latitude,
@@ -737,14 +744,14 @@ export default function RouteScreen() {
                           if (arrCount != 0) {
                             const now = [];
                             now.push([...polyLine, Object.values(newLine)]);
-                            console.log(now);
+                            // console.log(now);
                             if (prevRouteM.concat(now) != null) {
                               setRouteM(prevRouteM.concat(now));
                             }
                           } else {
-                            console.log([
-                              [...polyLine, Object.values(newLine)],
-                            ]);
+                            // console.log([
+                            //   [...polyLine, Object.values(newLine)],
+                            // ]);
                             setRouteM([[...polyLine, Object.values(newLine)]]);
                           }
                           setPrevLine(newLine);
@@ -755,38 +762,39 @@ export default function RouteScreen() {
                   }
                 }}
               >
+
                 {pinArray != null
                   ? pinArray.map((route, index) => {
-                      // console.log(route);
-                      return (
-                        <Marker
-                          key={index}
-                          draggable
-                          coordinate={{
-                            latitude: route.latitude,
-                            longitude: route.longitude,
-                          }}
-                          onPress={() => {
-                            setInfoImg(route.file.image);
-                            setInfoText(route.file.text);
-                            setInfoContent(route.file.content);
-                            toggleModal3();
-                          }}
-                          centerOffset={{ x: 0, y: -22 }}
+
+                    return (
+                      <Marker
+                        key={index}
+                        draggable
+                        coordinate={{
+                          latitude: route.latitude,
+                          longitude: route.longitude,
+                        }}
+                        onPress={() => {
+                          setInfoImg(route.file.image);
+                          setInfoText(route.file.text);
+                          setInfoContent(route.file.content);
+                          toggleModal3();
+                        }}
+                        centerOffset={{ x: 0, y: -22 }}
+                      >
+                        <Surface
+                          style={styles.route_contents_map_marker_shadow}
                         >
-                          <Surface
-                            style={styles.route_contents_map_marker_shadow}
-                          >
-                            <View style={styles.route_contents_map_marker_wrap}>
-                              <Image
-                                source={{ uri: route.file.thumbImage }}
-                                style={styles.route_contents_map_marker_image}
-                              />
-                            </View>
-                          </Surface>
-                        </Marker>
-                      );
-                    })
+                          <View style={styles.route_contents_map_marker_wrap}>
+                            <Image
+                              source={{ uri: route.file.thumbImage }}
+                              style={styles.route_contents_map_marker_image}
+                            />
+                          </View>
+                        </Surface>
+                      </Marker>
+                    );
+                  })
                   : null}
 
                 {adding ? (

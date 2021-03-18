@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment, useEffect, useState } from "react";
-import { View, SafeAreaView, Platform, Text, Dimensions, TouchableOpacity, RefreshControl, ScrollView, StyleSheet, Animated } from "react-native";
+import { View, SafeAreaView, Platform, Text, Dimensions, TouchableOpacity, RefreshControl, ScrollView, StyleSheet, Animated, Image } from "react-native";
 import { Calendar, CalendarList, Agenda, WeekCalendar, CalendarProvider, ExpandableCalendar, AgendaList } from "react-native-calendars";
 import { Avatar, IconButton, Button, List, Surface } from "react-native-paper";
 import { LocaleConfig } from "react-native-calendars";
@@ -11,6 +11,7 @@ import * as SecureStore from "expo-secure-store";
 import moment from "moment";
 import ButtonToggleGroup from 'react-native-button-toggle-group';
 import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators";
+import MapView, { Marker, Polyline } from "react-native-maps";
 
 LocaleConfig.locales["ko"] = {
   monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월",],
@@ -45,7 +46,7 @@ export default function DetailScreen() {
           const id = await SecureStore.getItemAsync("UserId");
           const response = await fetch(
             // `http://203.241.228.112:11200/api/diary/date?id=${id}&&date=${date}&&type=month`
-            `http://203.241.228.112:11200/api/diary/date?id=3&&date=2021-03-15&&type=month`
+            `http://203.241.228.112:11200/api/diary/date?id=46&&date=2021-03-17&&type=month`
           );
           setData(await response.json());
           setRefreshing(false);
@@ -55,6 +56,44 @@ export default function DetailScreen() {
         );
     }
   };
+
+
+  const [mapviewInit, setMapviewInit] = useState();
+  const getRegionForCoordinates = (points) => {
+    // points should be an array of { latitude: X, longitude: Y }
+    let minX, maxX, minY, maxY;
+
+    // init first point
+    ((point) => {
+      minX = point.latitude;
+      maxX = point.latitude;
+      minY = point.longitude;
+      maxY = point.longitude;
+    })(points[0]);
+
+    // calculate rect
+    points.map((point) => {
+      minX = Math.min(minX, point.latitude);
+      maxX = Math.max(maxX, point.latitude);
+      minY = Math.min(minY, point.longitude);
+      maxY = Math.max(maxY, point.longitude);
+      console.log(minX + " " + maxX);
+    });
+
+
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const deltaX = (maxX - minX);
+    const deltaY = (maxY - minY);
+
+    setMapviewInit({
+      latitude: midX,
+      longitude: midY,
+      latitudeDelta: deltaX + 0.001,
+      longitudeDelta: deltaY + 0.001,
+    });
+    console.log(mapviewInit);
+  }
 
   const getDate = async () => {
     if (data == undefined) {
@@ -70,11 +109,16 @@ export default function DetailScreen() {
   const getSettings = async () => {
     setNickname(await SecureStore.getItemAsync("NickName"));
   };
+
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    getMonth();
-    getDate();
-    getSettings();
-    //console.log(data.data);
+    if (!isLoading) {
+      getMonth();
+      getDate();
+      getSettings();
+      //console.log(data.data);
+      setIsLoading(true);
+    }
   });
 
   const setNewDaySelected = (date) => {
@@ -154,7 +198,10 @@ export default function DetailScreen() {
   }
   );
 
-  const itemPressed = (id) => {
+  const [nowItem, setNowItem] = useState();
+  const itemPressed = (item) => {
+    setNowItem(item);
+    getRegionForCoordinates(item.routeItems);
     setModal(true);
   };
 
@@ -200,16 +247,18 @@ export default function DetailScreen() {
 
   const [nowY, setNowY] = useState(0);
   const handleScroll = (e) => {
-    console.log(e.nativeEvent.contentOffset.y);
+    // console.log(e.nativeEvent.contentOffset.y);
     setNowY(e.nativeEvent.contentOffset.y);
     if (isCloseToBottom(e)) {
-      console.log("bottom");
+      // console.log("bottom");
     }
   }
 
   const [nickname, setNickname] = useState("");
 
   const divHeight = windowHeight / 15;
+
+  var smooth = require("smooth-polyline");
 
 
   if (Platform.OS === "ios") {
@@ -233,7 +282,16 @@ export default function DetailScreen() {
               left: 0,
             }}
           />
-          {isMain ?
+
+          {modal ? <View style={styles_detail.detail_title3}>
+            {/* <Avatar.Image size={windowWidth / 15} source={require('../assets/icon.png')} /> */}
+            <Text style={{
+              fontSize: windowWidth / 24,
+              fontFamily: "NotoMedium",
+              color: "#262223",
+              marginLeft: 7,
+            }}>{nowItem.name}</Text>
+          </View> : isMain ?
             nowY > divHeight ?
               <View style={styles_detail.detail_title3}>
                 <Avatar.Image size={windowWidth / 15} source={require('../assets/icon.png')} />
@@ -275,30 +333,7 @@ export default function DetailScreen() {
               />
             </View>}
 
-          <Modal
-            style={{
-              margin: 0,
-            }}
-            isVisible={modal}
-            hasBackdrop={true}
-            coverScreen={false}
-          >
-            <View
-              style={{
-                flex: 0.9,
-                backgroundColor: "white",
-                alignItems: "center",
-              }}
-            >
-              <Text>asdf</Text>
-              <Text>asdf</Text>
 
-
-              <Button mode="contained" onPress={() => { setModal(false); }}>
-                확인
-          </Button>
-            </View>
-          </Modal>
 
           <View style={styles_detail.detail_contents}>
             {isMain ?
@@ -590,6 +625,96 @@ export default function DetailScreen() {
                 </ScrollView>
 
               </View> : !isList ? <View>
+                <Modal
+                  style={{
+                    margin: 0,
+                  }}
+                  isVisible={modal}
+                  hasBackdrop={true}
+                  coverScreen={false}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: "white",
+                      alignItems: "center",
+                    }}
+                  >
+                    <MapView
+                      style={{ width: "100%", height: "40%" }}
+                      initialRegion={mapviewInit}
+                      zoomEnabled={false}
+                      zoomTapEnabled={false}
+                      rotateEnabled={false}
+                      scrollEnabled={false}
+                      pitchEnabled={false}
+                    >
+                      {nowItem !== undefined ? nowItem.diaryItems.map((route, index) => {
+
+                        return (
+                          <Marker
+                            key={index}
+                            draggable
+                            coordinate={{
+                              latitude: route.latitude,
+                              longitude: route.longitude,
+                            }}
+                            onPress={() => {
+                              // setInfoImg(route.file.image);
+                              // setInfoText(route.file.text);
+                              // setInfoContent(route.file.content);
+                              // toggleModal3();
+                            }}
+                          // centerOffset={{ x: 0, y: -22 }}
+                          >
+                            <Surface
+                              style={styles.route_contents_map_marker_shadow}
+                            >
+                              <View style={styles.route_contents_map_marker_wrap}>
+                                <Image
+                                  source={{ uri: route.thumb_url }}
+                                  style={styles.route_contents_map_marker_image}
+                                />
+                              </View>
+                            </Surface>
+                          </Marker>
+                        );
+                      }) : ""}
+                      {nowItem != undefined ? <Polyline
+                        // coordinates={smooth(smooth(nowItem.routeItems)).map(
+                        //   ([latitude, longitude]) => ({
+                        //     latitude,
+                        //     longitude,
+                        //   })
+                        // )}
+                        coordinates={nowItem.routeItems}
+                        strokeColor="#ff0000" // fallback for when `strokeColors` is not supported by the map-provider
+                        strokeWidth={8}
+                      /> : <></>}
+                    </MapView>
+                    {/* <Polyline
+                        coordinates={smooth(smooth(mapviewInit)).map(
+                          ([latitude, longitude]) => ({
+                            latitude,
+                            longitude,
+                          })
+                        )}
+                        strokeColor="#ff0000"// fallback for when `strokeColors` is not supported by the map-provider
+                        strokeWidth={8}
+                      /> */}
+
+                    <Text>asdf</Text>
+                    <Text>{mapviewInit != undefined ? mapviewInit.latitude : ""}</Text>
+                    <Text>{mapviewInit != undefined ? mapviewInit.longitude : ""}</Text>
+                    <Text>{mapviewInit != undefined ? mapviewInit.latitudeDelta : ""}</Text>
+                    <Text>{mapviewInit != undefined ? mapviewInit.longitudeDelta : ""}</Text>
+
+
+                    <Button mode="contained" onPress={() => { setModal(false); }}>
+                      확인
+                   </Button>
+                  </View>
+                </Modal>
                 <View style={{ justifyContent: "center", width: "100%", height: windowHeight / 15, borderWidth: 0, backgroundColor: "white", paddingBottom: windowHeight / 50 }}>
                   <View style={{ width: "100%", alignContent: "center", justifyContent: "center" }}>
                     <View style={{ width: "98%", justifyContent: "space-between", flexDirection: "row", alignSelf: "center" }}>
@@ -607,7 +732,9 @@ export default function DetailScreen() {
                       /> */}
                     </View>
                   </View>
+
                   <View style={{ alignSelf: "center", width: "93%", height: windowHeight / 23, borderWidth: 1, borderRadius: 5, borderColor: "#999999" }}>
+
                     <View style={{ marginLeft: -3, marginTop: -3, marginRight: 1, marginBottom: 1 }}>
                       <ButtonToggleGroup
                         highlightBackgroundColor={'#111111'}
@@ -624,6 +751,7 @@ export default function DetailScreen() {
                   </View>
                 </View>
                 <View style={{ height: "100%", width: "100%" }}>
+
                   {value == '오늘' ?
                     <View style={{ height: "100%", width: "100%", backgroundColor: "red" }}>
                       {data.data.map((item, index) => {
@@ -659,7 +787,7 @@ export default function DetailScreen() {
 
                           {data.data.map((item, index) => {
                             return (
-                              <Surface key={index} style={{ elevation: 1, width: "95%", alignSelf: "center", justifyContent: "center", height: (item.routes.length * windowHeight / 7) + windowHeight / 12, marginTop: 12, backgroundColor: "white", borderRadius: 10 }}>
+                              <Surface key={index} style={{ elevation: 1, width: "95%", alignSelf: "center", justifyContent: "center", height: (item.routes.length * windowHeight / 7) + windowHeight / 1, marginTop: 12, backgroundColor: "white", borderRadius: 10 }}>
                                 <View key={index} style={{ width: "100%", justifyContent: "center", height: "100%", borderRadius: 10 }}>
                                   <Text style={{
                                     fontSize: windowHeight / 50,
@@ -677,11 +805,11 @@ export default function DetailScreen() {
                                         //   </View>
 
                                         // </Surface>
-
-
-                                        <View key={index} style={{ width: "95%", height: windowHeight / 7, alignSelf: "center", marginTop: 10, borderRadius: 7, borderWidth: 1, borderColor: "#e6e6e6" }}>
-                                          <Text>{content.name}</Text>
-                                        </View>
+                                        <TouchableOpacity key={index} onPress={() => { itemPressed(content) }}>
+                                          <View key={index} style={{ width: "95%", height: windowHeight / 7, alignSelf: "center", marginTop: 10, borderRadius: 7, borderWidth: 1, borderColor: "#e6e6e6" }}>
+                                            <Text>{content.name}</Text>
+                                          </View>
+                                        </TouchableOpacity>
 
                                       );
                                     })}
