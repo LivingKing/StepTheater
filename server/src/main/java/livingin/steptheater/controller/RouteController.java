@@ -49,12 +49,56 @@ public class RouteController {
         return new PutRouteResponse(1);
     }
 
-    @GetMapping("/api/routes")
+    @GetMapping("/api/route")
     public GetRouteResponse findRoute(
             @RequestParam(value = "id") Long id,
             @RequestParam(value = "date") String date
     ) {
-        List<RouteQueryDto> routeByDate = routeService.findRouteByDate(id, date);
+        List<RouteQueryDto> routeByDate = routeService.findRouteByOneDate(id, date);
+        Double totalDistance = 0.0;
+        Integer totalHours = 0;
+        Integer totalMinutes = 0;
+        Integer totalMarkers = 0;
+        for (RouteQueryDto routeQueryDto : routeByDate) {
+            totalDistance += routeQueryDto.getDistance();
+            totalHours += routeQueryDto.getHours();
+            totalMinutes += routeQueryDto.getMinutes();
+            totalMarkers += routeQueryDto.getMarkers();
+        }
+        return new GetRouteResponse(routeByDate.size(), totalDistance, totalHours, totalMinutes, totalMarkers, routeByDate);
+    }
+
+    @GetMapping("/api/routes")
+    public GetRouteResponse findRoutes(
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "date") String date,
+            @RequestParam(value = "type") String type
+    ) {
+        String startDate = "";
+        String endDate = "";
+        String[] sDate = date.split("-");
+        LocalDate localDate = LocalDate.of(Integer.parseInt(sDate[0]),
+                Integer.parseInt(sDate[1]),
+                Integer.parseInt(sDate[2]));
+        System.out.println("localDate = " + localDate);
+        if (type.equals("day")) {
+            startDate = endDate = date;
+        } else if (type.equals("week")) {
+            LocalDate temp;
+            if(localDate.getDayOfWeek().getValue() == 7)
+                temp = localDate;
+            else
+                temp = localDate.minusDays(localDate.getDayOfWeek().getValue());
+            startDate = temp.toString();
+            endDate = temp.plusDays(6).toString();
+            System.out.println("startDate = " + startDate);
+            System.out.println("endDate = " + endDate);
+        } else if (type.equals("month")) {
+            LocalDate temp = localDate.minusDays(localDate.getDayOfMonth()-1);
+            startDate = temp.toString();
+            endDate = temp.plusMonths(1).minusDays(1).toString();
+        }
+        List<RouteQueryDto> routeByDate = routeService.findRouteByDate(id, startDate, endDate);
         Double totalDistance = 0.0;
         Integer totalHours = 0;
         Integer totalMinutes = 0;

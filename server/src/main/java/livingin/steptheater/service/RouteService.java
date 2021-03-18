@@ -1,13 +1,8 @@
 package livingin.steptheater.service;
 
 import livingin.steptheater.domain.Diary;
-import livingin.steptheater.domain.Member;
 import livingin.steptheater.domain.Route;
-import livingin.steptheater.domain.RouteItem;
-import livingin.steptheater.repository.DiaryRepository;
-import livingin.steptheater.repository.MemberRepository;
 import livingin.steptheater.repository.RouteRepository;
-import livingin.steptheater.repository.diary.DiaryQueryDto;
 import livingin.steptheater.repository.diary.RouteExistDiaryQueryDto;
 import livingin.steptheater.repository.diary.RouteQueryDto;
 import lombok.RequiredArgsConstructor;
@@ -71,8 +66,11 @@ public class RouteService {
         }
     }
 
-    public List<RouteQueryDto> findRouteByDate(Long id, String date){
-        return routeRepository.findRouteByDate(id, date);
+    public List<RouteQueryDto> findRouteByOneDate(Long id, String date){
+        return routeRepository.findOneRouteByDate(id, date);
+
+    }public List<RouteQueryDto> findRouteByDate(Long id, String startDate, String endDate){
+        return routeRepository.findRouteByDate(id, startDate, endDate);
     }
     public List<RouteExistDiaryQueryDto> findExistRouteByDate(Long id, String startDate, String endDate) {
         return routeRepository.findExistRouteByDate(id, startDate, endDate);

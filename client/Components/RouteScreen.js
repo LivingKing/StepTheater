@@ -155,7 +155,7 @@ export default function RouteScreen() {
     setRouteM(totalRoute);
 
     response = await fetch(
-      `${server.address}/api/routes?id=${id}&date=${today}`
+      `${server.address}/api/route?id=${id}&date=${today}`
     );
     result = await response.json();
     // console.log(result);
@@ -1077,7 +1077,7 @@ export default function RouteScreen() {
                           총 거리
                         </Text>
                         <Text style={styles.route_tool_routeInfo_textBold}>
-                          {totalDistance}{" "}
+                          {totalDistance.toFixed(2)}{" "}
                           <Text style={styles.route_tool_routeInfo_text}>
                             km
                           </Text>
