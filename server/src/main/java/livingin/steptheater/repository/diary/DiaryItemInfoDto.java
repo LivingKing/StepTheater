@@ -6,7 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DiaryItemInfoDto {
+<<<<<<< HEAD
     private Long id;
+=======
+>>>>>>> feature/detail
     private String title;
     private String description;
     private Double latitude;

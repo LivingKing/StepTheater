@@ -2,6 +2,7 @@ package livingin.steptheater.repository.diary;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+<<<<<<< HEAD
 import java.util.List;
 @Data
 public class RouteInfoDto {
@@ -14,4 +15,12 @@ public class RouteInfoDto {
         this.id = id;
         this.name = name;
     }
+=======
+
+@Data
+@AllArgsConstructor
+public class RouteInfoDto {
+    private String name;
+    private RouteItemInfoDto routeItemInfoDto;
+>>>>>>> feature/detail
 }

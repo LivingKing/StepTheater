@@ -11,7 +11,10 @@ import {
   Paragraph,
 } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+<<<<<<< HEAD
 import { server } from "../app.json";
+=======
+>>>>>>> feature/detail
 import styles from "../assets/styles";
 
 export default function FindScreen({ navigation }) {
@@ -72,7 +75,11 @@ export default function FindScreen({ navigation }) {
   const findId = async () => {
     if (nameError === "" && nickNameError === "") {
       const response = await fetch(
+<<<<<<< HEAD
         `${server.address}/api/member/findEmail?nickname=${nickname}&&name=${name}`
+=======
+        `http://203.241.228.112:11200/api/member/findEmail?nickname=${nickname}&&name=${name}`
+>>>>>>> feature/detail
       );
       const result = await response.json();
       if (result.status === 500) {
@@ -89,7 +96,11 @@ export default function FindScreen({ navigation }) {
   const findPw = async () => {
     if (nameError === "" && nickNameError === "" && emailError === "") {
       const response = await fetch(
+<<<<<<< HEAD
         `${server.address}/api/member/findPw?email=${email}&&nickname=${nickname}&&name=${name}`
+=======
+        `http://203.241.228.112:11200/api/member/findPw?email=${email}&&nickname=${nickname}&&name=${name}`
+>>>>>>> feature/detail
       );
       const result = await response.json();
       console.log(result);
@@ -100,7 +111,11 @@ export default function FindScreen({ navigation }) {
       } else {
         setPwDialogVis();
         await fetch(
+<<<<<<< HEAD
           `${server.address}/api/email/send/findPW?email=${result.email}&&nickname=${result.nickname}&&certified=${result.certified}`
+=======
+          `http://203.241.228.112:11200/api/email/send/findPW?email=${result.email}&&nickname=${result.nickname}&&certified=${result.certified}`
+>>>>>>> feature/detail
         );
       }
     }
