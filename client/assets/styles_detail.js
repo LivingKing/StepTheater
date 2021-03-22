@@ -36,9 +36,9 @@ const styles_detail = StyleSheet.create({
     zIndex: 16,
     paddingBottom: 10,
     alignItems: "center",
-    justifyContent: "center",
-    borderBottomColor: "#e6e6e6",
-    borderBottomWidth: 1,
+    justifyContent: "space-between",
+    // borderBottomColor: "#e6e6e6",
+    // borderBottomWidth: 1,
   },
   detail_title_text: {
     textAlignVertical: "auto",

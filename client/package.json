@@ -12,6 +12,7 @@
     "@react-navigation/bottom-tabs": "^5.11.7",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
+    "@unimodules/core": "^7.0.0",
     "expo": "~40.0.0",
     "expo-apple-authentication": "~2.2.2",
     "expo-calendar": "~8.6.0",
@@ -33,18 +34,23 @@
     "react-native-animated-scroll-indicators": "^1.0.1",
     "react-native-button-toggle-group": "^1.1.1",
     "react-native-calendars": "^1.1249.0",
+    "react-native-canvas": "^0.1.37",
+    "react-native-gesture-handler": "^1.10.3",
     "react-native-image-picker": "^3.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-maps": "0.27.1",
     "react-native-modal": "^11.7.0",
     "react-native-paper": "^4.7.2",
     "react-native-safe-area-context": "3.1.9",
+    "react-native-screens": "^2.18.1",
     "react-native-scrollview-indicator": "^1.0.4",
+    "react-native-svg": "^12.1.0",
     "react-native-view-shot": "3.1.2",
     "react-native-web": "~0.13.12",
     "react-native-webview": "11.0.0",
     "save": "^2.4.0",
-    "smooth-polyline": "^1.0.8"
+    "smooth-polyline": "^1.0.8",
+    "unimodules-permissions-interface": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
