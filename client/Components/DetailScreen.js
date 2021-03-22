@@ -22,6 +22,7 @@ import {
   ExpandableCalendar,
   AgendaList,
 } from "react-native-calendars";
+import { Ionicons } from "@expo/vector-icons";
 import { Avatar, IconButton, Button, List, Surface } from "react-native-paper";
 import { LocaleConfig } from "react-native-calendars";
 import styles from "../assets/styles";
@@ -83,6 +84,8 @@ export default function DetailScreen() {
   const [totalHours, setTotalHours] = useState(0);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [totalMarkers, setTotalMarkers] = useState(0);
+  const [totalRecordDays, setTotalRecordDays] = useState(0);
+  const [totalRecordRoutes, setTotalRecordRoutes] = useState(0);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [markedDates, setMarkedDates] = React.useState({});
   const [modal, setModal] = useState(false);
@@ -167,15 +170,22 @@ export default function DetailScreen() {
     const id = await SecureStore.getItemAsync("UserId");
     const today = await SecureStore.getItemAsync("today");
 
-    const response = await fetch(
+    let response = await fetch(
       `${server.address}/api/routes?id=${id}&date=${today}&type=month`
     );
-    const result = await response.json();
+    let result = await response.json();
 
+    // console.log(result);
     setTotalDistance(result.totalDistance);
     setTotalHours(result.totalHours);
     setTotalMinutes(result.totalMinutes);
     setTotalMarkers(result.totalMarkers);
+    setTotalRecordRoutes(result.count);
+    response = await fetch(
+      `${server.address}/api/diary/date?id=${id}&date=${today}&type=month`
+    );
+    result = await response.json();
+    setTotalRecordDays(result.data.length);
   };
   const getSettings = async () => {
     setNickname(await SecureStore.getItemAsync("NickName"));
@@ -401,15 +411,22 @@ export default function DetailScreen() {
                     : styles_detail.detail_title2
                 }
               >
-                <Text style={styles_detail.detail_title_text}>걸음 기록</Text>
+                <Image
+                  style={{
+                    width: "35%",
+                    height: "100%",
+                  }}
+                  source={require("../assets/detail.png")}
+                />
+                {/* <Text style={styles_detail.detail_title_text}>걸음 기록</Text> */}
               </View>
             )
           ) : (
             <View style={styles_detail.detail_title}>
-              <IconButton
-                icon={"keyboard-backspace"}
-                color="#555555"
-                size={20}
+              <Ionicons
+                name="ios-chevron-back"
+                size={35}
+                color="#262223"
                 onPress={toggleMain}
                 style={{ alignSelf: "center" }}
               />
@@ -509,7 +526,7 @@ export default function DetailScreen() {
                               color: "#262223",
                             }}
                           >
-                            0
+                            {totalRecordDays}
                             <Text
                               style={{
                                 fontSize: windowWidth / 32,
@@ -527,7 +544,7 @@ export default function DetailScreen() {
                                 marginLeft: 7,
                               }}
                             >
-                              0
+                              {totalRecordRoutes}
                               <Text
                                 style={{
                                   fontSize: windowWidth / 32,
@@ -874,7 +891,7 @@ export default function DetailScreen() {
                                   top: -windowHeight / 150,
                                 }}
                               >
-                                0
+                                {totalRecordDays}
                                 <Text
                                   style={{
                                     fontSize: windowWidth / 30,
@@ -920,7 +937,7 @@ export default function DetailScreen() {
                                   top: -windowHeight / 150,
                                 }}
                               >
-                                0
+                                {totalRecordRoutes}
                                 <Text
                                   style={{
                                     fontSize: windowWidth / 30,

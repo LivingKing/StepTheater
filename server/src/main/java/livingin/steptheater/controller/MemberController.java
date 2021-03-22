@@ -15,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
@@ -54,9 +55,9 @@ public class MemberController {
             findMember = memberService.findOneByOAuth(oauth);
 
         if (findMember == null) {
-            return new GetMemberResponse(0L, "none", "none");
+            return new GetMemberResponse(0L, "none", "none", null);
         }
-        return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname());
+        return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname(), findMember.getRegisterDate().toLocalDate());
     }
 
     @RequestMapping("/api/member/certified")
@@ -214,6 +215,7 @@ public class MemberController {
         private Long id;
         private String email;
         private String nickname;
+        private LocalDate registerDate;
     }
 
     @Data

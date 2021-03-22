@@ -1,12 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useEffect } from "react";
-import { Text, View, SafeAreaView, Platform } from "react-native";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { Text, View, SafeAreaView, Platform, Image } from "react-native";
 import styles from "../assets/styles";
-import MapView, { Marker, Polyline } from "react-native-maps";
+
 import * as SecureStore from "expo-secure-store";
 import { useFocusEffect } from "@react-navigation/core";
+import moment from "moment";
+import { server } from "../app.json";
 
 export default function HomeScreen({ navigation }) {
+  const [wDays, setWDays] = useState(0);
   const showState = async () => {
     console.log(
       "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
@@ -16,6 +19,35 @@ export default function HomeScreen({ navigation }) {
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
     );
   };
+  const checkRegisterDate = async () => {
+    try {
+      await SecureStore.getItemAsync("registerDate");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+  const getMemberData = async () => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const response = await fetch(`${server.address}/api/member?id=${id}`);
+    const result = await response.json();
+    await SecureStore.setItemAsync("registerDate", result.registerDate);
+  };
+
+  const setWDaysData = async () => {
+    setWDays(
+      moment().diff(
+        moment(await SecureStore.getItemAsync("registerDate")),
+        "days"
+      )
+    );
+  };
+  useFocusEffect(
+    useCallback(() => {
+      if (!checkRegisterDate) getMemberData();
+      setWDaysData();
+    }, [])
+  );
   if (Platform.OS === "ios") {
     return (
       <Fragment>
@@ -24,31 +56,54 @@ export default function HomeScreen({ navigation }) {
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
           <View style={styles.com_safeView_title}>
-            <Text style={styles.com_safeView_title_text}>걸음 한 편</Text>
+            <Image
+              style={{
+                width: "35%",
+                height: "100%",
+              }}
+              source={require("../assets/main.png")}
+            />
+            {/* <Text style={styles.com_safeView_title_text}>걸음 한 편</Text> */}
           </View>
           <View style={styles.com_safeView_contents}>
-            <MapView>
-              <Polyline
-                coordinates={[
-                  { latitude: 37.8025259, longitude: -122.4351431 },
-                  { latitude: 37.7896386, longitude: -122.421646 },
-                  { latitude: 37.7665248, longitude: -122.4161628 },
-                  { latitude: 37.7734153, longitude: -122.4577787 },
-                  { latitude: 37.7948605, longitude: -122.4596065 },
-                  { latitude: 37.8025259, longitude: -122.4351431 },
-                ]}
-                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                strokeColors={[
-                  "#7F0000",
-                  "#00000000", // no color, creates a "long" gradient between the previous and next coordinate
-                  "#B24112",
-                  "#E5845C",
-                  "#238C23",
-                  "#7F0000",
-                ]}
-                strokeWidth={6}
-              />
-            </MapView>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 40,
+                fontFamily: "MapoFlower",
+                fontWeight: "800",
+              }}
+            >
+              발자국을{"\n"}기록한 지{"\n\n"}
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 60,
+                  fontFamily: "MapoFlower",
+                  fontWeight: "600",
+                }}
+              >
+                {wDays}
+              </Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 40,
+                  fontFamily: "MapoFlower",
+                  fontWeight: "800",
+                }}
+              >
+                걸음
+              </Text>
+            </View>
           </View>
         </SafeAreaView>
       </Fragment>

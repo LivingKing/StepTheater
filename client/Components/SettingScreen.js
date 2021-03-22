@@ -8,6 +8,7 @@ import {
   Button,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 import styles from "../assets/styles";
@@ -36,7 +37,15 @@ export default function SettingScreen({ navigation }) {
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
           <View style={styles.com_safeView_title}>
-            <Text style={styles.com_safeView_title_text}>설정</Text>
+            <Image
+              style={{
+                width: "35%",
+                height: "100%",
+                marginLeft: -10,
+              }}
+              source={require("../assets/settings.png")}
+            />
+            {/* <Text style={styles.com_safeView_title_text}>설정</Text> */}
           </View>
           <View style={styles.com_safeView_contents}>
             <ScrollView

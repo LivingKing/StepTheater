@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { View, SafeAreaView, Platform, Text } from "react-native";
+import { View, SafeAreaView, Platform, Text, Image } from "react-native";
 import {
   NavigationActions,
   StackActions,
@@ -146,13 +146,21 @@ export default function LoginScreen({ navigation }) {
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
           <View style={styles.com_safeView_title}>
-            <Text style={styles.com_safeView_title_text}>로그인</Text>
+            <Image
+              style={{
+                paddingTop: 50,
+                width: "35%",
+                height: "35%",
+              }}
+              source={require("../assets/login.png")}
+            />
+            {/* <Text style={styles.com_safeView_title_text}>로그인</Text> */}
           </View>
           <View style={styles.com_safeView_contents}>
             <View style={styles.login_safeView_contents_logoView}>
               <Text style={styles.login_safeView_contents_logoView_logoText}>
-                {`로고
-위치`}
+                {`걸음
+한편`}
               </Text>
             </View>
             <View style={styles.login_safeView_contents_loginView}>

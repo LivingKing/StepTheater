@@ -61,21 +61,14 @@ export default function RouteScreen() {
   const [minutes, setMinute] = useState(0);
   const captureRef = useRef();
   const polyColor = [
-    "#ff0000",
-    "#00ff00",
-    "#0000ff",
-    "#ffff00",
-    "#ff00ff",
-    "#00ffff",
+    "orangered",
+    "cornflowerblue",
+    "lightgreen",
+    "blueviolet",
+    "aquamarine",
+    "darksalmon",
   ];
 
-  const getPhotoUrl = async () => {
-    const url = await captureRef.current.capture();
-    const result = await ImageManipulator.manipulateAsync(url, [], {
-      base64: true,
-    });
-    return result.base64;
-  };
   var smooth = require("smooth-polyline");
 
   const getLocation = async () => {
@@ -88,7 +81,6 @@ export default function RouteScreen() {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    //console.log(location);
     setLocation(location);
   };
 
@@ -134,6 +126,7 @@ export default function RouteScreen() {
   };
 
   const getRouteData = async () => {
+    if (recording) return;
     const id = await SecureStore.getItemAsync("UserId");
     const today = await SecureStore.getItemAsync("today");
 
@@ -141,17 +134,34 @@ export default function RouteScreen() {
       `${server.address}/api/diary/date?id=${id}&date=${today}&type=day`
     );
     let result = await response.json();
+    // console.log(result);
 
     const totalRoute = [];
-
+    const totalMarker = [];
     result.data[0].routes.map((route) => {
+      route.diaryItems.map((items) => {
+        const file = {
+          image: items.image_url,
+          thumbImage: items.thumb_url,
+          text: items.title,
+          content: items.description,
+        };
+        const obj = {
+          latitude: items.latitude,
+          longitude: items.longitude,
+          file,
+        };
+        totalMarker.push(obj);
+      });
       const tempRoute = [];
       route.routeItems.map((items) => {
         tempRoute.push(Array(items.latitude, items.longitude));
       });
       totalRoute.push(tempRoute);
     });
-    // console.log(totalRoute);
+
+    totalRoute.reverse();
+    setPinArray(totalMarker);
     setRouteM(totalRoute);
 
     response = await fetch(
@@ -163,8 +173,10 @@ export default function RouteScreen() {
     setTotalHours(result.totalHours);
     setTotalMinutes(result.totalMinutes);
     setTotalMarkers(result.totalMarkers);
+    setMarkersCnt(totalRoute.length);
     setRouteCnt(result.count);
   };
+
   useFocusEffect(
     useCallback(() => {
       getLocation();
@@ -453,7 +465,14 @@ export default function RouteScreen() {
           <View
             style={recording ? styles.route_title_after : styles.route_title}
           >
-            <Text style={styles.route_title_text}>걸음 한 편</Text>
+            <Image
+              style={{
+                width: "35%",
+                height: "100%",
+              }}
+              source={require("../assets/route.png")}
+            />
+            {/* <Text style={styles.route_title_text}>걸음 한 편</Text> */}
           </View>
 
           {recording ? (
@@ -964,7 +983,7 @@ export default function RouteScreen() {
                 {routeM.map((route, index) => {
                   if (route != null) {
                     if (route != undefined) {
-                      // console.log(index);
+                      // console.log(route);
                       return (
                         <Polyline
                           key={index}

@@ -41,6 +41,7 @@ public class DiaryController {
             @RequestParam(value = "id") Long userId,
             @RequestParam(value = "date") String date
     ) {
+
         List<DiaryQueryDto> diaryDto = diaryService.findOneDiaryDto(userId, date);
         return new Result(diaryDto.size(), diaryDto);
     }

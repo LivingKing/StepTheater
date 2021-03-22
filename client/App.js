@@ -39,6 +39,8 @@ export default function App() {
       NotoMedium: require("./assets/fonts/NotoSansKR-Medium.otf"),
       NotoRegular: require("./assets/fonts/NotoSansKR-Regular.otf"),
       NotoThin: require("./assets/fonts/NotoSansKR-Thin.otf"),
+      MapoFlower: require("./assets/fonts/MapoFlowerIsland.ttf"),
+      DokLip: require("./assets/fonts/DokLip.ttf"),
     });
     setFontsLoad(true);
   };

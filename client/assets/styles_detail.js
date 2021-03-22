@@ -7,7 +7,7 @@ const styles_detail = StyleSheet.create({
   detail: { flex: 1, backgroundColor: "white" },
 
   detail_title: {
-    marginTop: 10,
+    marginTop: 3.8,
     flex: 0.05,
     backgroundColor: "white",
     justifyContent: "space-between",
@@ -17,7 +17,7 @@ const styles_detail = StyleSheet.create({
     alignItems: "center",
   },
   detail_title2: {
-    marginTop: 10,
+    marginTop: 3.8,
     flex: 0.05,
     backgroundColor: "white",
     justifyContent: "space-between",
@@ -29,7 +29,7 @@ const styles_detail = StyleSheet.create({
     borderBottomWidth: 1,
   },
   detail_title3: {
-    marginTop: 10,
+    marginTop: 3.8,
     flex: 0.05,
     backgroundColor: "white",
     flexDirection: "row",
@@ -48,66 +48,66 @@ const styles_detail = StyleSheet.create({
     marginLeft: 15,
   },
 
-  detail_contents: { flex: 0.95, backgroundColor: "#f6f6f6", },
+  detail_contents: { flex: 0.95, backgroundColor: "#f6f6f6" },
   item: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     flex: 1,
     borderRadius: 5,
     padding: 10,
     marginRight: 10,
-    marginTop: 17
+    marginTop: 17,
   },
   emptyDate: {
     height: 15,
     flex: 1,
-    paddingTop: 30
+    paddingTop: 30,
   },
 
   calendar: {
     paddingLeft: 20,
-    paddingRight: 20
+    paddingRight: 20,
   },
   section: {
-    backgroundColor: '#EBF9F9',
-    color: 'grey',
-    textTransform: 'capitalize'
+    backgroundColor: "#EBF9F9",
+    color: "grey",
+    textTransform: "capitalize",
   },
   item: {
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-    flexDirection: 'row'
+    borderBottomColor: "lightgrey",
+    flexDirection: "row",
   },
   itemHourText: {
-    color: 'black'
+    color: "black",
   },
   itemDurationText: {
-    color: 'grey',
+    color: "grey",
     fontSize: 12,
     marginTop: 4,
-    marginLeft: 4
+    marginLeft: 4,
   },
   itemTitleText: {
-    color: 'black',
+    color: "black",
     marginLeft: 16,
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: "bold",
+    fontSize: 16,
   },
   itemButtonContainer: {
     flex: 1,
-    alignItems: 'flex-end'
+    alignItems: "flex-end",
   },
   emptyItem: {
     paddingLeft: 20,
     height: 52,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey'
+    borderBottomColor: "lightgrey",
   },
   emptyItemText: {
-    color: 'lightgrey',
-    fontSize: 14
+    color: "lightgrey",
+    fontSize: 14,
   },
 });
 export default styles_detail;

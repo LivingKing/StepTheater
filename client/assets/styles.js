@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
   route: { flex: 1, backgroundColor: "white" },
 
   route_title: {
-    marginTop: 10,
     flex: 0.05,
+    marginTop: 3.8,
     backgroundColor: "white",
     justifyContent: "center",
   },
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 
   route_title_after: {
-    marginTop: 10,
+    marginTop: 3.8,
     flex: 0.05,
     backgroundColor: "white",
     justifyContent: "center",
@@ -146,9 +146,17 @@ const styles = StyleSheet.create({
   route_contents_pinModal_concanButton_wrap: { flexDirection: "row" },
 
   route_contents_pause_title: {
-    width: "100%", backgroundColor: "white", paddingTop: "5%", borderTopLeftRadius: 15, borderTopRightRadius: 15, paddingLeft: "4%",
+    width: "100%",
+    backgroundColor: "white",
+    paddingTop: "5%",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    paddingLeft: "4%",
   },
-  route_contents_pause_title_text: { fontFamily: "NotoMedium", fontSize: windowHeight / 40 },
+  route_contents_pause_title_text: {
+    fontFamily: "NotoMedium",
+    fontSize: windowHeight / 40,
+  },
   route_contents_pause_info: {
     backgroundColor: "white",
     flexDirection: "row",
@@ -156,9 +164,15 @@ const styles = StyleSheet.create({
     paddingLeft: "5%",
     paddingRight: "5%",
     marginTop: "5%",
-    width: "100%"
+    width: "100%",
   },
-  route_contents_pause_tool: { width: "100%", backgroundColor: "white", marginTop: "1%", flexDirection: "row", marginTop: "5%" },
+  route_contents_pause_tool: {
+    width: "100%",
+    backgroundColor: "white",
+    marginTop: "1%",
+    flexDirection: "row",
+    marginTop: "5%",
+  },
   route_contents_pause_tool_button: {
     width: "42%",
     marginLeft: "4%",
@@ -286,7 +300,7 @@ const styles = StyleSheet.create({
   login_safeView_contents_logoView_logoText: {
     fontSize: 50,
     fontWeight: "700",
-    fontFamily: "DoHyeon",
+    fontFamily: "DokLip",
     color: "#262223",
   },
   login_safeView_contents_loginView: {
