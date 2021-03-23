@@ -74,9 +74,13 @@ public class MemberService {
 
 
     @Transactional
-    public void update(Long id, String email) {
+    public void update(Long id, String nickname, boolean privacy, boolean location, String image_url, String thumb_url) {
         Member member = memberRepository.findOne(id);
-        member.setEmail(email);
+        member.setNickname(nickname);
+        member.setPrivacy_Checked(privacy);
+        member.setLocation_Checked(location);
+        member.setImage_url(image_url);
+        member.setThumb_url(thumb_url);
     }
 
     @Transactional

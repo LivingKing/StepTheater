@@ -43,12 +43,18 @@ const styles = StyleSheet.create({
     paddingRight: 23,
     justifyContent: "space-between",
   },
-  route_info_user: { height: windowHeight / 10, width: "93%" },
+  route_info_user: {
+    height: windowHeight / 20,
+    width: "93%",
+    justifyContent: "center",
+    marginLeft: 10,
+  },
   route_info_text: {
     fontSize: windowHeight / 60,
     fontFamily: "NotoRegular",
     color: "#3f3f3f",
-    marginTop: -windowHeight / 24,
+    marginLeft: -10,
+    marginTop: -windowHeight / 28,
     paddingLeft: windowHeight / 20,
   },
 
@@ -356,6 +362,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  member_safeView_contents_memberView: {
+    flexGrow: 0.8,
+    flexShrink: 1,
+    flexBasis: 0,
+    width: "90%",
   },
 });
 export default styles;

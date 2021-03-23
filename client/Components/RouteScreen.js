@@ -132,6 +132,7 @@ export default function RouteScreen() {
       await SecureStore.setItemAsync("Recording", "false");
       setRecording(false);
     }
+    setThumbImage(await SecureStore.getItemAsync("Thumb_Url"));
   };
 
   const getRouteData = async () => {
@@ -497,14 +498,15 @@ export default function RouteScreen() {
           ) : (
             <View style={styles.route_info}>
               <View style={styles.route_info_user}>
-                <Avatar.Icon
+                <Avatar.Image
                   style={{
                     backgroundColor: "white",
-                    paddingTop: windowHeight / 200,
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
-                  size={windowHeight / 20}
+                  source={{ url: thumbImage }}
+                  size={windowHeight / 30}
                   color="#b4b4b4"
-                  icon="account-circle"
                 />
                 <Text style={styles.route_info_text}>
                   {nickname}님, 총{" "}

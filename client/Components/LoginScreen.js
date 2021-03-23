@@ -75,6 +75,14 @@ export default function LoginScreen({ navigation }) {
       await SecureStore.setItemAsync("UserId", String(result.id));
       await SecureStore.setItemAsync("LoginType", result.memberType);
       await SecureStore.setItemAsync("NickName", result.nickname);
+      await SecureStore.setItemAsync("Name", result.name);
+      await SecureStore.setItemAsync("Image_Url", String(result.image_url));
+      await SecureStore.setItemAsync("Thumb_Url", String(result.thumb_url));
+      await SecureStore.setItemAsync("Privacy_Checked", String(result.privacy));
+      await SecureStore.setItemAsync(
+        "Location_Checked",
+        String(result.location)
+      );
       await SecureStore.setItemAsync("IsLogin", "true");
 
       navigation.reset({ index: 0, routes: [{ name: "메인" }] });

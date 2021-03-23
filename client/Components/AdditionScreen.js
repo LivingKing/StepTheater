@@ -90,21 +90,18 @@ export default function AdditionScreen({ navigation }) {
       form.location = locationChecked;
       form.nickname = nickname;
 
-      const response = await fetch(
-        `${server.address}/api/members/${id}/OAuth`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nickname: form.nickname,
-            privacy: form.privacy,
-            location: form.location,
-          }),
-        }
-      );
+      const response = await fetch(`${server.address}/api/member/${id}/OAuth`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nickname: form.nickname,
+          privacy: form.privacy,
+          location: form.location,
+        }),
+      });
       if (response.ok) {
         setSucDialogVis();
         const data = await response.json();

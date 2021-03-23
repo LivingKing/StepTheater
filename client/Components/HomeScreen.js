@@ -26,14 +26,6 @@ export default function HomeScreen({ navigation }) {
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
     );
   };
-  const checkRegisterDate = async () => {
-    try {
-      await SecureStore.getItemAsync("registerDate");
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
   const getMemberData = async () => {
     const id = await SecureStore.getItemAsync("UserId");
     const response = await fetch(`${server.address}/api/member?id=${id}`);
@@ -42,16 +34,18 @@ export default function HomeScreen({ navigation }) {
   };
 
   const setWDaysData = async () => {
+    console.log(await SecureStore.getItemAsync("registerDate"));
     setWDays(
       moment().diff(
         moment(await SecureStore.getItemAsync("registerDate")),
         "days"
       )
     );
+    console.log(wDays);
   };
   useFocusEffect(
     useCallback(() => {
-      if (!checkRegisterDate) getMemberData();
+      getMemberData();
       setWDaysData();
     }, [])
   );
@@ -74,8 +68,8 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={styles.com_safeView_contents}>
             <ImageBackground
-              source={require("../assets/bg.png")}
-              resizeMode="cover"
+              source={require("../assets/bg5.png")}
+              resizeMode="stretch"
               style={{
                 width: "100%",
                 height: "100%",
@@ -83,12 +77,11 @@ export default function HomeScreen({ navigation }) {
             >
               <Text
                 style={{
-                  textAlign: "left",
+                  textAlign: "center",
                   fontSize: 35,
                   fontFamily: "MapoFlower",
                   fontWeight: "800",
                   marginTop: 20,
-                  marginLeft: 15,
                 }}
               >
                 발자국을{"\n"}기록한 지{"\n"}
@@ -96,14 +89,13 @@ export default function HomeScreen({ navigation }) {
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "left",
+                  justifyContent: "center",
                   alignItems: "center",
-                  marginLeft: 15,
                 }}
               >
                 <Text
                   style={{
-                    textAlign: "left",
+                    textAlign: "center",
                     fontSize: 50,
                     fontFamily: "MapoFlower",
                     fontWeight: "600",
@@ -113,7 +105,7 @@ export default function HomeScreen({ navigation }) {
                 </Text>
                 <Text
                   style={{
-                    textAlign: "left",
+                    textAlign: "center",
                     fontSize: 35,
                     fontFamily: "MapoFlower",
                     fontWeight: "800",
