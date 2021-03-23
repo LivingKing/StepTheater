@@ -103,7 +103,7 @@ export default function DetailScreen({ navigation }) {
   const polyColor = ["blanchedalmond", "blueviolet", "thistle", "yellowgreen"];
 
   const getDate = async () => {
-    if (data == undefined) {
+    if (todayDate == undefined) {
       await SecureStore.getItemAsync("todayDate")
         .then(async (date) => {
           setTodayDate(date);
@@ -167,7 +167,7 @@ export default function DetailScreen({ navigation }) {
     setRefreshing(true);
 
     wait(2000).then(() => {
-      getMonth();
+      // getMonth();
       setRefreshing(false);
     });
   }, []);
@@ -386,8 +386,8 @@ export default function DetailScreen({ navigation }) {
                     nowY <= 0
                       ? divHeight
                       : nowY < divHeight
-                      ? divHeight - nowY
-                      : 0,
+                        ? divHeight - nowY
+                        : 0,
                   zIndex: 11,
                   backgroundColor: "white",
                 }}
@@ -408,8 +408,8 @@ export default function DetailScreen({ navigation }) {
                       nowY <= 0
                         ? windowWidth / 2.5
                         : nowY < divHeight
-                        ? windowWidth / 2.5 + nowY
-                        : windowWidth / 2.5 + divHeight,
+                          ? windowWidth / 2.5 + nowY
+                          : windowWidth / 2.5 + divHeight,
                     backgroundColor: "white",
                   }}
                 >
@@ -939,29 +939,29 @@ export default function DetailScreen({ navigation }) {
                                   if (svgDeltaX != 0) {
                                     Number(svgDeltaY) > Number(svgDeltaX)
                                       ? (go =
-                                          Number(
-                                            svgMidX -
-                                              svgDeltaY / 2 -
-                                              svgDeltaY * 0.15
-                                          ) +
-                                          " " +
-                                          Number(svgMinY - svgDeltaY * 0.15) +
-                                          " " +
-                                          svgDeltaY * 1.3 +
-                                          " " +
-                                          svgDeltaY * 1.3)
+                                        Number(
+                                          svgMidX -
+                                          svgDeltaY / 2 -
+                                          svgDeltaY * 0.15
+                                        ) +
+                                        " " +
+                                        Number(svgMinY - svgDeltaY * 0.15) +
+                                        " " +
+                                        svgDeltaY * 1.3 +
+                                        " " +
+                                        svgDeltaY * 1.3)
                                       : (go =
-                                          Number(svgMinX - svgDeltaX * 0.15) +
-                                          " " +
-                                          Number(
-                                            svgMidY -
-                                              svgDeltaX / 2 -
-                                              svgDeltaX * 0.15
-                                          ) +
-                                          " " +
-                                          svgDeltaX * 1.3 +
-                                          " " +
-                                          svgDeltaX * 1.3);
+                                        Number(svgMinX - svgDeltaX * 0.15) +
+                                        " " +
+                                        Number(
+                                          svgMidY -
+                                          svgDeltaX / 2 -
+                                          svgDeltaX * 0.15
+                                        ) +
+                                        " " +
+                                        svgDeltaX * 1.3 +
+                                        " " +
+                                        svgDeltaX * 1.3);
                                   }
 
                                   // console.log(go);
@@ -1046,17 +1046,17 @@ export default function DetailScreen({ navigation }) {
                                                 ? ""
                                                 : Number(svgDeltaY) >
                                                   Number(svgDeltaX)
-                                                ? Number(svgDeltaY) / 13
-                                                : Number(svgDeltaX) / 13
+                                                  ? Number(svgDeltaY) / 13
+                                                  : Number(svgDeltaX) / 13
                                             }
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             points={svgPoint}
-                                            // points="5.24928,8.90221 5.24930 9.5"
-                                            // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
-                                            // fill="none"
-                                            // stroke="black"
-                                            // strokeWidth="1"
+                                          // points="5.24928,8.90221 5.24930 9.5"
+                                          // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
+                                          // fill="none"
+                                          // stroke="black"
+                                          // strokeWidth="1"
                                           />
                                         </Svg>
                                       </View>
