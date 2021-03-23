@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
   route: { flex: 1, backgroundColor: "white" },
 
   route_title: {
-    flex: 0.05,
     marginTop: 3.8,
+    flex: 0.05,
     backgroundColor: "white",
     justifyContent: "center",
   },
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 
   route_title_after: {
-    marginTop: 3.8,
+    marginTop: 10,
     flex: 0.05,
     backgroundColor: "white",
     justifyContent: "center",
@@ -43,12 +43,18 @@ const styles = StyleSheet.create({
     paddingRight: 23,
     justifyContent: "space-between",
   },
-  route_info_user: { height: windowHeight / 10, width: "93%" },
+  route_info_user: {
+    height: windowHeight / 20,
+    width: "93%",
+    justifyContent: "center",
+    marginLeft: 10,
+  },
   route_info_text: {
     fontSize: windowHeight / 60,
     fontFamily: "NotoRegular",
     color: "#3f3f3f",
-    marginTop: -windowHeight / 24,
+    marginLeft: -10,
+    marginTop: -windowHeight / 28,
     paddingLeft: windowHeight / 20,
   },
 
@@ -300,7 +306,7 @@ const styles = StyleSheet.create({
   login_safeView_contents_logoView_logoText: {
     fontSize: 50,
     fontWeight: "700",
-    fontFamily: "DokLip",
+    fontFamily: "DoHyeon",
     color: "#262223",
   },
   login_safeView_contents_loginView: {
@@ -356,6 +362,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  member_safeView_contents_memberView: {
+    flexGrow: 0.8,
+    flexShrink: 1,
+    flexBasis: 0,
+    width: "90%",
   },
 });
 export default styles;

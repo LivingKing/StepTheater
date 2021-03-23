@@ -123,10 +123,21 @@ export default function RouteScreen() {
 
   const getSettings = async () => {
     setNickname(await SecureStore.getItemAsync("NickName"));
+    try {
+      const rec = await SecureStore.getItemAsync("Recording");
+      if (rec === "true") setRecording(true);
+      else if (rec === "false") setRecording(false);
+    } catch (e) {
+      console.err(e);
+      await SecureStore.setItemAsync("Recording", "false");
+      setRecording(false);
+    }
+    setThumbImage(await SecureStore.getItemAsync("Thumb_Url"));
   };
 
   const getRouteData = async () => {
-    if (recording) return;
+    const rec = await SecureStore.getItemAsync("Recording");
+    if (rec === "true") return;
     const id = await SecureStore.getItemAsync("UserId");
     const today = await SecureStore.getItemAsync("today");
 
@@ -173,7 +184,6 @@ export default function RouteScreen() {
     setTotalHours(result.totalHours);
     setTotalMinutes(result.totalMinutes);
     setTotalMarkers(result.totalMarkers);
-    setMarkersCnt(totalRoute.length);
     setRouteCnt(result.count);
   };
 
@@ -272,10 +282,10 @@ export default function RouteScreen() {
     setMinute(Math.floor(totaltime % 60));
     setCurrentTime(currentTime);
   };
-  const routeStateChange = () => {
+  const routeStateChange = async () => {
+    if (recording) await SecureStore.setItemAsync("Recording", "false");
+    else await SecureStore.setItemAsync("Recording", "true");
     setRecording(!recording);
-
-    //console.log(recording);
   };
 
   const windowWidth = Dimensions.get("window").width;
@@ -371,7 +381,7 @@ export default function RouteScreen() {
     setMarkersCnt(0);
     setCurrentTime([]);
 
-    setRecording(false);
+    routeStateChange();
     setModalVisible(false);
     setModalVisible2(false);
     setAdding(false);
@@ -488,14 +498,15 @@ export default function RouteScreen() {
           ) : (
             <View style={styles.route_info}>
               <View style={styles.route_info_user}>
-                <Avatar.Icon
+                <Avatar.Image
                   style={{
                     backgroundColor: "white",
-                    paddingTop: windowHeight / 200,
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
-                  size={windowHeight / 20}
+                  source={{ url: thumbImage }}
+                  size={windowHeight / 30}
                   color="#b4b4b4"
-                  icon="account-circle"
                 />
                 <Text style={styles.route_info_text}>
                   {nickname}님, 총{" "}

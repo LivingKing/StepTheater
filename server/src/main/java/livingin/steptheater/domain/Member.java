@@ -38,6 +38,10 @@ public class Member {
 
     private String certified;
 
+    private String image_url;
+
+    private String thumb_url;
+
     @OneToMany(mappedBy = "member")
     private List<Diary> diaries = new ArrayList<>();
 

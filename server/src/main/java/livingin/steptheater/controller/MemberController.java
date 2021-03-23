@@ -55,9 +55,9 @@ public class MemberController {
             findMember = memberService.findOneByOAuth(oauth);
 
         if (findMember == null) {
-            return new GetMemberResponse(0L, "none", "none", null);
+            return new GetMemberResponse(0L, "none", "none","none", null);
         }
-        return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname(), findMember.getRegisterDate().toLocalDate());
+        return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname(),findMember.getName(), findMember.getRegisterDate().toLocalDate());
     }
 
     @RequestMapping("/api/member/certified")
@@ -136,9 +136,9 @@ public class MemberController {
     public UpdateMemberResponse updateMember(
             @PathVariable("id") Long id,
             @RequestBody @Valid UpdateMemberRequest request) {
-        memberService.update(id, request.getEmail());
+        memberService.update(id, request.nickname, request.privacy, request.location,request.image_url, request.thumb_url);
         Member findMember = memberService.findOne(id);
-        return new UpdateMemberResponse(findMember.getId(), findMember.getNickname());
+        return new UpdateMemberResponse(findMember.getId(), findMember.getNickname(), findMember.isPrivacy_Checked(), findMember.isLocation_Checked(), findMember.getImage_url(), findMember.getThumb_url());
     }
 
     @PutMapping("/api/member/{id}/OAuth")
@@ -156,7 +156,7 @@ public class MemberController {
             @RequestBody @Valid LoginMemberRequest request) {
         String message = memberService.login(request.email, request.password);
         Member member = memberService.findOneByEmail(request.email);
-        return new LoginMemberResponse(message, member.getId(), member.getEmail(), member.getMemberType(), member.getNickname());
+        return new LoginMemberResponse(message, member.getId(), member.getEmail(), member.getMemberType(), member.getNickname(), member.getName(), member.getImage_url(), member.getThumb_url(), member.isPrivacy_Checked(), member.isLocation_Checked());
     }
 
     private String certified_key() {
@@ -215,6 +215,7 @@ public class MemberController {
         private Long id;
         private String email;
         private String nickname;
+        private String name;
         private LocalDate registerDate;
     }
 
@@ -222,12 +223,20 @@ public class MemberController {
     @AllArgsConstructor
     static class UpdateMemberResponse {
         private Long id;
-        private String Email;
+        private String nickname;
+        private boolean privacy;
+        private boolean location;
+        private String image_url;
+        private String thumb_url;
     }
 
     @Data
     static class UpdateMemberRequest {
-        private String Email;
+        private String nickname;
+        private boolean privacy;
+        private boolean location;
+        private String image_url;
+        private String thumb_url;
     }
 
     @Data
@@ -238,6 +247,11 @@ public class MemberController {
         private String email;
         private MemberType memberType;
         private String nickname;
+        private String name;
+        private String image_url;
+        private String thumb_url;
+        private Boolean privacy;
+        private Boolean location;
     }
 
     @Data

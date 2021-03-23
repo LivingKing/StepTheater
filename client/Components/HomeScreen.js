@@ -1,6 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Text, View, SafeAreaView, Platform, Image } from "react-native";
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Platform,
+  Image,
+  ImageBackground,
+} from "react-native";
 import styles from "../assets/styles";
 
 import * as SecureStore from "expo-secure-store";
@@ -27,16 +34,14 @@ export default function HomeScreen({ navigation }) {
   };
 
   const setWDaysData = async () => {
-
     console.log(await SecureStore.getItemAsync("registerDate"));
     setWDays(
       moment().diff(
         moment(await SecureStore.getItemAsync("registerDate")),
         "days"
       )
-    )
+    );
     console.log(wDays);
-
   };
   useFocusEffect(
     useCallback(() => {
@@ -62,39 +67,30 @@ export default function HomeScreen({ navigation }) {
             {/* <Text style={styles.com_safeView_title_text}>걸음 한 편</Text> */}
           </View>
           <View style={styles.com_safeView_contents}>
-            <Text
+            <ImageBackground
+              source={require("../assets/bg5.png")}
+              resizeMode="stretch"
               style={{
-                textAlign: "center",
-                fontSize: 40,
-                fontFamily: "MapoFlower",
-                fontWeight: "800",
-              }}
-            >
-              발자국을{"\n"}기록한 지{"\n\n"}
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+                width: "100%",
+                height: "100%",
               }}
             >
               <Text
                 style={{
                   textAlign: "center",
-                  fontSize: 60,
-                  fontFamily: "MapoFlower",
-                  fontWeight: "600",
-                }}
-              >
-                {wDays}
-              </Text>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 40,
+                  fontSize: 35,
                   fontFamily: "MapoFlower",
                   fontWeight: "800",
+                  marginTop: 20,
+                }}
+              >
+                발자국을{"\n"}기록한 지{"\n"}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 걸음째

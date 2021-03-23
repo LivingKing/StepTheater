@@ -12,8 +12,8 @@ import {
   Animated,
   Image,
 } from "react-native";
-import { Avatar, IconButton, Surface } from "react-native-paper"
-import styles from "../../assets/styles"
+import { Avatar, IconButton, Surface } from "react-native-paper";
+import styles from "../../assets/styles";
 import styles_detail from "../../assets/styles_detail";
 import * as SecureStore from "expo-secure-store";
 import moment from "moment";
@@ -45,14 +45,11 @@ export default function DetailScreen({ navigation }) {
   let nowNum = -1;
   let temp = 0;
 
-
   const [recentData, setRecentData] = useState();
 
   const [todayDate, setTodayDate] = useState();
 
   const [dayItem, setDayItem] = useState();
-
-
 
   const getRecent = async () => {
     if (recentData == undefined) {
@@ -103,12 +100,7 @@ export default function DetailScreen({ navigation }) {
     // console.log(mapviewInit);
   };
 
-  const polyColor = [
-    "blanchedalmond",
-    "blueviolet",
-    "thistle",
-    "yellowgreen",
-  ];
+  const polyColor = ["blanchedalmond", "blueviolet", "thistle", "yellowgreen"];
 
   const getDate = async () => {
     if (data == undefined) {
@@ -164,7 +156,6 @@ export default function DetailScreen({ navigation }) {
 
     setModal(true);
   };
-
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -238,8 +229,6 @@ export default function DetailScreen({ navigation }) {
             }}
           />
 
-
-
           {nowY > divHeight ? (
             <View style={styles_detail.detail_title2}>
               <Avatar.Image
@@ -247,33 +236,33 @@ export default function DetailScreen({ navigation }) {
                 source={require("../../assets/icon.png")}
               />
               <Text
-                style={[styles_detail.detail_header, { marginLeft: 7, fontFamily: "NotoMedium" }]}
+                style={[
+                  styles_detail.detail_header,
+                  { marginLeft: 7, fontFamily: "NotoMedium" },
+                ]}
               >
                 {nickname}
-                <Text
-                  style={styles_detail.detail_header}
-                >
-                  님의 동선
-                  </Text>
+                <Text style={styles_detail.detail_header}>님의 동선</Text>
               </Text>
             </View>
           ) : (
             <View
-              style={[styles_detail.detail_title, nowY >= 0 && {
-                borderBottomColor: "#e6e6e6",
-                borderBottomWidth: 1,
-              }]}
+              style={[
+                styles_detail.detail_title,
+                nowY >= 0 && {
+                  borderBottomColor: "#e6e6e6",
+                  borderBottomWidth: 1,
+                },
+              ]}
             >
               <Image
                 style={styles_detail.detail_logo}
                 source={require("../../assets/detail.png")}
               />
             </View>
-          )
-          }
+          )}
 
           <View style={styles_detail.detail_contents}>
-
             <View style={{ flex: 1, backgroundColor: "white" }}>
               <View
                 style={{
@@ -328,7 +317,7 @@ export default function DetailScreen({ navigation }) {
                           }}
                         >
                           님의 동선
-                          </Text>
+                        </Text>
                       </Text>
 
                       <Text
@@ -348,7 +337,7 @@ export default function DetailScreen({ navigation }) {
                           }}
                         >
                           0
-                            <Text
+                          <Text
                             style={{
                               fontSize: windowWidth / 32,
                               fontFamily: "NotoLight",
@@ -366,7 +355,7 @@ export default function DetailScreen({ navigation }) {
                             }}
                           >
                             0
-                              <Text
+                            <Text
                               style={{
                                 fontSize: windowWidth / 32,
                                 fontFamily: "NotoLight",
@@ -374,7 +363,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               편
-                              </Text>
+                            </Text>
                           </Text>
                         </Text>
                       </Text>
@@ -397,8 +386,8 @@ export default function DetailScreen({ navigation }) {
                     nowY <= 0
                       ? divHeight
                       : nowY < divHeight
-                        ? divHeight - nowY
-                        : 0,
+                      ? divHeight - nowY
+                      : 0,
                   zIndex: 11,
                   backgroundColor: "white",
                 }}
@@ -419,16 +408,15 @@ export default function DetailScreen({ navigation }) {
                       nowY <= 0
                         ? windowWidth / 2.5
                         : nowY < divHeight
-                          ? windowWidth / 2.5 + nowY
-                          : windowWidth / 2.5 + divHeight,
+                        ? windowWidth / 2.5 + nowY
+                        : windowWidth / 2.5 + divHeight,
                     backgroundColor: "white",
                   }}
                 >
                   <View
                     style={{
                       width: "100%",
-                      top:
-                        nowY >= divHeight ? divHeight : nowY < 0 ? 0 : nowY,
+                      top: nowY >= divHeight ? divHeight : nowY < 0 ? 0 : nowY,
                       height: windowWidth / 8.5,
                       backgroundColor: "white",
                       justifyContent: "space-between",
@@ -449,7 +437,7 @@ export default function DetailScreen({ navigation }) {
                         }}
                       >
                         3
-                          <Text
+                        <Text
                           style={{
                             fontSize: windowWidth / 25,
                             fontFamily: "NotoLight",
@@ -457,7 +445,7 @@ export default function DetailScreen({ navigation }) {
                           }}
                         >
                           월 총 동선 기록
-                          </Text>
+                        </Text>
                       </Text>
                       <IconButton
                         icon={"help-circle-outline"}
@@ -501,11 +489,7 @@ export default function DetailScreen({ navigation }) {
                           width: "90%",
                           height: windowWidth / 3.9,
                           top:
-                            nowY >= divHeight
-                              ? divHeight
-                              : nowY < 0
-                                ? 0
-                                : nowY,
+                            nowY >= divHeight ? divHeight : nowY < 0 ? 0 : nowY,
                           alignSelf: "center",
                           borderRadius: 10,
                           elevation: 0.97,
@@ -553,7 +537,7 @@ export default function DetailScreen({ navigation }) {
                                 }}
                               >
                                 km
-                                </Text>
+                              </Text>
                             </Text>
                             <Text
                               style={{
@@ -564,7 +548,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               총 거리
-                              </Text>
+                            </Text>
                           </View>
                           <View
                             style={{
@@ -593,7 +577,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               {totalHours}:
-                                {totalMinutes.toString().padStart(2, "0")}
+                              {totalMinutes.toString().padStart(2, "0")}
                               <Text
                                 style={{
                                   fontSize: windowWidth / 30,
@@ -602,7 +586,7 @@ export default function DetailScreen({ navigation }) {
                                 }}
                               >
                                 분
-                                </Text>
+                              </Text>
                             </Text>
                             <Text
                               style={{
@@ -613,7 +597,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               총 시간
-                              </Text>
+                            </Text>
                           </View>
                           <View
                             style={{
@@ -646,7 +630,7 @@ export default function DetailScreen({ navigation }) {
                                 }}
                               >
                                 개
-                                </Text>
+                              </Text>
                             </Text>
                             <Text
                               style={{
@@ -657,7 +641,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               마커 갯수
-                              </Text>
+                            </Text>
                           </View>
                         </View>
                       </Surface>
@@ -669,11 +653,7 @@ export default function DetailScreen({ navigation }) {
                           width: "90%",
                           height: windowWidth / 3.9,
                           top:
-                            nowY >= divHeight
-                              ? divHeight
-                              : nowY < 0
-                                ? 0
-                                : nowY,
+                            nowY >= divHeight ? divHeight : nowY < 0 ? 0 : nowY,
                           alignSelf: "center",
                           borderRadius: 10,
                           elevation: 0.97,
@@ -713,7 +693,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               0
-                                <Text
+                              <Text
                                 style={{
                                   fontSize: windowWidth / 30,
                                   fontFamily: "NotoLight",
@@ -721,7 +701,7 @@ export default function DetailScreen({ navigation }) {
                                 }}
                               >
                                 일
-                                </Text>
+                              </Text>
                             </Text>
                             <Text
                               style={{
@@ -732,7 +712,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               기록한 날
-                              </Text>
+                            </Text>
                           </View>
                           <View
                             style={{
@@ -759,7 +739,7 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               0
-                                <Text
+                              <Text
                                 style={{
                                   fontSize: windowWidth / 30,
                                   fontFamily: "NotoLight",
@@ -767,7 +747,7 @@ export default function DetailScreen({ navigation }) {
                                 }}
                               >
                                 편
-                                </Text>
+                              </Text>
                             </Text>
                             <Text
                               style={{
@@ -778,14 +758,13 @@ export default function DetailScreen({ navigation }) {
                               }}
                             >
                               기록한 동선
-                              </Text>
+                            </Text>
                           </View>
                         </View>
                       </Surface>
                     </View>
                   </Animated.ScrollView>
                 </View>
-
 
                 {/* <View style={{
                     width: "100%", height: 300
@@ -805,7 +784,7 @@ export default function DetailScreen({ navigation }) {
                   style={{
                     width: "100%",
                     backgroundColor: "white",
-                    paddingBottom: windowWidth / 20
+                    paddingBottom: windowWidth / 20,
                   }}
                 >
                   <View
@@ -826,28 +805,38 @@ export default function DetailScreen({ navigation }) {
                         alignItems: "center",
                       }}
                     >
-                      <Text style={{
-                        fontSize: windowWidth / 25,
-                        fontFamily: "NotoMedium",
-                        color: "#555555",
-                      }}>최근 동선</Text>
-                      <TouchableOpacity onPress={() => {
-                        navigation.push("모든기록", {
-                          routeData: routeData
-                        });
-                      }}>
-                        <Text style={{
-                          fontSize: windowWidth / 30,
-                          fontFamily: "NotoRegular",
-                          color: "#777777",
-                          marginRight: -windowWidth / 100
-                        }}>모두 보기  ❯</Text>
+                      <Text
+                        style={{
+                          fontSize: windowWidth / 25,
+                          fontFamily: "NotoMedium",
+                          color: "#555555",
+                        }}
+                      >
+                        최근 동선
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.push("모든기록", {
+                            routeData: routeData,
+                          });
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: windowWidth / 30,
+                            fontFamily: "NotoRegular",
+                            color: "#777777",
+                            marginRight: -windowWidth / 100,
+                          }}
+                        >
+                          모두 보기 ❯
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
                   <View style={{}}>
-                    {recentData != undefined ?
-                      (recentData.data.map((item, index) => {
+                    {recentData != undefined ? (
+                      recentData.data.map((item, index) => {
                         return (
                           <View
                             key={index}
@@ -856,9 +845,11 @@ export default function DetailScreen({ navigation }) {
                               justifyContent: "center",
                             }}
                           >
-
                             {item.routes.map((content, index) => {
-                              if (content.routeItems.length != 0 && content.routeItems.length != 1) {
+                              if (
+                                content.routeItems.length != 0 &&
+                                content.routeItems.length != 1
+                              ) {
                                 nowNum++;
                                 temp++;
                                 let svgMinX;
@@ -883,22 +874,10 @@ export default function DetailScreen({ navigation }) {
 
                                   // calculate rect
                                   content.routeItems.map((point) => {
-                                    minX = Math.min(
-                                      minX,
-                                      point.latitude
-                                    );
-                                    maxX = Math.max(
-                                      maxX,
-                                      point.latitude
-                                    );
-                                    minY = Math.min(
-                                      minY,
-                                      point.longitude
-                                    );
-                                    maxY = Math.max(
-                                      maxY,
-                                      point.longitude
-                                    );
+                                    minX = Math.min(minX, point.latitude);
+                                    maxX = Math.max(maxX, point.latitude);
+                                    minY = Math.min(minY, point.longitude);
+                                    maxY = Math.max(maxY, point.longitude);
                                   });
                                   // const midX = (minX + maxX) / 2;
                                   // const midY = (minY + maxY) / 2;
@@ -937,15 +916,13 @@ export default function DetailScreen({ navigation }) {
                                     .toString()
                                     .substring(0, 5);
                                   svgMidX = (
-                                    (Number(svgMaxX) +
-                                      Number(svgMinX)) /
+                                    (Number(svgMaxX) + Number(svgMinX)) /
                                     2
                                   )
                                     .toString()
                                     .substring(0, 6);
                                   svgMidY = (
-                                    (Number(svgMaxY) +
-                                      Number(svgMinY)) /
+                                    (Number(svgMaxY) + Number(svgMinY)) /
                                     2
                                   )
                                     .toString()
@@ -960,36 +937,31 @@ export default function DetailScreen({ navigation }) {
                                   // console.log(svgDeltaY);
 
                                   if (svgDeltaX != 0) {
-                                    Number(svgDeltaY) >
-                                      Number(svgDeltaX)
+                                    Number(svgDeltaY) > Number(svgDeltaX)
                                       ? (go =
-                                        Number(
-                                          svgMidX -
-                                          svgDeltaY / 2 -
-                                          svgDeltaY * 0.15
-                                        ) +
-                                        " " +
-                                        Number(
-                                          svgMinY - svgDeltaY * 0.15
-                                        ) +
-                                        " " +
-                                        svgDeltaY * 1.3 +
-                                        " " +
-                                        svgDeltaY * 1.3)
+                                          Number(
+                                            svgMidX -
+                                              svgDeltaY / 2 -
+                                              svgDeltaY * 0.15
+                                          ) +
+                                          " " +
+                                          Number(svgMinY - svgDeltaY * 0.15) +
+                                          " " +
+                                          svgDeltaY * 1.3 +
+                                          " " +
+                                          svgDeltaY * 1.3)
                                       : (go =
-                                        Number(
-                                          svgMinX - svgDeltaX * 0.15
-                                        ) +
-                                        " " +
-                                        Number(
-                                          svgMidY -
-                                          svgDeltaX / 2 -
-                                          svgDeltaX * 0.15
-                                        ) +
-                                        " " +
-                                        svgDeltaX * 1.3 +
-                                        " " +
-                                        svgDeltaX * 1.3);
+                                          Number(svgMinX - svgDeltaX * 0.15) +
+                                          " " +
+                                          Number(
+                                            svgMidY -
+                                              svgDeltaX / 2 -
+                                              svgDeltaX * 0.15
+                                          ) +
+                                          " " +
+                                          svgDeltaX * 1.3 +
+                                          " " +
+                                          svgDeltaX * 1.3);
                                   }
 
                                   // console.log(go);
@@ -999,21 +971,13 @@ export default function DetailScreen({ navigation }) {
                                   .map(
                                     (p) =>
                                       `${[
-                                        p.latitude
-                                          .toString()
-                                          .substring(3, 5),
+                                        p.latitude.toString().substring(3, 5),
                                         ".",
-                                        p.latitude
-                                          .toString()
-                                          .substring(5, 8),
+                                        p.latitude.toString().substring(5, 8),
                                       ].join("")},${[
-                                        p.longitude
-                                          .toString()
-                                          .substring(4, 6),
+                                        p.longitude.toString().substring(4, 6),
                                         ".",
-                                        p.longitude
-                                          .toString()
-                                          .substring(6, 9),
+                                        p.longitude.toString().substring(6, 9),
                                       ].join("")}`
                                   )
                                   .join(" ");
@@ -1049,8 +1013,7 @@ export default function DetailScreen({ navigation }) {
                                           width: 62,
                                           height: 62,
                                           backgroundColor:
-                                            content.routeItems.length !=
-                                              0
+                                            content.routeItems.length != 0
                                               ? "white"
                                               : "grey",
                                           alignSelf: "center",
@@ -1064,9 +1027,7 @@ export default function DetailScreen({ navigation }) {
                                       >
                                         <Svg
                                           style={{
-                                            transform: [
-                                              { rotate: "-90deg" },
-                                            ],
+                                            transform: [{ rotate: "-90deg" }],
                                           }}
                                           // viewBox="-0.25 54.7 4.8 10"
                                           // viewBox="0 55.15 4.40 300"
@@ -1079,260 +1040,213 @@ export default function DetailScreen({ navigation }) {
                                           {/* <Svg height="100%" width="100%" viewBox="0 0 100 100"> */}
                                           <Poly
                                             fill="none"
-                                            stroke={
-                                              polyColor[nowNum % 4]
-                                            }
+                                            stroke={polyColor[nowNum % 4]}
                                             strokeWidth={
-                                              content.routeItems
-                                                .length == 0
+                                              content.routeItems.length == 0
                                                 ? ""
                                                 : Number(svgDeltaY) >
                                                   Number(svgDeltaX)
-                                                  ? Number(svgDeltaY) / 13
-                                                  : Number(svgDeltaX) / 13
+                                                ? Number(svgDeltaY) / 13
+                                                : Number(svgDeltaX) / 13
                                             }
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             points={svgPoint}
-                                          // points="5.24928,8.90221 5.24930 9.5"
-                                          // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
-                                          // fill="none"
-                                          // stroke="black"
-                                          // strokeWidth="1"
+                                            // points="5.24928,8.90221 5.24930 9.5"
+                                            // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
+                                            // fill="none"
+                                            // stroke="black"
+                                            // strokeWidth="1"
                                           />
                                         </Svg>
                                       </View>
-
 
                                       <View
                                         style={{
                                           width: "73%",
                                           height: "100%",
-                                          borderTopWidth:
-                                            temp == 1 ? 0 : 1,
+                                          borderTopWidth: temp == 1 ? 0 : 1,
                                           borderColor: "#e6e6e6",
                                         }}
                                       >
-                                        {routeData !== undefined
-                                          ? (routeData.data.map(
-                                            (route, index) => {
-                                              if (
-                                                route.id ==
-                                                content.id &&
-                                                route.distance != 0
-                                              )
-                                                return (
+                                        {routeData !== undefined ? (
+                                          routeData.data.map((route, index) => {
+                                            if (
+                                              route.id == content.id &&
+                                              route.distance != 0
+                                            )
+                                              return (
+                                                <View
+                                                  style={{
+                                                    width: "100%",
+                                                    flexDirection: "row",
+                                                    marginTop: windowWidth / 80,
+                                                  }}
+                                                  key={index}
+                                                >
                                                   <View
                                                     style={{
-                                                      width: "100%",
-                                                      flexDirection:
-                                                        "row",
-                                                      marginTop:
-                                                        windowWidth /
-                                                        80,
+                                                      backgroundColor: "white",
+                                                      flexDirection: "row",
+                                                      justifyContent:
+                                                        "space-between",
                                                     }}
                                                     key={index}
                                                   >
-                                                    <View
-                                                      style={{
-                                                        backgroundColor:
-                                                          "white",
-                                                        flexDirection:
-                                                          "row",
-                                                        justifyContent:
-                                                          "space-between",
-                                                      }}
-                                                      key={index}
-                                                    >
+                                                    {route.distance >= 1 ? (
+                                                      <View
+                                                        style={{
+                                                          alignItems: "center",
+                                                          justifyContent:
+                                                            "center",
+                                                          height:
+                                                            windowWidth / 20,
+                                                          width:
+                                                            windowWidth / 11,
+                                                          flexDirection: "row",
+                                                          borderRadius: 5,
+                                                          borderWidth: 1,
+                                                          borderColor:
+                                                            "#C58B41",
+                                                          marginRight:
+                                                            windowWidth / 80,
+                                                        }}
+                                                      >
+                                                        <Text
+                                                          style={{
+                                                            fontSize:
+                                                              windowWidth / 33,
+                                                            fontFamily:
+                                                              "NotoBold",
+                                                            color: "#C58B41",
+                                                            marginTop:
+                                                              -windowWidth / 90,
+                                                          }}
+                                                        >
+                                                          1km
+                                                        </Text>
+                                                      </View>
+                                                    ) : route.distance >=
+                                                      0.1 ? (
+                                                      <View
+                                                        style={{
+                                                          alignItems: "center",
+                                                          justifyContent:
+                                                            "center",
+                                                          height:
+                                                            windowWidth / 20,
+                                                          width:
+                                                            windowWidth / 11,
+                                                          flexDirection: "row",
+                                                          borderRadius: 5,
+                                                          borderWidth: 1,
+                                                          borderColor:
+                                                            "#C54441",
+                                                          marginRight:
+                                                            windowWidth / 80,
+                                                        }}
+                                                      >
+                                                        <Text
+                                                          style={{
+                                                            fontSize:
+                                                              windowWidth / 33,
+                                                            fontFamily:
+                                                              "NotoBold",
+                                                            color: "#C54441",
+                                                            marginTop:
+                                                              -windowWidth / 90,
+                                                          }}
+                                                        >
+                                                          100m
+                                                        </Text>
+                                                      </View>
+                                                    ) : (
+                                                      <></>
+                                                    )}
 
-                                                      {route.distance >=
-                                                        1 ? (
-                                                        <View
+                                                    {route.minutes >= 5 ? (
+                                                      <View
+                                                        style={{
+                                                          alignItems: "center",
+                                                          justifyContent:
+                                                            "center",
+                                                          height:
+                                                            windowWidth / 20,
+                                                          width:
+                                                            windowWidth / 11,
+                                                          flexDirection: "row",
+                                                          borderRadius: 5,
+                                                          borderWidth: 1,
+                                                          borderColor:
+                                                            "#33AB3A",
+                                                          marginRight:
+                                                            windowWidth / 80,
+                                                        }}
+                                                      >
+                                                        <Text
                                                           style={{
-                                                            alignItems:
-                                                              "center",
-                                                            justifyContent:
-                                                              "center",
-                                                            height:
-                                                              windowWidth /
-                                                              20,
-                                                            width:
-                                                              windowWidth /
-                                                              11,
-                                                            flexDirection:
-                                                              "row",
-                                                            borderRadius: 5,
-                                                            borderWidth: 1,
-                                                            borderColor:
-                                                              "#C58B41",
-                                                            marginRight:
-                                                              windowWidth /
-                                                              80,
+                                                            fontSize:
+                                                              windowWidth / 33,
+                                                            fontFamily:
+                                                              "NotoBold",
+                                                            color: "#33AB3A",
+                                                            marginTop:
+                                                              -windowWidth / 90,
                                                           }}
                                                         >
-                                                          <Text
-                                                            style={{
-                                                              fontSize:
-                                                                windowWidth /
-                                                                33,
-                                                              fontFamily:
-                                                                "NotoBold",
-                                                              color:
-                                                                "#C58B41",
-                                                              marginTop:
-                                                                -windowWidth /
-                                                                90,
-                                                            }}
-                                                          >
-                                                            1km
-                                                                    </Text>
-                                                        </View>
-                                                      ) : route.distance >=
-                                                        0.1 ? (
-                                                        <View
+                                                          5hr
+                                                        </Text>
+                                                      </View>
+                                                    ) : route.minutes >= 1 ? (
+                                                      <View
+                                                        style={{
+                                                          alignItems: "center",
+                                                          justifyContent:
+                                                            "center",
+                                                          height:
+                                                            windowWidth / 20,
+                                                          width:
+                                                            windowWidth / 11,
+                                                          flexDirection: "row",
+                                                          borderRadius: 5,
+                                                          borderWidth: 1,
+                                                          borderColor:
+                                                            "#4aa2ad",
+                                                          marginRight:
+                                                            windowWidth / 80,
+                                                        }}
+                                                      >
+                                                        <Text
                                                           style={{
-                                                            alignItems:
-                                                              "center",
-                                                            justifyContent:
-                                                              "center",
-                                                            height:
-                                                              windowWidth /
-                                                              20,
-                                                            width:
-                                                              windowWidth /
-                                                              11,
-                                                            flexDirection:
-                                                              "row",
-                                                            borderRadius: 5,
-                                                            borderWidth: 1,
-                                                            borderColor:
-                                                              "#C54441",
-                                                            marginRight:
-                                                              windowWidth /
-                                                              80,
+                                                            fontSize:
+                                                              windowWidth / 33,
+                                                            fontFamily:
+                                                              "NotoBold",
+                                                            color: "#4aa2ad",
+                                                            marginTop:
+                                                              -windowWidth / 90,
                                                           }}
                                                         >
-                                                          <Text
-                                                            style={{
-                                                              fontSize:
-                                                                windowWidth /
-                                                                33,
-                                                              fontFamily:
-                                                                "NotoBold",
-                                                              color:
-                                                                "#C54441",
-                                                              marginTop:
-                                                                -windowWidth /
-                                                                90,
-                                                            }}
-                                                          >
-                                                            100m
-                                                                    </Text>
-                                                        </View>
-                                                      ) : (
-                                                        <></>
-                                                      )}
-
-                                                      {route.minutes >=
-                                                        5 ? (
-                                                        <View
-                                                          style={{
-                                                            alignItems:
-                                                              "center",
-                                                            justifyContent:
-                                                              "center",
-                                                            height:
-                                                              windowWidth /
-                                                              20,
-                                                            width:
-                                                              windowWidth /
-                                                              11,
-                                                            flexDirection:
-                                                              "row",
-                                                            borderRadius: 5,
-                                                            borderWidth: 1,
-                                                            borderColor:
-                                                              "#33AB3A",
-                                                            marginRight:
-                                                              windowWidth /
-                                                              80,
-                                                          }}
-                                                        >
-                                                          <Text
-                                                            style={{
-                                                              fontSize:
-                                                                windowWidth /
-                                                                33,
-                                                              fontFamily:
-                                                                "NotoBold",
-                                                              color:
-                                                                "#33AB3A",
-                                                              marginTop:
-                                                                -windowWidth /
-                                                                90,
-                                                            }}
-                                                          >
-                                                            5hr
-                                                                    </Text>
-                                                        </View>
-                                                      ) : route.minutes >=
-                                                        1 ? (
-                                                        <View
-                                                          style={{
-                                                            alignItems:
-                                                              "center",
-                                                            justifyContent:
-                                                              "center",
-                                                            height:
-                                                              windowWidth /
-                                                              20,
-                                                            width:
-                                                              windowWidth /
-                                                              11,
-                                                            flexDirection:
-                                                              "row",
-                                                            borderRadius: 5,
-                                                            borderWidth: 1,
-                                                            borderColor:
-                                                              "#4aa2ad",
-                                                            marginRight:
-                                                              windowWidth /
-                                                              80,
-                                                          }}
-                                                        >
-                                                          <Text
-                                                            style={{
-                                                              fontSize:
-                                                                windowWidth /
-                                                                33,
-                                                              fontFamily:
-                                                                "NotoBold",
-                                                              color:
-                                                                "#4aa2ad",
-                                                              marginTop:
-                                                                -windowWidth /
-                                                                90,
-                                                            }}
-                                                          >
-                                                            1hr
-                                                                    </Text>
-                                                        </View>
-                                                      ) : (
-                                                        <></>
-                                                      )}
-                                                    </View>
+                                                          1hr
+                                                        </Text>
+                                                      </View>
+                                                    ) : (
+                                                      <></>
+                                                    )}
                                                   </View>
-                                                );
-                                            }
-                                          ))
-                                          : (<></>)}
-                                        <View style={{
-                                          flex: index == 1 ? 1 : 0.6,
-                                          justifyContent: "space-between",
-                                          marginTop: "1%"
-                                        }}>
-
-
+                                                </View>
+                                              );
+                                          })
+                                        ) : (
+                                          <></>
+                                        )}
+                                        <View
+                                          style={{
+                                            flex: index == 1 ? 1 : 0.6,
+                                            justifyContent: "space-between",
+                                            marginTop: "1%",
+                                          }}
+                                        >
                                           <Text
                                             style={{
                                               fontSize: windowWidth / 28,
@@ -1352,19 +1266,18 @@ export default function DetailScreen({ navigation }) {
                                             {item.diaryDate}
                                           </Text>
                                         </View>
-
                                       </View>
-
                                     </View>
-
                                   </TouchableOpacity>
                                 );
                               }
                             })}
                           </View>
                         );
-                      }
-                      )) : (<></>)}
+                      })
+                    ) : (
+                      <></>
+                    )}
                   </View>
                 </View>
                 <View
@@ -1411,7 +1324,7 @@ export default function DetailScreen({ navigation }) {
             </View>
           </View>
         </SafeAreaView>
-      </Fragment >
+      </Fragment>
     );
   } else {
     return null;
