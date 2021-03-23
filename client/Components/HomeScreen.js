@@ -93,10 +93,29 @@ export default function HomeScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text>
-                걸음째
-            </Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 50,
+                    fontFamily: "MapoFlower",
+                    fontWeight: "600",
+                  }}
+                >
+                  {wDays}
+                </Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 35,
+                    fontFamily: "MapoFlower",
+                    fontWeight: "800",
+                  }}
+                >
+                  {" "}
+                  걸음째
+                </Text>
               </View>
+            </ImageBackground>
           </View>
         </SafeAreaView>
       </Fragment>
