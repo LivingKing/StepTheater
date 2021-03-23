@@ -19,14 +19,6 @@ export default function HomeScreen({ navigation }) {
       "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
     );
   };
-  const checkRegisterDate = async () => {
-    try {
-      await SecureStore.getItemAsync("registerDate");
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
   const getMemberData = async () => {
     const id = await SecureStore.getItemAsync("UserId");
     const response = await fetch(`${server.address}/api/member?id=${id}`);
@@ -35,16 +27,20 @@ export default function HomeScreen({ navigation }) {
   };
 
   const setWDaysData = async () => {
+
+    console.log(await SecureStore.getItemAsync("registerDate"));
     setWDays(
       moment().diff(
         moment(await SecureStore.getItemAsync("registerDate")),
         "days"
       )
-    );
+    )
+    console.log(wDays);
+
   };
   useFocusEffect(
     useCallback(() => {
-      if (!checkRegisterDate) getMemberData();
+      getMemberData();
       setWDaysData();
     }, [])
   );
@@ -101,7 +97,7 @@ export default function HomeScreen({ navigation }) {
                   fontWeight: "800",
                 }}
               >
-                걸음
+                걸음째
               </Text>
             </View>
           </View>

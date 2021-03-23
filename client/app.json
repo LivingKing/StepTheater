@@ -30,7 +30,7 @@
       "favicon": "./assets/favicon.png"
     }
   },
-  "server":{
-    "address":"http://203.241.228.108:8080"
+  "server": {
+    "address": "http://203.241.228.108:8080"
   }
 }

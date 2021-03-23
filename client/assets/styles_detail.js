@@ -5,7 +5,15 @@ const windowHeight = Dimensions.get("window").height;
 
 const styles_detail = StyleSheet.create({
   detail: { flex: 1, backgroundColor: "white" },
-
+  detail_logo: {
+    width: "35%",
+    height: "100%",
+  },
+  detail_header: {
+    fontSize: windowWidth / 24,
+    fontFamily: "NotoLight",
+    color: "#262223",
+  },
   detail_title: {
     marginTop: 3.8,
     flex: 0.05,
@@ -20,7 +28,7 @@ const styles_detail = StyleSheet.create({
     marginTop: 3.8,
     flex: 0.05,
     backgroundColor: "white",
-    justifyContent: "space-between",
+    justifyContent: "center",
     flexDirection: "row",
     zIndex: 16,
     paddingBottom: 10,
