@@ -9,30 +9,15 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Animated,
   Image,
 } from "react-native";
-import {
-  Calendar,
-  CalendarList,
-  Agenda,
-  WeekCalendar,
-  CalendarProvider,
-  ExpandableCalendar,
-  AgendaList,
-} from "react-native-calendars";
-import { Ionicons } from "@expo/vector-icons";
-import { Avatar, IconButton, Button, List, Surface } from "react-native-paper";
-import { LocaleConfig } from "react-native-calendars";
+import { Avatar, IconButton, Surface } from "react-native-paper"
 import styles from "../../assets/styles"
 import styles_detail from "../../assets/styles_detail";
-import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
 import moment from "moment";
-import ButtonToggleGroup from "react-native-button-toggle-group";
 import RNAnimatedScrollIndicators from "react-native-animated-scroll-indicators";
-import MapView, { Marker, Polyline } from "react-native-maps";
 import { useFocusEffect } from "@react-navigation/core";
 import { server } from "../../app.json";
 
