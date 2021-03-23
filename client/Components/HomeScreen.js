@@ -93,9 +93,10 @@ export default function HomeScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
+                <Text>
                 걸음째
-              </Text>
-            </View>
+            </Text>
+              </View>
           </View>
         </SafeAreaView>
       </Fragment>
