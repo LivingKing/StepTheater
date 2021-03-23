@@ -63,7 +63,7 @@ public class DiaryController {
             startDate = endDate = date;
         } else if (type.equals("week")) {
             LocalDate temp;
-            if(localDate.getDayOfWeek().getValue() == 7)
+            if (localDate.getDayOfWeek().getValue() == 7)
                 temp = localDate;
             else
                 temp = localDate.minusDays(localDate.getDayOfWeek().getValue());
@@ -72,11 +72,20 @@ public class DiaryController {
             System.out.println("startDate = " + startDate);
             System.out.println("endDate = " + endDate);
         } else if (type.equals("month")) {
-            LocalDate temp = localDate.minusDays(localDate.getDayOfMonth()-1);
+            LocalDate temp = localDate.minusDays(localDate.getDayOfMonth() - 1);
             startDate = temp.toString();
             endDate = temp.plusMonths(1).minusDays(1).toString();
         }
         return new DateResult(type, date, diaryService.findDiaryByDate(userId, startDate, endDate));
+    }
+
+    @GetMapping("/api/diary/recent")
+    public RecentDateResult recentDiary(
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "count") Integer count
+    ) {
+        List<DiaryInfoDto> recentDiary = diaryService.findRecentDiary(id, count);
+        return new RecentDateResult(recentDiary.size(),recentDiary);
     }
 
     @PostMapping("/api/diary")
@@ -106,6 +115,13 @@ public class DiaryController {
     static class DateResult<T> {
         private String type;
         private String dairyDate;
+        private T Data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class RecentDateResult<T> {
+        private int count;
         private T Data;
     }
 }

@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
   route: { flex: 1, backgroundColor: "white" },
 
   route_title: {
-    flex: 0.05,
     marginTop: 3.8,
+    flex: 0.05,
     backgroundColor: "white",
     justifyContent: "center",
   },
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 
   route_title_after: {
-    marginTop: 3.8,
+    marginTop: 10,
     flex: 0.05,
     backgroundColor: "white",
     justifyContent: "center",
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   login_safeView_contents_logoView_logoText: {
     fontSize: 50,
     fontWeight: "700",
-    fontFamily: "DokLip",
+    fontFamily: "DoHyeon",
     color: "#262223",
   },
   login_safeView_contents_loginView: {

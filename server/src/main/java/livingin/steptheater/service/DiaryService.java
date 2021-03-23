@@ -52,4 +52,8 @@ public class DiaryService {
         return diaryRepository.findDiaryByDate(userId, startDate, endDate);
     }
 
+    public List<DiaryInfoDto> findRecentDiary(Long userId, Integer count) {
+        return diaryRepository.findRecentDiary(userId, count);
+    }
+
 }
