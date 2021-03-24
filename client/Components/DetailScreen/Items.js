@@ -128,13 +128,12 @@ export default function Items(props) {
                             temp++;
                             let svgMinX;
                             let svgMinY;
-                            let svgMaxX;
-                            let svgMaxY;
                             let svgMidX;
                             let svgMidY;
                             let svgDeltaX;
                             let svgDeltaY;
                             let go;
+                            let temp;
                             if (content.routeItems.length != 0) {
                               let minX, maxX, minY, maxY;
 
@@ -153,106 +152,46 @@ export default function Items(props) {
                                 minY = Math.min(minY, point.longitude);
                                 maxY = Math.max(maxY, point.longitude);
                               });
-                              // const midX = (minX + maxX) / 2;
-                              // const midY = (minY + maxY) / 2;
-                              // const deltaX = maxX - minX;
-                              // const deltaY = maxY - minY;
+                              temp = content.routeItems.slice();
+                              temp.map((point, index) => {
+                                temp[index] = {
+                                  latitude: point.latitude - minX,
+                                  longitude: point.longitude - minY,
+                                };
+                              });
 
-                              svgMinX = [
-                                minX.toString().substring(3, 5),
-                                ".",
-                                minX.toString().substring(5, 8),
-                              ].join("");
-                              svgMinY = [
-                                minY.toString().substring(4, 6),
-                                ".",
-                                minY.toString().substring(6, 9),
-                              ].join("");
-                              svgMaxX = [
-                                maxX.toString().substring(3, 5),
-                                ".",
-                                maxX.toString().substring(5, 8),
-                              ].join("");
-                              svgMaxY = [
-                                maxY.toString().substring(4, 6),
-                                ".",
-                                maxY.toString().substring(6, 9),
-                              ].join("");
+                              minX = maxX = minY = maxY = 0;
+                              temp.map((point) => {
+                                // console.log(point);
+                                minX = Math.min(minX, point.latitude);
+                                maxX = Math.max(maxX, point.latitude);
+                                minY = Math.min(minY, point.longitude);
+                                maxY = Math.max(maxY, point.longitude);
+                              });
 
-                              svgDeltaX = (Number(svgMaxX) - Number(svgMinX))
-                                .toString()
-                                .substring(0, 5);
-                              svgDeltaY = (Number(svgMaxY) - Number(svgMinY))
-                                .toString()
-                                .substring(0, 5);
-                              svgMidX = (
-                                (Number(svgMaxX) + Number(svgMinX)) /
-                                2
-                              )
-                                .toString()
-                                .substring(0, 6);
-                              svgMidY = (
-                                (Number(svgMaxY) + Number(svgMinY)) /
-                                2
-                              )
-                                .toString()
-                                .substring(0, 6);
+                              svgDeltaX = maxX - minX;
+                              svgDeltaY = maxY - minY;
+                              svgMidX = (maxX + minX) / 2;
+                              svgMidY = maxY + minY / 2;
+                              svgMinX = 0;
+                              svgMinY = 0;
 
-                              // console.log(content.name);
-                              // console.log(svgMinX);
-                              // console.log(svgMinY);
-                              // console.log(svgMidX);
-                              // console.log(svgMidY);
-                              // console.log(svgDeltaX);
-                              // console.log(svgDeltaY);
-
-                              if (svgDeltaX != 0) {
-                                Number(svgDeltaY) > Number(svgDeltaX)
-                                  ? (go =
-                                      Number(
-                                        svgMidX -
-                                          svgDeltaY / 2 -
-                                          svgDeltaY * 0.15
-                                      ) +
-                                      " " +
-                                      Number(svgMinY - svgDeltaY * 0.15) +
-                                      " " +
-                                      svgDeltaY * 1.3 +
-                                      " " +
-                                      svgDeltaY * 1.3)
-                                  : (go =
-                                      Number(svgMinX - svgDeltaX * 0.15) +
-                                      " " +
-                                      Number(
-                                        svgMidY -
-                                          svgDeltaX / 2 -
-                                          svgDeltaX * 0.15
-                                      ) +
-                                      " " +
-                                      svgDeltaX * 1.3 +
-                                      " " +
-                                      svgDeltaX * 1.3);
+                              if (svgDeltaX != 0 || svgDeltaX != 0) {
+                                const val =
+                                  svgDeltaY > svgDeltaX ? svgDeltaY : svgDeltaX;
+                                go = `${svgMidX - val / 2 - val * 0.15} ${
+                                  svgMinY - val * 0.15
+                                } ${val * 1.3} ${val * 1.3}`;
                               }
-
-                              // console.log(go);
-                              // console.log("\n");
                             }
-                            const svgPoint = content.routeItems
+                            const svgPoint = temp
                               .map(
                                 (p) =>
-                                  `${[
-                                    p.latitude.toString().substring(3, 5),
-                                    ".",
-                                    p.latitude.toString().substring(5, 8),
-                                  ].join("")},${[
-                                    p.longitude.toString().substring(4, 6),
-                                    ".",
-                                    p.longitude.toString().substring(6, 9),
+                                  `${[p.latitude].join("")},${[
+                                    p.longitude,
                                   ].join("")}`
                               )
                               .join(" ");
-                            // console.log(svgPoint);
-                            // console.log(content.routeItems);
                             return (
                               // <Surface key={index} style={{ width: "95%", height: windowHeight / 7, alignSelf: "center", marginTop: 10, borderRadius: 7 }}>
 

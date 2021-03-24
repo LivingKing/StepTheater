@@ -24,13 +24,17 @@ import { server } from "../../app.json";
 import Svg, { Polyline as Poly } from "react-native-svg";
 
 export default function DetailScreen({ navigation }) {
+  const [thumbImage, setThumbImage] = useState("");
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalHours, setTotalHours] = useState(0);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [totalMarkers, setTotalMarkers] = useState(0);
+  const [totalRecordDays, setTotalRecordDays] = useState(0);
+  const [totalRecordRoutes, setTotalRecordRoutes] = useState(0);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [markedDates, setMarkedDates] = React.useState({});
   const [modal, setModal] = useState(false);
+  const [data, setData] = useState();
   const [routeInfo, setRouteInfo] = useState();
 
   const windowWidth = Dimensions.get("window").width;
@@ -55,7 +59,7 @@ export default function DetailScreen({ navigation }) {
     if (recentData == undefined) {
       const id = await SecureStore.getItemAsync("UserId");
       const response = await fetch(
-        `${server.address}/api/diary/recent?id=${id}&count=3`
+        `${server.address}/api/diary/recent?id=${id}&count=6`
         // `${server.address}/api/diary/date?id=1&&date=2021-03-17&&type=month`
       );
       const result = await response.json();
@@ -103,7 +107,7 @@ export default function DetailScreen({ navigation }) {
   const polyColor = ["blanchedalmond", "blueviolet", "thistle", "yellowgreen"];
 
   const getDate = async () => {
-    if (todayDate == undefined) {
+    if (data == undefined) {
       await SecureStore.getItemAsync("todayDate")
         .then(async (date) => {
           setTodayDate(date);
@@ -122,19 +126,27 @@ export default function DetailScreen({ navigation }) {
     const id = await SecureStore.getItemAsync("UserId");
     const today = await SecureStore.getItemAsync("today");
 
-    const response = await fetch(
+    let response = await fetch(
       `${server.address}/api/routes?id=${id}&date=${today}&type=month`
     );
-    const result = await response.json();
+    let result = await response.json();
     setRouteData(result);
     setTotalDistance(result.totalDistance);
     setTotalHours(result.totalHours);
     setTotalMinutes(result.totalMinutes);
     setTotalMarkers(result.totalMarkers);
+    setTotalRecordRoutes(result.count);
+
+    response = await fetch(
+      `${server.address}/api/diary/date?id=${id}&date=${today}&type=month`
+    );
+    result = await response.json();
+    setTotalRecordDays(result.data.length);
   };
 
   const getSettings = async () => {
     setNickname(await SecureStore.getItemAsync("NickName"));
+    setThumbImage(await SecureStore.getItemAsync("Thumb_Url"));
   };
 
   useFocusEffect(
@@ -167,7 +179,7 @@ export default function DetailScreen({ navigation }) {
     setRefreshing(true);
 
     wait(2000).then(() => {
-      // getMonth();
+      getMonth();
       setRefreshing(false);
     });
   }, []);
@@ -233,7 +245,7 @@ export default function DetailScreen({ navigation }) {
             <View style={styles_detail.detail_title2}>
               <Avatar.Image
                 size={windowWidth / 15}
-                source={require("../../assets/icon.png")}
+                source={{ url: thumbImage }}
               />
               <Text
                 style={[
@@ -272,7 +284,7 @@ export default function DetailScreen({ navigation }) {
                   top: 0,
                   paddingLeft: windowWidth / 18,
                   width: "100%",
-                  height: nowY > 0 ? divHeight - nowY : divHeight,
+                  height: 60,
                   backgroundColor: "white",
                   zIndex: 10,
                 }}
@@ -287,7 +299,7 @@ export default function DetailScreen({ navigation }) {
                 >
                   <Avatar.Image
                     size={windowWidth / 10}
-                    source={require("../../assets/icon.png")}
+                    source={{ url: thumbImage }}
                   />
                   <View
                     style={{
@@ -436,7 +448,7 @@ export default function DetailScreen({ navigation }) {
                           marginLeft: 7,
                         }}
                       >
-                        3
+                        {moment().format("MM")}
                         <Text
                           style={{
                             fontSize: windowWidth / 25,
@@ -692,7 +704,7 @@ export default function DetailScreen({ navigation }) {
                                 top: -windowHeight / 150,
                               }}
                             >
-                              0
+                              {totalRecordDays}
                               <Text
                                 style={{
                                   fontSize: windowWidth / 30,
@@ -738,7 +750,7 @@ export default function DetailScreen({ navigation }) {
                                 top: -windowHeight / 150,
                               }}
                             >
-                              0
+                              {totalRecordRoutes}
                               <Text
                                 style={{
                                   fontSize: windowWidth / 30,
@@ -846,21 +858,17 @@ export default function DetailScreen({ navigation }) {
                             }}
                           >
                             {item.routes.map((content, index) => {
-                              if (
-                                content.routeItems.length != 0 &&
-                                content.routeItems.length != 1
-                              ) {
+                              if (content.routeItems.length != 0) {
                                 nowNum++;
                                 temp++;
                                 let svgMinX;
                                 let svgMinY;
-                                let svgMaxX;
-                                let svgMaxY;
                                 let svgMidX;
                                 let svgMidY;
                                 let svgDeltaX;
                                 let svgDeltaY;
                                 let go;
+                                let temp;
                                 if (content.routeItems.length != 0) {
                                   let minX, maxX, minY, maxY;
 
@@ -879,110 +887,47 @@ export default function DetailScreen({ navigation }) {
                                     minY = Math.min(minY, point.longitude);
                                     maxY = Math.max(maxY, point.longitude);
                                   });
-                                  // const midX = (minX + maxX) / 2;
-                                  // const midY = (minY + maxY) / 2;
-                                  // const deltaX = maxX - minX;
-                                  // const deltaY = maxY - minY;
+                                  temp = content.routeItems.slice();
+                                  temp.map((point, index) => {
+                                    temp[index] = {
+                                      latitude: point.latitude - minX,
+                                      longitude: point.longitude - minY,
+                                    };
+                                  });
 
-                                  svgMinX = [
-                                    minX.toString().substring(3, 5),
-                                    ".",
-                                    minX.toString().substring(5, 8),
-                                  ].join("");
-                                  svgMinY = [
-                                    minY.toString().substring(4, 6),
-                                    ".",
-                                    minY.toString().substring(6, 9),
-                                  ].join("");
-                                  svgMaxX = [
-                                    maxX.toString().substring(3, 5),
-                                    ".",
-                                    maxX.toString().substring(5, 8),
-                                  ].join("");
-                                  svgMaxY = [
-                                    maxY.toString().substring(4, 6),
-                                    ".",
-                                    maxY.toString().substring(6, 9),
-                                  ].join("");
+                                  minX = maxX = minY = maxY = 0;
+                                  temp.map((point) => {
+                                    // console.log(point);
+                                    minX = Math.min(minX, point.latitude);
+                                    maxX = Math.max(maxX, point.latitude);
+                                    minY = Math.min(minY, point.longitude);
+                                    maxY = Math.max(maxY, point.longitude);
+                                  });
 
-                                  svgDeltaX = (
-                                    Number(svgMaxX) - Number(svgMinX)
-                                  )
-                                    .toString()
-                                    .substring(0, 5);
-                                  svgDeltaY = (
-                                    Number(svgMaxY) - Number(svgMinY)
-                                  )
-                                    .toString()
-                                    .substring(0, 5);
-                                  svgMidX = (
-                                    (Number(svgMaxX) + Number(svgMinX)) /
-                                    2
-                                  )
-                                    .toString()
-                                    .substring(0, 6);
-                                  svgMidY = (
-                                    (Number(svgMaxY) + Number(svgMinY)) /
-                                    2
-                                  )
-                                    .toString()
-                                    .substring(0, 6);
+                                  svgDeltaX = maxX - minX;
+                                  svgDeltaY = maxY - minY;
+                                  svgMidX = (maxX + minX) / 2;
+                                  svgMidY = maxY + minY / 2;
+                                  svgMinX = 0;
+                                  svgMinY = 0;
 
-                                  // console.log(content.name);
-                                  // console.log(svgMinX);
-                                  // console.log(svgMinY);
-                                  // console.log(svgMidX);
-                                  // console.log(svgMidY);
-                                  // console.log(svgDeltaX);
-                                  // console.log(svgDeltaY);
-
-                                  if (svgDeltaX != 0) {
-                                    Number(svgDeltaY) > Number(svgDeltaX)
-                                      ? (go =
-                                        Number(
-                                          svgMidX -
-                                          svgDeltaY / 2 -
-                                          svgDeltaY * 0.15
-                                        ) +
-                                        " " +
-                                        Number(svgMinY - svgDeltaY * 0.15) +
-                                        " " +
-                                        svgDeltaY * 1.3 +
-                                        " " +
-                                        svgDeltaY * 1.3)
-                                      : (go =
-                                        Number(svgMinX - svgDeltaX * 0.15) +
-                                        " " +
-                                        Number(
-                                          svgMidY -
-                                          svgDeltaX / 2 -
-                                          svgDeltaX * 0.15
-                                        ) +
-                                        " " +
-                                        svgDeltaX * 1.3 +
-                                        " " +
-                                        svgDeltaX * 1.3);
+                                  if (svgDeltaX != 0 || svgDeltaX != 0) {
+                                    const val =
+                                      svgDeltaY > svgDeltaX
+                                        ? svgDeltaY
+                                        : svgDeltaX;
+                                    go = `${svgMidX - val / 2 - val * 0.15} ${svgMinY - val * 0.15
+                                      } ${val * 1.3} ${val * 1.3}`;
                                   }
-
-                                  // console.log(go);
-                                  // console.log("\n");
                                 }
-                                const svgPoint = content.routeItems
+                                const svgPoint = temp
                                   .map(
                                     (p) =>
-                                      `${[
-                                        p.latitude.toString().substring(3, 5),
-                                        ".",
-                                        p.latitude.toString().substring(5, 8),
-                                      ].join("")},${[
-                                        p.longitude.toString().substring(4, 6),
-                                        ".",
-                                        p.longitude.toString().substring(6, 9),
+                                      `${[p.latitude].join("")},${[
+                                        p.longitude,
                                       ].join("")}`
                                   )
                                   .join(" ");
-                                // console.log(svgPoint);
-                                // console.log(content.routeItems);
                                 return (
                                   <TouchableOpacity
                                     key={index}
@@ -1287,7 +1232,7 @@ export default function DetailScreen({ navigation }) {
                     backgroundColor: "#f6f6f6",
                   }}
                 ></View>
-                <View
+                {/* <View
                   style={{
                     width: "100%",
                     height: windowHeight / 3,
@@ -1316,7 +1261,7 @@ export default function DetailScreen({ navigation }) {
                       <Text>모두 보기 </Text>
                     </View>
                   </View>
-                </View>
+                </View> */}
                 {/* <View style={{ width: "100%", height: windowHeight / 20, backgroundColor: "white" }}>
 
                   </View> */}
