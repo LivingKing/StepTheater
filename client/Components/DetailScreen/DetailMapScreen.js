@@ -452,7 +452,7 @@ export default function DetailMapScreen({ navigation, route }) {
                 <ScrollView
                   style={{
                     width: "100%",
-                    height: windowWidth / 4,
+                    height: windowWidth / 3.7,
                     marginTop: 20,
                     marginBottom: -10,
                   }}
@@ -660,7 +660,7 @@ export default function DetailMapScreen({ navigation, route }) {
                               marginTop: 20,
                               flexDirection: "row",
                               borderRadius: 10,
-                              backgroundColor: "#red",
+                              backgroundColor: "#f8f8f8",
                             }}
                           >
                             <View
