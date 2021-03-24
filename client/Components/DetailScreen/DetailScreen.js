@@ -120,7 +120,7 @@ export default function DetailScreen({ navigation }) {
         );
     }
   };
-
+  let nowRouteIndex = -1;
   const [routeData, setRouteData] = useState();
   const getRouteData = async () => {
     const id = await SecureStore.getItemAsync("UserId");
@@ -907,7 +907,7 @@ export default function DetailScreen({ navigation }) {
                                   svgDeltaX = maxX - minX;
                                   svgDeltaY = maxY - minY;
                                   svgMidX = (maxX + minX) / 2;
-                                  svgMidY = maxY + minY / 2;
+                                  svgMidY = (maxY + minY) / 2;
                                   svgMinX = 0;
                                   svgMinY = 0;
 
@@ -916,8 +916,7 @@ export default function DetailScreen({ navigation }) {
                                       svgDeltaY > svgDeltaX
                                         ? svgDeltaY
                                         : svgDeltaX;
-                                    go = `${svgMidX - val / 2 - val * 0.15} ${svgMinY - val * 0.15
-                                      } ${val * 1.3} ${val * 1.3}`;
+                                    go = `${svgMidX - val / 2 - val * 0.15} ${svgMidY - val / 2 - val * 0.15} ${val * 1.3} ${val * 1.3}`;
                                   }
                                 }
                                 const svgPoint = temp
@@ -1010,16 +1009,14 @@ export default function DetailScreen({ navigation }) {
                                         style={{
                                           width: "73%",
                                           height: "100%",
-                                          borderTopWidth: temp == 1 ? 0 : 1,
+                                          borderTopWidth: nowNum == 0 ? 0 : 1,
                                           borderColor: "#e6e6e6",
                                         }}
                                       >
                                         {routeData !== undefined ? (
                                           routeData.data.map((route, index) => {
-                                            if (
-                                              route.id == content.id &&
-                                              route.distance != 0
-                                            )
+                                            if (route.id == content.id && route.distance != 0)
+
                                               return (
                                                 <View
                                                   style={{

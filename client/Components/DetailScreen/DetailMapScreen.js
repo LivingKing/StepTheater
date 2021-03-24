@@ -40,6 +40,8 @@ import Svg, { Polyline as Poly } from "react-native-svg";
 import Items from "./Items";
 
 export default function DetailMapScreen({ navigation, route }) {
+
+  const polyColor = ["#B66866", "#B69366", "#446274", "#508F54"];
   const [isModalVisible3, setModalVisible3] = useState(false);
 
   const toggleModal3 = () => {
@@ -93,7 +95,7 @@ export default function DetailMapScreen({ navigation, route }) {
   const [totalHours, setTotalHours] = useState(routeData.totalHours);
   const [totalMinutes, setTotalMinutes] = useState(routeData.totalMinutes);
   const [totalMarkers, setTotalMarkers] = useState(routeData.totalMarkers);
-
+  let nowNum = -1;
   useFocusEffect(
     useCallback(() => {
       getRegionForCoordinates(nowItem.routeItems);
@@ -468,6 +470,7 @@ export default function DetailMapScreen({ navigation, route }) {
                         route.routeItems.length != 0 &&
                         route.routeItems.length != 1
                       ) {
+                        nowNum++;
                         let svgMinX;
                         let svgMinY;
                         let svgMidX;
@@ -515,15 +518,14 @@ export default function DetailMapScreen({ navigation, route }) {
                           svgDeltaX = maxX - minX;
                           svgDeltaY = maxY - minY;
                           svgMidX = (maxX + minX) / 2;
-                          svgMidY = maxY + minY / 2;
+                          svgMidY = (maxY + minY) / 2;
                           svgMinX = 0;
                           svgMinY = 0;
 
                           if (svgDeltaX != 0 || svgDeltaX != 0) {
                             const val =
                               svgDeltaY > svgDeltaX ? svgDeltaY : svgDeltaX;
-                            go = `${svgMidX - val / 2 - val * 0.15} ${svgMinY - val * 0.15
-                              } ${val * 1.3} ${val * 1.3}`;
+                            go = `${svgMidX - val / 2 - val * 0.15} ${svgMidY - val / 2 - val * 0.15} ${val * 1.3} ${val * 1.3}`;
                           }
                         }
 
@@ -582,8 +584,7 @@ export default function DetailMapScreen({ navigation, route }) {
                                 {/* <Svg height="100%" width="100%" viewBox="0 0 100 100"> */}
                                 <Poly
                                   fill="none"
-                                  // stroke={polyColor[index % 4]}
-                                  stroke="red"
+                                  stroke={polyColor[nowNum % 4]}
                                   strokeWidth={
                                     route.routeItems.length == 0
                                       ? ""
@@ -659,7 +660,7 @@ export default function DetailMapScreen({ navigation, route }) {
                               marginTop: 20,
                               flexDirection: "row",
                               borderRadius: 10,
-                              backgroundColor: "#f8f8f8",
+                              backgroundColor: "#red",
                             }}
                           >
                             <View

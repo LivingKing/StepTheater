@@ -69,6 +69,7 @@ export default function Items(props) {
           >
             {props.route != undefined ? (
               props.route.data.map((item, index) => {
+                nowNum = -1;
                 temp = 0;
                 let isEmpty = false;
                 item.routes.map((content, index) => {
@@ -172,16 +173,14 @@ export default function Items(props) {
                               svgDeltaX = maxX - minX;
                               svgDeltaY = maxY - minY;
                               svgMidX = (maxX + minX) / 2;
-                              svgMidY = maxY + minY / 2;
+                              svgMidY = (maxY + minY) / 2;
                               svgMinX = 0;
                               svgMinY = 0;
 
                               if (svgDeltaX != 0 || svgDeltaX != 0) {
                                 const val =
                                   svgDeltaY > svgDeltaX ? svgDeltaY : svgDeltaX;
-                                go = `${svgMidX - val / 2 - val * 0.15} ${
-                                  svgMinY - val * 0.15
-                                } ${val * 1.3} ${val * 1.3}`;
+                                go = `${svgMidX - val / 2 - val * 0.15} ${svgMidY - val / 2 - val * 0.15} ${val * 1.3} ${val * 1.3}`;
                               }
                             }
                             const svgPoint = temp
@@ -261,17 +260,17 @@ export default function Items(props) {
                                             ? ""
                                             : Number(svgDeltaY) >
                                               Number(svgDeltaX)
-                                            ? Number(svgDeltaY) / 13
-                                            : Number(svgDeltaX) / 13
+                                              ? Number(svgDeltaY) / 13
+                                              : Number(svgDeltaX) / 13
                                         }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                         points={svgPoint}
-                                        // points="5.24928,8.90221 5.24930 9.5"
-                                        // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
-                                        // fill="none"
-                                        // stroke="black"
-                                        // strokeWidth="1"
+                                      // points="5.24928,8.90221 5.24930 9.5"
+                                      // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
+                                      // fill="none"
+                                      // stroke="black"
+                                      // strokeWidth="1"
                                       />
                                     </Svg>
                                   </View>
@@ -279,7 +278,7 @@ export default function Items(props) {
                                     style={{
                                       width: "73%",
                                       height: "100%",
-                                      borderTopWidth: temp == 1 ? 0 : 1,
+                                      borderTopWidth: nowNum == 0 ? 0 : 1,
                                       borderColor: "#e6e6e6",
                                     }}
                                   >
