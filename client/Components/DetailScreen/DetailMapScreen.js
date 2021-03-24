@@ -40,6 +40,12 @@ import Svg, { Polyline as Poly } from "react-native-svg";
 import Items from "./Items";
 
 export default function DetailMapScreen({ navigation, route }) {
+  const [isModalVisible3, setModalVisible3] = useState(false);
+
+  const toggleModal3 = () => {
+    setModalVisible3(!isModalVisible3);
+  };
+
   const [mapviewInit, setMapviewInit] = useState();
   const getRegionForCoordinates = (points) => {
     let minX, maxX, minY, maxY;
@@ -94,6 +100,8 @@ export default function DetailMapScreen({ navigation, route }) {
     }, [])
   );
 
+  const [nowDiaryItem, setNowDiaryItem] = useState();
+
   if (Platform.OS === "ios") {
     return (
       <Fragment>
@@ -147,6 +155,64 @@ export default function DetailMapScreen({ navigation, route }) {
           </View>
 
           <View style={{ flex: 0.95, backgroundColor: "white" }}>
+            {nowDiaryItem != undefined ? (<Modal
+              style={{
+                margin: 0,
+              }}
+              isVisible={isModalVisible3}
+              hasBackdrop={true}
+              coverScreen={false}
+              onBackdropPress={toggleModal3}
+            >
+              <View
+                style={{
+                  flex: 0.98,
+                  backgroundColor: "white",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    marginTop: 10,
+                    flex: 0.04,
+                    fontSize: 20,
+                    fontWeight: "600",
+                  }}
+                >
+                  {nowDiaryItem.title}
+                </Text>
+                <Image
+                  resizeMode="stretch"
+                  source={{ uri: nowDiaryItem.image_url }}
+                  style={{
+                    width: "90%",
+                    flex: 0.6,
+                    margin: 10,
+                    borderRadius: 15,
+                  }}
+                />
+                <Text
+                  style={{
+                    width: "90%",
+                    flex: 0.3,
+                    borderWidth: 1,
+                    borderColor: "black",
+                    textAlign: "center",
+                    padding: 10,
+                  }}
+                >
+                  {nowDiaryItem.description.trim()}
+                </Text>
+
+                <Button
+                  style={{ margin: 10, flex: 0.065 }}
+                  mode="contained"
+                  onPress={toggleModal3}
+                >
+                  확인
+                    </Button>
+              </View>
+            </Modal>) : (<></>)}
             <ScrollView>
               <View
                 style={{
@@ -158,152 +224,152 @@ export default function DetailMapScreen({ navigation, route }) {
                 <View style={{ width: windowWidth, paddingTop: 1 }}>
                   {routeData !== undefined
                     ? routeData.data.map((route, index) => {
-                        if (nowItem != undefined) {
-                          if (route.id == nowItem.id)
-                            return (
+                      if (nowItem != undefined) {
+                        if (route.id == nowItem.id)
+                          return (
+                            <View
+                              style={{
+                                width: "98%",
+                                height: windowWidth / 6,
+
+                                alignSelf: "center",
+                                borderRadius: 10,
+
+                                backgroundColor: "white",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                borderRadius: 10,
+                              }}
+                              key={index}
+                            >
                               <View
                                 style={{
-                                  width: "98%",
-                                  height: windowWidth / 6,
-
+                                  alignItems: "center",
                                   alignSelf: "center",
-                                  borderRadius: 10,
+                                  height: "60%",
+                                  width: "33.33%",
 
-                                  backgroundColor: "white",
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  borderRadius: 10,
+                                  justifyContent: "center",
                                 }}
-                                key={index}
                               >
-                                <View
+                                <Text
                                   style={{
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    height: "60%",
-                                    width: "33.33%",
-
-                                    justifyContent: "center",
+                                    fontSize: windowWidth / 20,
+                                    fontFamily: "NotoBold",
+                                    color: "#3c3c3c",
+                                    top: -windowHeight / 150,
                                   }}
                                 >
-                                  <Text
-                                    style={{
-                                      fontSize: windowWidth / 20,
-                                      fontFamily: "NotoBold",
-                                      color: "#3c3c3c",
-                                      top: -windowHeight / 150,
-                                    }}
-                                  >
-                                    {route.distance.toFixed(2)}
-                                    <Text
-                                      style={{
-                                        fontSize: windowWidth / 30,
-                                        fontFamily: "NotoLight",
-                                        color: "#3f3f3f",
-                                      }}
-                                    >
-                                      km
-                                    </Text>
-                                  </Text>
+                                  {route.distance.toFixed(2)}
                                   <Text
                                     style={{
                                       fontSize: windowWidth / 30,
-                                      fontFamily: "NotoRegular",
+                                      fontFamily: "NotoLight",
                                       color: "#3f3f3f",
-                                      top: -windowHeight / 150,
                                     }}
                                   >
-                                    거리
-                                  </Text>
-                                </View>
-                                <View
+                                    km
+                                    </Text>
+                                </Text>
+                                <Text
                                   style={{
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    height: "40%",
-                                    width: "33.33%",
-                                    borderLeftColor: "#eaeaea",
-                                    borderLeftWidth: 1,
-                                    borderRightColor: "#eaeaea",
-                                    borderRightWidth: 1,
-                                    justifyContent: "center",
+                                    fontSize: windowWidth / 30,
+                                    fontFamily: "NotoRegular",
+                                    color: "#3f3f3f",
+                                    top: -windowHeight / 150,
                                   }}
                                 >
-                                  <Text
-                                    style={{
-                                      fontSize: windowWidth / 20,
-                                      fontFamily: "NotoBold",
-                                      color: "#3c3c3c",
-                                      top: -windowHeight / 150,
-                                    }}
-                                  >
-                                    {totalHours}:
-                                    {route.minutes.toString().padStart(2, "0")}
-                                    <Text
-                                      style={{
-                                        fontSize: windowWidth / 30,
-                                        fontFamily: "NotoLight",
-                                        color: "#3f3f3f",
-                                      }}
-                                    >
-                                      분
-                                    </Text>
+                                  거리
                                   </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: windowWidth / 30,
-                                      fontFamily: "NotoRegular",
-                                      color: "#3f3f3f",
-                                      top: -windowHeight / 150,
-                                    }}
-                                  >
-                                    시간
-                                  </Text>
-                                </View>
-
-                                <View
-                                  style={{
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    height: "60%",
-                                    width: "33.33%",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Text
-                                    style={{
-                                      fontSize: windowWidth / 20,
-                                      fontFamily: "NotoBold",
-                                      color: "#3c3c3c",
-                                      top: -windowHeight / 150,
-                                    }}
-                                  >
-                                    {route.markers}
-                                    <Text
-                                      style={{
-                                        fontSize: windowWidth / 30,
-                                        fontFamily: "NotoLight",
-                                        color: "#3f3f3f",
-                                      }}
-                                    >
-                                      개
-                                    </Text>
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: windowWidth / 30,
-                                      fontFamily: "NotoRegular",
-                                      color: "#3f3f3f",
-                                      top: -windowHeight / 150,
-                                    }}
-                                  >
-                                    마커
-                                  </Text>
-                                </View>
                               </View>
-                            );
-                        }
-                      })
+                              <View
+                                style={{
+                                  alignItems: "center",
+                                  alignSelf: "center",
+                                  height: "40%",
+                                  width: "33.33%",
+                                  borderLeftColor: "#eaeaea",
+                                  borderLeftWidth: 1,
+                                  borderRightColor: "#eaeaea",
+                                  borderRightWidth: 1,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: windowWidth / 20,
+                                    fontFamily: "NotoBold",
+                                    color: "#3c3c3c",
+                                    top: -windowHeight / 150,
+                                  }}
+                                >
+                                  {totalHours}:
+                                    {route.minutes.toString().padStart(2, "0")}
+                                  <Text
+                                    style={{
+                                      fontSize: windowWidth / 30,
+                                      fontFamily: "NotoLight",
+                                      color: "#3f3f3f",
+                                    }}
+                                  >
+                                    분
+                                    </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: windowWidth / 30,
+                                    fontFamily: "NotoRegular",
+                                    color: "#3f3f3f",
+                                    top: -windowHeight / 150,
+                                  }}
+                                >
+                                  시간
+                                  </Text>
+                              </View>
+
+                              <View
+                                style={{
+                                  alignItems: "center",
+                                  alignSelf: "center",
+                                  height: "60%",
+                                  width: "33.33%",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: windowWidth / 20,
+                                    fontFamily: "NotoBold",
+                                    color: "#3c3c3c",
+                                    top: -windowHeight / 150,
+                                  }}
+                                >
+                                  {route.markers}
+                                  <Text
+                                    style={{
+                                      fontSize: windowWidth / 30,
+                                      fontFamily: "NotoLight",
+                                      color: "#3f3f3f",
+                                    }}
+                                  >
+                                    개
+                                    </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: windowWidth / 30,
+                                    fontFamily: "NotoRegular",
+                                    color: "#3f3f3f",
+                                    top: -windowHeight / 150,
+                                  }}
+                                >
+                                  마커
+                                  </Text>
+                              </View>
+                            </View>
+                          );
+                      }
+                    })
                     : ""}
                 </View>
 
@@ -331,37 +397,37 @@ export default function DetailMapScreen({ navigation, route }) {
                   >
                     {nowItem !== undefined
                       ? nowItem.diaryItems.map((route, index) => {
-                          return (
-                            <Marker
-                              key={index}
-                              draggable
-                              coordinate={{
-                                latitude: route.latitude,
-                                longitude: route.longitude,
-                              }}
-                              onPress={() => {
-                                setNowDiaryItem(route);
-                                toggleModal3();
-                              }}
-                              // centerOffset={{ x: 0, y: -22 }}
+                        return (
+                          <Marker
+                            key={index}
+                            draggable
+                            coordinate={{
+                              latitude: route.latitude,
+                              longitude: route.longitude,
+                            }}
+                            onPress={() => {
+                              setNowDiaryItem(route);
+                              toggleModal3();
+                            }}
+                          // centerOffset={{ x: 0, y: -22 }}
+                          >
+                            <Surface
+                              style={styles.route_contents_map_marker_shadow}
                             >
-                              <Surface
-                                style={styles.route_contents_map_marker_shadow}
+                              <View
+                                style={styles.route_contents_map_marker_wrap}
                               >
-                                <View
-                                  style={styles.route_contents_map_marker_wrap}
-                                >
-                                  <Image
-                                    source={{ uri: route.thumb_url }}
-                                    style={
-                                      styles.route_contents_map_marker_image
-                                    }
-                                  />
-                                </View>
-                              </Surface>
-                            </Marker>
-                          );
-                        })
+                                <Image
+                                  source={{ uri: route.thumb_url }}
+                                  style={
+                                    styles.route_contents_map_marker_image
+                                  }
+                                />
+                              </View>
+                            </Surface>
+                          </Marker>
+                        );
+                      })
                       : ""}
                     {nowItem != undefined ? (
                       <Polyline
@@ -398,251 +464,250 @@ export default function DetailMapScreen({ navigation, route }) {
                 >
                   {dayItem != undefined
                     ? dayItem.routes.map((route, index) => {
-                        if (
-                          route.routeItems.length != 0 &&
-                          route.routeItems.length != 1
-                        ) {
-                          let svgMinX;
-                          let svgMinY;
-                          let svgMidX;
-                          let svgMidY;
-                          let svgDeltaX;
-                          let svgDeltaY;
-                          let go;
-                          let temp;
-                          if (route.routeItems.length != 0) {
-                            let minX, maxX, minY, maxY;
+                      if (
+                        route.routeItems.length != 0 &&
+                        route.routeItems.length != 1
+                      ) {
+                        let svgMinX;
+                        let svgMinY;
+                        let svgMidX;
+                        let svgMidY;
+                        let svgDeltaX;
+                        let svgDeltaY;
+                        let go;
+                        let temp;
+                        if (route.routeItems.length != 0) {
+                          let minX, maxX, minY, maxY;
 
-                            // init first point
-                            ((point) => {
-                              minX = point.latitude;
-                              maxX = point.latitude;
-                              minY = point.longitude;
-                              maxY = point.longitude;
-                            })(route.routeItems[0]);
+                          // init first point
+                          ((point) => {
+                            minX = point.latitude;
+                            maxX = point.latitude;
+                            minY = point.longitude;
+                            maxY = point.longitude;
+                          })(route.routeItems[0]);
 
-                            // calculate rect
-                            route.routeItems.map((point) => {
-                              minX = Math.min(minX, point.latitude);
-                              maxX = Math.max(maxX, point.latitude);
-                              minY = Math.min(minY, point.longitude);
-                              maxY = Math.max(maxY, point.longitude);
-                            });
+                          // calculate rect
+                          route.routeItems.map((point) => {
+                            minX = Math.min(minX, point.latitude);
+                            maxX = Math.max(maxX, point.latitude);
+                            minY = Math.min(minY, point.longitude);
+                            maxY = Math.max(maxY, point.longitude);
+                          });
 
-                            temp = route.routeItems.slice();
-                            temp.map((point, index) => {
-                              temp[index] = {
-                                latitude: point.latitude - minX,
-                                longitude: point.longitude - minY,
-                              };
-                            });
+                          temp = route.routeItems.slice();
+                          temp.map((point, index) => {
+                            temp[index] = {
+                              latitude: point.latitude - minX,
+                              longitude: point.longitude - minY,
+                            };
+                          });
 
-                            minX = maxX = minY = maxY = 0;
-                            temp.map((point) => {
-                              // console.log(point);
-                              minX = Math.min(minX, point.latitude);
-                              maxX = Math.max(maxX, point.latitude);
-                              minY = Math.min(minY, point.longitude);
-                              maxY = Math.max(maxY, point.longitude);
-                            });
+                          minX = maxX = minY = maxY = 0;
+                          temp.map((point) => {
+                            // console.log(point);
+                            minX = Math.min(minX, point.latitude);
+                            maxX = Math.max(maxX, point.latitude);
+                            minY = Math.min(minY, point.longitude);
+                            maxY = Math.max(maxY, point.longitude);
+                          });
 
-                            svgDeltaX = maxX - minX;
-                            svgDeltaY = maxY - minY;
-                            svgMidX = (maxX + minX) / 2;
-                            svgMidY = maxY + minY / 2;
-                            svgMinX = 0;
-                            svgMinY = 0;
+                          svgDeltaX = maxX - minX;
+                          svgDeltaY = maxY - minY;
+                          svgMidX = (maxX + minX) / 2;
+                          svgMidY = maxY + minY / 2;
+                          svgMinX = 0;
+                          svgMinY = 0;
 
-                            if (svgDeltaX != 0 || svgDeltaX != 0) {
-                              const val =
-                                svgDeltaY > svgDeltaX ? svgDeltaY : svgDeltaX;
-                              go = `${svgMidX - val / 2 - val * 0.15} ${
-                                svgMinY - val * 0.15
+                          if (svgDeltaX != 0 || svgDeltaX != 0) {
+                            const val =
+                              svgDeltaY > svgDeltaX ? svgDeltaY : svgDeltaX;
+                            go = `${svgMidX - val / 2 - val * 0.15} ${svgMinY - val * 0.15
                               } ${val * 1.3} ${val * 1.3}`;
-                            }
                           }
+                        }
 
-                          const svgPoint = temp
-                            .map(
-                              (p) =>
-                                `${[p.latitude].join("")},${[p.longitude].join(
-                                  ""
-                                )}`
-                            )
-                            .join(" ");
-                          return (
-                            <TouchableOpacity
-                              key={index}
-                              onPress={() => {
-                                setNowItem(route);
-                                if (route.routeItems.length != 0) {
-                                  getRegionForCoordinates(route.routeItems);
-                                }
-                              }}
+                        const svgPoint = temp
+                          .map(
+                            (p) =>
+                              `${[p.latitude].join("")},${[p.longitude].join(
+                                ""
+                              )}`
+                          )
+                          .join(" ");
+                        return (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              setNowItem(route);
+                              if (route.routeItems.length != 0) {
+                                getRegionForCoordinates(route.routeItems);
+                              }
+                            }}
+                            style={{
+                              marginLeft: windowWidth / 100,
+                              marginRight: windowWidth / 100,
+                            }}
+                          >
+                            <View
                               style={{
-                                marginLeft: windowWidth / 100,
-                                marginRight: windowWidth / 100,
+                                width: 77,
+                                height: 77,
+                                backgroundColor:
+                                  route.routeItems.length != 1
+                                    ? "white"
+                                    : "grey",
+                                alignSelf: "center",
+                                marginLeft: windowWidth / 50,
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                borderColor: "#e6e6e6",
+                                marginTop: 5,
+                                marginBottom: 5,
                               }}
                             >
-                              <View
+                              {/* <Text>동선</Text> */}
+                              <Svg
                                 style={{
-                                  width: 77,
-                                  height: 77,
-                                  backgroundColor:
-                                    route.routeItems.length != 1
-                                      ? "white"
-                                      : "grey",
-                                  alignSelf: "center",
-                                  marginLeft: windowWidth / 50,
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  borderColor: "#e6e6e6",
-                                  marginTop: 5,
-                                  marginBottom: 5,
+                                  transform: [{ rotate: "-90deg" }],
                                 }}
+                                // viewBox="-0.25 54.7 4.8 10"
+                                // viewBox="0 55.15 4.40 300"
+                                // viewBox="35.1751355963 0.02378590963 128.698668037 0.08597688504"
+                                viewBox={go}
+                                // viewBox={go != undefined ? svgMinX + " " + svgMinY + " " + 1 + " " + 3 : ""}
+                                width="100%"
+                                height="100%"
                               >
-                                {/* <Text>동선</Text> */}
-                                <Svg
-                                  style={{
-                                    transform: [{ rotate: "-90deg" }],
-                                  }}
-                                  // viewBox="-0.25 54.7 4.8 10"
-                                  // viewBox="0 55.15 4.40 300"
-                                  // viewBox="35.1751355963 0.02378590963 128.698668037 0.08597688504"
-                                  viewBox={go}
-                                  // viewBox={go != undefined ? svgMinX + " " + svgMinY + " " + 1 + " " + 3 : ""}
-                                  width="100%"
-                                  height="100%"
-                                >
-                                  {/* <Svg height="100%" width="100%" viewBox="0 0 100 100"> */}
-                                  <Poly
-                                    fill="none"
-                                    // stroke={polyColor[index % 4]}
-                                    stroke="red"
-                                    strokeWidth={
-                                      route.routeItems.length == 0
-                                        ? ""
-                                        : Number(svgDeltaY) > Number(svgDeltaX)
+                                {/* <Svg height="100%" width="100%" viewBox="0 0 100 100"> */}
+                                <Poly
+                                  fill="none"
+                                  // stroke={polyColor[index % 4]}
+                                  stroke="red"
+                                  strokeWidth={
+                                    route.routeItems.length == 0
+                                      ? ""
+                                      : Number(svgDeltaY) > Number(svgDeltaX)
                                         ? Number(svgDeltaY) / 13
                                         : Number(svgDeltaX) / 13
-                                    }
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    points={svgPoint}
-                                    // points="5.24928,8.90221 5.24930 9.5"
-                                    // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
-                                    // fill="none"
-                                    // stroke="black"
-                                    // strokeWidth="1"
-                                  />
-                                </Svg>
-                              </View>
-                              <Text
-                                style={{
-                                  alignSelf: "center",
-                                  fontSize: windowWidth / 30,
-                                  fontFamily: "NotoRegular",
-                                  color: "#3f3f3f",
-                                }}
-                              >
-                                {route.name.length > 6
-                                  ? route.name.slice(0, 6) + "..."
-                                  : route.name}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        }
-                      })
+                                  }
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  points={svgPoint}
+                                // points="5.24928,8.90221 5.24930 9.5"
+                                // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
+                                // fill="none"
+                                // stroke="black"
+                                // strokeWidth="1"
+                                />
+                              </Svg>
+                            </View>
+                            <Text
+                              style={{
+                                alignSelf: "center",
+                                fontSize: windowWidth / 30,
+                                fontFamily: "NotoRegular",
+                                color: "#3f3f3f",
+                              }}
+                            >
+                              {route.name.length > 6
+                                ? route.name.slice(0, 6) + "..."
+                                : route.name}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      }
+                    })
                     : ""}
                 </ScrollView>
                 {nowItem !== undefined
                   ? nowItem.diaryItems.map((route, index) => {
-                      return (
-                        <TouchableOpacity
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          // itemPressed(content);
+                          // setDayItem(item);
+                          setNowDiaryItem(route);
+                          toggleModal3();
+                        }}
+                        style={{
+                          width: "100%",
+                          alignItems: "center",
+                        }}
+                      >
+                        <View
                           key={index}
-                          onPress={() => {
-                            // itemPressed(content);
-                            // setDayItem(item);
-                            setNowDiaryItem(route);
-                            toggleModal3();
-                          }}
                           style={{
                             width: "100%",
                             alignItems: "center",
                           }}
                         >
                           <View
-                            key={index}
                             style={{
-                              width: "100%",
-                              alignItems: "center",
+                              width: "90%",
+                              height: 1,
+                              backgroundColor: "#f3f3f3",
+                              marginTop: 20,
+                            }}
+                          ></View>
+                          <View
+                            style={{
+                              paddingTop: 10,
+                              paddingBottom: 10,
+                              width: "95%",
+                              marginTop: 20,
+                              flexDirection: "row",
+                              borderRadius: 10,
+                              backgroundColor: "#f8f8f8",
                             }}
                           >
                             <View
                               style={{
-                                width: "90%",
-                                height: 1,
-                                backgroundColor: "#f3f3f3",
-                                marginTop: 20,
-                              }}
-                            ></View>
-                            <View
-                              style={{
-                                paddingTop: 10,
-                                paddingBottom: 10,
-                                width: "95%",
-                                marginTop: 20,
-                                flexDirection: "row",
-                                borderRadius: 10,
-                                backgroundColor: "#f8f8f8",
+                                marginLeft: windowWidth / 30,
+                                justifyContent: "center",
                               }}
                             >
-                              <View
+                              <Image
+                                source={{ uri: route.thumb_url }}
                                 style={{
-                                  marginLeft: windowWidth / 30,
-                                  justifyContent: "center",
+                                  width: windowWidth / 6,
+                                  height: windowWidth / 6,
+                                  borderRadius: 5,
+                                }}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                paddingLeft: windowWidth / 20,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: windowHeight / 50,
+                                  fontFamily: "NotoMedium",
+                                  color: "#262223",
                                 }}
                               >
-                                <Image
-                                  source={{ uri: route.thumb_url }}
-                                  style={{
-                                    width: windowWidth / 6,
-                                    height: windowWidth / 6,
-                                    borderRadius: 5,
-                                  }}
-                                />
-                              </View>
-                              <View
+                                {route.title}
+                              </Text>
+                              <Text
                                 style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  paddingLeft: windowWidth / 20,
+                                  fontSize: windowHeight / 70,
+                                  fontFamily: "NotoRegular",
+                                  color: "#262223",
                                 }}
                               >
-                                <Text
-                                  style={{
-                                    fontSize: windowHeight / 50,
-                                    fontFamily: "NotoMedium",
-                                    color: "#262223",
-                                  }}
-                                >
-                                  {route.title}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: windowHeight / 70,
-                                    fontFamily: "NotoRegular",
-                                    color: "#262223",
-                                  }}
-                                >
-                                  {route.description}
-                                </Text>
-                              </View>
+                                {route.description}
+                              </Text>
                             </View>
                           </View>
-                        </TouchableOpacity>
-                      );
-                    })
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
                   : ""}
 
                 {/* <Button
