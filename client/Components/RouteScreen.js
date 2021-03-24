@@ -205,6 +205,7 @@ export default function RouteScreen() {
       quality: 1,
       base64: true,
     });
+    console.log(result);
     if (!result.cancelled) {
       setIsImageLoading(true);
       const form = new FormData();

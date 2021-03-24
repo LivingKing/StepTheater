@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={styles.com_safeView_contents}>
             <ImageBackground
-              source={require("../assets/bg5.png")}
+              source={require("../assets/bg11.png")}
               resizeMode="stretch"
               style={{
                 width: "100%",
