@@ -1,10 +1,54 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment } from "react";
-import { Text, View, SafeAreaView, Platform } from "react-native";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Platform,
+  Image,
+  ImageBackground,
+} from "react-native";
 import styles from "../assets/styles";
 
+import * as SecureStore from "expo-secure-store";
+import { useFocusEffect } from "@react-navigation/core";
+import moment from "moment";
+import { server } from "../app.json";
+
 export default function HomeScreen({ navigation }) {
-  console.log(navigation);
+  const [wDays, setWDays] = useState(0);
+  const showState = async () => {
+    console.log(
+      "IsLogin : " + (await SecureStore.getItemAsync("IsLogin")),
+      "\nUserId : " + (await SecureStore.getItemAsync("UserId")),
+      "\nEmail : " + (await SecureStore.getItemAsync("Email")),
+      "\nNickname : " + (await SecureStore.getItemAsync("NickName")),
+      "\nLoginType : " + (await SecureStore.getItemAsync("LoginType"))
+    );
+  };
+  const getMemberData = async () => {
+    const id = await SecureStore.getItemAsync("UserId");
+    const response = await fetch(`${server.address}/api/member?id=${id}`);
+    const result = await response.json();
+    await SecureStore.setItemAsync("registerDate", result.registerDate);
+  };
+
+  const setWDaysData = async () => {
+    console.log(await SecureStore.getItemAsync("registerDate"));
+    setWDays(
+      moment().diff(
+        moment(await SecureStore.getItemAsync("registerDate")),
+        "days"
+      )
+    );
+    console.log(wDays);
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getMemberData();
+      setWDaysData();
+    }, [])
+  );
   if (Platform.OS === "ios") {
     return (
       <Fragment>
@@ -13,19 +57,65 @@ export default function HomeScreen({ navigation }) {
         </SafeAreaView>
         <SafeAreaView style={styles.com_safeView}>
           <View style={styles.com_safeView_title}>
-            <Text style={styles.com_safeView_title_text}>걸음 한 편</Text>
+            <Image
+              style={{
+                width: "35%",
+                height: "100%",
+              }}
+              source={require("../assets/main.png")}
+            />
+            {/* <Text style={styles.com_safeView_title_text}>걸음 한 편</Text> */}
           </View>
           <View style={styles.com_safeView_contents}>
-            <Text style={styles.com_safeView_contents_text}>
-              {/* {`성공하지 못할 거라는 그릇된 믿음을 버리는 것이
-              성공을 향한 첫걸음이다.
-              
-              -앤드류 매튜스-`} */}
-              {`인생은 한 편의 영화다.
-              
-              -전현근-
-              `}
-            </Text>
+            <ImageBackground
+              source={require("../assets/bg5.png")}
+              resizeMode="stretch"
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 35,
+                  fontFamily: "MapoFlower",
+                  fontWeight: "800",
+                  marginTop: 20,
+                }}
+              >
+                발자국을{"\n"}기록한 지{"\n"}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 50,
+                    fontFamily: "MapoFlower",
+                    fontWeight: "600",
+                  }}
+                >
+                  {wDays}
+                </Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 35,
+                    fontFamily: "MapoFlower",
+                    fontWeight: "800",
+                  }}
+                >
+                  {" "}
+                  걸음째
+                </Text>
+              </View>
+            </ImageBackground>
           </View>
         </SafeAreaView>
       </Fragment>
