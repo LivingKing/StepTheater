@@ -14,7 +14,7 @@
 ## 개발 환경
 
 ### IDE
-IntelliJ, VsCode
+IntelliJ, VSCode
 
 ### 언어
 Java, JavaScript
