@@ -24,4 +24,5 @@ Spring Boot, Spring Data JPA, React Native, H2 DataBase
 
 ## API 및 Model
 API : https://www.notion.so/API-81cbd058a9c8401a977ee350bb9254cd
+
 Model : https://www.notion.so/Model-707b948cd66b41d1b459cac1b468da2f
