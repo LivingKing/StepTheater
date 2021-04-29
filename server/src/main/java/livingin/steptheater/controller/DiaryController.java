@@ -1,24 +1,16 @@
 package livingin.steptheater.controller;
 
-import livingin.steptheater.domain.DiaryItem;
 import livingin.steptheater.domain.Member;
-import livingin.steptheater.domain.Route;
-import livingin.steptheater.repository.DiaryItemRepository;
-import livingin.steptheater.repository.RouteRepository;
 import livingin.steptheater.repository.diary.DiaryInfoDto;
 import livingin.steptheater.repository.diary.DiaryQueryDto;
-import livingin.steptheater.service.DiaryItemService;
 import livingin.steptheater.service.DiaryService;
 import livingin.steptheater.service.MemberService;
-import livingin.steptheater.service.RouteService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -27,15 +19,19 @@ import java.util.*;
 public class DiaryController {
     private final MemberService memberService;
     private final DiaryService diaryService;
-    private final RouteService routeService;
-    private final DiaryItemService diaryItemService;
 
+    /**
+     * 전체 다이어리 조회 API
+     * */
     @GetMapping("/api/diaries")
     public Result diaries() {
         List<DiaryQueryDto> diaryDtos = diaryService.findDiaryDtos();
         return new Result(diaryDtos.size(), diaryDtos);
     }
 
+    /**
+     * 특정 회원 다이어리 조회 API
+     */
     @GetMapping("/api/diary")
     public Result findDiaries(
             @RequestParam(value = "id") Long userId,
@@ -46,6 +42,9 @@ public class DiaryController {
         return new Result(diaryDto.size(), diaryDto);
     }
 
+    /**
+     * 특정 회원의 일, 주, 월 다이어리 조회 API
+     */
     @GetMapping("/api/diary/date")
     public DateResult findDiariesByDate(
             @RequestParam(value = "id") Long userId,
@@ -79,6 +78,9 @@ public class DiaryController {
         return new DateResult(type, date, diaryService.findDiaryByDate(userId, startDate, endDate));
     }
 
+    /**
+     * 특정 회원의 최근 다이어리 조회 API
+     */
     @GetMapping("/api/diary/recent")
     public RecentDateResult recentDiary(
             @RequestParam(value = "id") Long id,
@@ -88,6 +90,9 @@ public class DiaryController {
         return new RecentDateResult(recentDiary.size(),recentDiary);
     }
 
+    /**
+     * 다이어리 생성 API
+     */
     @PostMapping("/api/diary")
     public Long diaries(
             @RequestBody @Valid CreateDiaryRequest request
@@ -97,12 +102,18 @@ public class DiaryController {
         return diaryService.diary(member.getId(), LocalDate.parse(request.date));
     }
 
+    /**
+     * diary 생성 request class
+     */
     @Data
     static class CreateDiaryRequest {
         private Long id;
         private String date;
     }
 
+    /**
+     * 결과 리턴 Data class
+     */
     @Data
     @AllArgsConstructor
     static class Result<T> {
@@ -110,6 +121,9 @@ public class DiaryController {
         private T Data;
     }
 
+    /**
+     * 결과 리턴 Data class
+     */
     @Data
     @AllArgsConstructor
     static class DateResult<T> {
@@ -118,6 +132,9 @@ public class DiaryController {
         private T Data;
     }
 
+    /**
+     * 결과 리턴 Data class
+     */
     @Data
     @AllArgsConstructor
     static class RecentDateResult<T> {

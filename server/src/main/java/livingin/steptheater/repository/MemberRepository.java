@@ -13,15 +13,24 @@ public class MemberRepository {
 
     private final EntityManager em;
 
+    /**
+     * 멤버 Entity 저장
+     */
     public Long save(Member member) {
         em.persist(member);
         return member.getId();
     }
 
+    /**
+     * id 기반으로 멤버 Entity 조회
+     */
     public Member findOne(Long id) {
         return em.find(Member.class, id);
     }
 
+    /**
+     * email 기반으로 멤버 조회
+     */
     public Member findOneByEmail(String email) {
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -33,6 +42,9 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    /**
+     * nickname 기반으로 멤버 조회
+     */
     public Member findOneByNickName(String nickname) {
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -44,6 +56,9 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    /**
+     * OauthID 기반으로 멤버 조회
+     */
     public Member findOneByOauthId(String oauthid) {
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -55,6 +70,9 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    /**
+     * Email 찾기 로직
+     */
     public Member findOneEmail(String nickname, String name) {
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -68,6 +86,9 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    /**
+     * PW 찾기 로직
+     */
     public Member findOnePassword(String email, String nickname, String name){
         List<Member> findMembers = em.createQuery(
                 "select m from Member m " +
@@ -83,11 +104,17 @@ public class MemberRepository {
         return findMembers.get(0);
     }
 
+    /**
+     * 멤버 전체 조회 로직
+     */
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
     }
 
+    /**
+     * Email 기반 멤버 조회 로직
+     */
     public List<Member> findByEmail(String email) {
         return em.createQuery(
                 "select m from Member m " +

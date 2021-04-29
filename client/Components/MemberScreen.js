@@ -115,7 +115,7 @@ export default function MemberScreen({ navigation }) {
       form.location = locationChecked;
       form.nickname = nickname;
       form.imageUrl = image;
-      form.thumbImage = thumbImage;
+      form.thumbUrl = thumbImage;
 
       const response = await fetch(`${server.address}/api/member/${id}`, {
         method: "PUT",
@@ -128,7 +128,7 @@ export default function MemberScreen({ navigation }) {
           privacy: form.privacy,
           location: form.location,
           image_url: form.imageUrl,
-          thumb_url: form.thumbImage,
+          thumb_url: form.thumbUrl,
         }),
       });
       if (response.ok) {
@@ -234,7 +234,7 @@ export default function MemberScreen({ navigation }) {
               }}
             >
               {isImageLoading && <ActivityIndicator size="large" />}
-              {image !== "null" && (
+              {!isImageLoading && image !== "null" && (
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={pickImage}

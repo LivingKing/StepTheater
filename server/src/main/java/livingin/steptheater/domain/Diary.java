@@ -1,13 +1,10 @@
 package livingin.steptheater.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +38,6 @@ public class Diary {
         member.getDiaries().add(this);
     }
 
-//    public void addDiaryItem(DiaryItem diaryItem){
-//        diaryItems.add(diaryItem);
-//    }
-//
-//    public void addRoute(Route route){
-//        routes.add(route);
-//    }
-
     //==생성 메서드==//
     public static Diary createDiary(Member member, LocalDate date){
         Diary diary = new Diary();
@@ -57,6 +46,5 @@ public class Diary {
         return diary;
     }
 
-    //==비즈니즈 로직==//
 
 }

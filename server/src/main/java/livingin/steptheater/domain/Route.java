@@ -2,10 +2,7 @@ package livingin.steptheater.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 

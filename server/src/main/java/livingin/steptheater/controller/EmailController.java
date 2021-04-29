@@ -1,7 +1,6 @@
 package livingin.steptheater.controller;
 
 import livingin.steptheater.service.EmailService;
-import livingin.steptheater.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +13,10 @@ import javax.mail.MessagingException;
 public class EmailController {
 
     private final EmailService emailService;
-    private final MemberService memberService;
 
+    /**
+     * 이메일 인증 발송 API
+     */
     @GetMapping("/api/email/send/certified")
     public void sendCertifiedMail(
             @RequestParam(value = "email") String email,

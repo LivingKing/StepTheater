@@ -17,6 +17,9 @@ import java.util.*;
 public class RouteItemController {
     private final RouteItemService routeItemService;
 
+    /**
+     * 좌표 저장 API
+     */
     @PostMapping("/api/route/item")
     public CreateRouteItemResponse saveRouteItem(
             @RequestBody @Valid CreateRouteItemRequest request
@@ -28,6 +31,10 @@ public class RouteItemController {
         return new CreateRouteItemResponse(1);
     }
 
+    /**
+     * Data 처리를 위한 API
+     */
+    
     @Data
     @AllArgsConstructor
     static class CreateRouteItemResponse {

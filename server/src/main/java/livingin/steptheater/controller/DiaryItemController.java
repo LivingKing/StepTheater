@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 
 @RestController
@@ -16,6 +14,9 @@ public class DiaryItemController {
 
     private final DiaryItemService diaryItemService;
 
+    /**
+     * DiaryItem 생성 API
+     */
     @PostMapping("/api/diary/item")
     public void saveItem(
             @RequestBody @Valid CreateDiaryItemRequest request
@@ -33,6 +34,9 @@ public class DiaryItemController {
                 request.route_name);
     }
 
+    /**
+     * DiaryItem 생성 Data class
+     */
     @Data
     static class CreateDiaryItemRequest {
         private Long id;

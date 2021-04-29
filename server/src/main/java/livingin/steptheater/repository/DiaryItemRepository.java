@@ -15,9 +15,16 @@ public class DiaryItemRepository {
 
     private final EntityManager em;
 
+    /**
+     * DiaryItem Entity 등록
+     */
     public void save(DiaryItem diaryItem){
         em.persist(diaryItem);
     }
+
+    /**
+     * id 기반으로 DiaryItem 조회
+     */
     public DiaryItem findOne(Long id){
         return em.find(DiaryItem.class, id);
     }

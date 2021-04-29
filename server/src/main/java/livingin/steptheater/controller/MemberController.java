@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 public class MemberController {
     private final MemberService memberService;
 
+    /**
+     * 전체 멤버 조회 API
+     */
     @GetMapping("/api/members")
     public GetMembersResponse member() {
         List<Member> findMembers = memberService.findMembers();
@@ -36,6 +39,9 @@ public class MemberController {
         return new GetMembersResponse(collect.size(), collect);
     }
 
+    /**
+     * 특정 멤버 조회 API
+     */
     @GetMapping("/api/member")
     public GetMemberResponse findMember(
             @RequestParam(value = "id", required = false) Long id,
@@ -60,6 +66,9 @@ public class MemberController {
         return new GetMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getNickname(),findMember.getName(), findMember.getRegisterDate().toLocalDate());
     }
 
+    /**
+     * 멤버 인증 확인 API
+     */
     @RequestMapping("/api/member/certified")
     public void certifiedEmail(
             @RequestParam(value = "email") String email,
@@ -74,6 +83,9 @@ public class MemberController {
         }
     }
 
+    /**
+     *  ID/PW 찾기 페이지 API
+     */
     @RequestMapping("/api/member/findPW")
     public void findPwEmail(
             @RequestParam(value = "email") String email,
@@ -85,6 +97,9 @@ public class MemberController {
             response.sendRedirect("/email/findPW.html");
     }
 
+    /**
+     * email 찾기 API
+     */
     @GetMapping("/api/member/findEmail")
     public GetFindEmailResponse findEmail(
             @RequestParam(value = "nickname") String nickname,
@@ -95,6 +110,9 @@ public class MemberController {
         return new GetFindEmailResponse(findMember.getEmail());
     }
 
+    /**
+     * PW 찾기 API
+     */
     @GetMapping("/api/member/findPw")
     public GetFindPWResponse findPassword(
             @RequestParam(value = "email") String email,
@@ -107,6 +125,9 @@ public class MemberController {
     }
 
 
+    /**
+     * 멤버 저장 API
+     */
     @PostMapping("/api/members")
     public CreateMemberResponse saveMember(@RequestBody @Valid CreateMemberRequest request) {
         System.out.println("request = " + request);
@@ -131,7 +152,9 @@ public class MemberController {
         return new CreateMemberResponse(id, member.getEmail(), member.getNickname(), member.getCertified());
     }
 
-
+    /**
+     * 특정 회원 업데이트 API
+     */
     @PutMapping("/api/member/{id}")
     public UpdateMemberResponse updateMember(
             @PathVariable("id") Long id,
@@ -141,6 +164,9 @@ public class MemberController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getNickname(), findMember.isPrivacy_Checked(), findMember.isLocation_Checked(), findMember.getImage_url(), findMember.getThumb_url());
     }
 
+    /**
+     * 특정 회원 Oauth 정보 업데이트 API
+     */
     @PutMapping("/api/member/{id}/OAuth")
     public UpdateOAuthMemberResponse updateOAuthMember(
             @PathVariable("id") Long id,
@@ -150,7 +176,9 @@ public class MemberController {
         return new UpdateOAuthMemberResponse(findMember.getId(), findMember.getNickname());
     }
 
-
+    /**
+     * 로그인 API
+     */
     @PostMapping("/api/member/login")
     public LoginMemberResponse loginMember(
             @RequestBody @Valid LoginMemberRequest request) {
@@ -159,6 +187,9 @@ public class MemberController {
         return new LoginMemberResponse(message, member.getId(), member.getEmail(), member.getMemberType(), member.getNickname(), member.getName(), member.getImage_url(), member.getThumb_url(), member.isPrivacy_Checked(), member.isLocation_Checked());
     }
 
+    /**
+     * 인증 키 생성 함수
+     */
     private String certified_key() {
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
@@ -172,6 +203,9 @@ public class MemberController {
         return sb.toString();
     }
 
+    /**
+     * Data 처리를 위한 Data class들
+     */
     @Data
     @AllArgsConstructor
     static class GetMembersResponse<T> {

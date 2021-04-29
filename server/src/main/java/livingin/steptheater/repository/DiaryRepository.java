@@ -17,14 +17,23 @@ public class DiaryRepository {
 
     private final EntityManager em;
 
+    /**
+     * Diary Entity 등록
+     */
     public void save(Diary diary) {
         em.persist(diary);
     }
 
+    /**
+     * id 기반으로 Diary 조회
+     */
     public Diary findOne(Long id) {
         return em.find(Diary.class, id);
     }
 
+    /**
+     * 전체 다이어리 조회 로직
+     */
     public List<DiaryQueryDto> findDiaryDtos() {
         return em.createQuery(
                 "select new livingin.steptheater.repository.diary.DiaryQueryDto(d.id,m.nickname,d.diaryDate) " +
@@ -33,6 +42,9 @@ public class DiaryRepository {
                 .getResultList();
     }
 
+    /**
+     * 특정 회원 다이어리 조회 로직
+     */
     public List<DiaryQueryDto> findOneDiaryDto(Long userId, String date) {
         return em.createQuery(
                 "select new livingin.steptheater.repository.diary.DiaryQueryDto(d.id,m.nickname,d.diaryDate) " +
@@ -46,6 +58,9 @@ public class DiaryRepository {
 
     }
 
+    /**
+     * 특정 회원의 특정 날짜 다이어리 조회
+     */
     public Diary findOneDiary(Long userId, String date) {
         List<Diary> resultList = em.createQuery(
                 "select d " +
@@ -62,6 +77,9 @@ public class DiaryRepository {
         return resultList.get(0);
     }
 
+    /**
+     * 특정 회원의 특정 기간 사이 다이어리 조회 로직
+     */
     public List<DiaryInfoDto> findDiaryByDate(Long id, String startDate, String endDate) {
         List<DiaryInfoDto> result = em.createQuery("select new livingin.steptheater.repository.diary.DiaryInfoDto(d.id, d.diaryDate) " +
                 "from Diary d " +
@@ -109,6 +127,9 @@ public class DiaryRepository {
         return result;
     }
 
+    /**
+     * 특정 회원의 최근 다이어리 조회 로직
+     */
     public List<DiaryInfoDto> findRecentDiary(Long id, Integer count) {
         int routeCnt = 0;
         List<DiaryInfoDto> result = em.createQuery("select new livingin.steptheater.repository.diary.DiaryInfoDto(d.id, d.diaryDate) " +

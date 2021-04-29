@@ -18,6 +18,9 @@ public class RouteController {
 
     private final RouteService routeService;
 
+    /**
+     * 동선 저장 API
+     */
     @PostMapping("/api/route")
     public CreateRouteResponse saveRoute(
             @RequestBody @Valid CreateRouteRequest request
@@ -28,6 +31,9 @@ public class RouteController {
         return new CreateRouteResponse(1);
     }
 
+    /**
+     * 동선 업데이트 API
+     */
     @PutMapping("/api/route")
     public PutRouteResponse updateRoute(
             @RequestBody RouteVo routeVo
@@ -49,6 +55,9 @@ public class RouteController {
         return new PutRouteResponse(1);
     }
 
+    /**
+     * 특정 회원 특정 날짜 동선 조회 API
+     */
     @GetMapping("/api/route")
     public GetRouteResponse findRoute(
             @RequestParam(value = "id") Long id,
@@ -68,6 +77,10 @@ public class RouteController {
         return new GetRouteResponse(routeByDate.size(), totalDistance, totalHours, totalMinutes, totalMarkers, routeByDate);
     }
 
+
+    /**
+     * 특정 회원 일, 주, 월 동선 조회 API
+     */
     @GetMapping("/api/routes")
     public GetRouteResponse findRoutes(
             @RequestParam(value = "id") Long id,
@@ -112,6 +125,9 @@ public class RouteController {
         return new GetRouteResponse(routeByDate.size(), totalDistance, totalHours, totalMinutes, totalMarkers, routeByDate);
     }
 
+    /**
+     * 동선 이름 중복 조회 API
+     */
     @GetMapping("/api/route/duplicate")
     public FindRouteResponse findRoute(
             @RequestParam(value = "id") Long id,
@@ -121,6 +137,9 @@ public class RouteController {
         return new FindRouteResponse(routeService.duplicateCheck(id, date, name));
     }
 
+    /**
+     * 특정 회원의 특정 기간동안 동선이 존재하는 날 조회
+     */
     @GetMapping("/api/route/exist")
     public Result findExistRoute(
             @RequestParam(value = "id") Long id,
@@ -148,6 +167,9 @@ public class RouteController {
         return new Result(routeByDate.size(), routeByDate);
     }
 
+    /**
+     * 데이터 처리를 위한 Data class들
+     */
     @Data
     @AllArgsConstructor
     static class CreateRouteResponse {

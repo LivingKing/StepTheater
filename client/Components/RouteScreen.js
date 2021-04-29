@@ -149,6 +149,7 @@ export default function RouteScreen() {
 
     const totalRoute = [];
     const totalMarker = [];
+    if (result.data[0] === undefined) return;
     result.data[0].routes.map((route) => {
       route.diaryItems.map((items) => {
         const file = {
@@ -673,7 +674,8 @@ export default function RouteScreen() {
                         }}
                       >
                         {isImageLoading && <ActivityIndicator size="large" />}
-                        {image && (
+
+                        {!isImageLoading && image && (
                           <TouchableOpacity
                             activeOpacity={0.8}
                             onPress={pickImage}
@@ -879,41 +881,45 @@ export default function RouteScreen() {
                   }
                 }}
                 onUserLocationChange={(e) => {
-                  if (e.nativeEvent.coordinate.accuracy <= 15) {
-                    const newLine = {
-                      latitude: e.nativeEvent.coordinate.latitude,
-                      longitude: e.nativeEvent.coordinate.longitude,
-                    };
+                  try {
+                    if (e.nativeEvent.coordinate.accuracy <= 15) {
+                      const newLine = {
+                        latitude: e.nativeEvent.coordinate.latitude,
+                        longitude: e.nativeEvent.coordinate.longitude,
+                      };
 
-                    if (recording == true) {
-                      if (count == 0) {
-                        setPolyLine([...polyLine, Object.values(newLine)]);
-                        if (arrCount != 0) {
-                          setPrevRouteM(routeM);
-                        }
-                        setPrevLine(newLine);
-                        setCount(1);
-                      } else {
-                        if (getDistance(prevLine, newLine) >= 10) {
+                      if (recording == true) {
+                        if (count == 0) {
+                          setPolyLine([...polyLine, Object.values(newLine)]);
                           if (arrCount != 0) {
-                            const now = [];
-                            now.push([...polyLine, Object.values(newLine)]);
-                            // console.log(now);
-                            if (prevRouteM.concat(now) != null) {
-                              setRouteM(prevRouteM.concat(now));
-                            }
-                          } else {
-                            // console.log([
-                            // [...polyLine, Object.values(newLine)],
-                            // ]);
-                            setRouteM([[...polyLine, Object.values(newLine)]]);
+                            setPrevRouteM(routeM);
                           }
                           setPrevLine(newLine);
-                          setPolyLine([...polyLine, Object.values(newLine)]);
+                          setCount(1);
+                        } else {
+                          if (getDistance(prevLine, newLine) >= 10) {
+                            if (arrCount != 0) {
+                              const now = [];
+                              now.push([...polyLine, Object.values(newLine)]);
+                              // console.log(now);
+                              if (prevRouteM.concat(now) != null) {
+                                setRouteM(prevRouteM.concat(now));
+                              }
+                            } else {
+                              // console.log([
+                              // [...polyLine, Object.values(newLine)],
+                              // ]);
+                              setRouteM([
+                                [...polyLine, Object.values(newLine)],
+                              ]);
+                            }
+                            setPrevLine(newLine);
+                            setPolyLine([...polyLine, Object.values(newLine)]);
+                          }
                         }
                       }
                     }
-                  }
+                  } catch (e) {}
                 }}
               >
                 {pinArray != null

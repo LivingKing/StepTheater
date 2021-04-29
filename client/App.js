@@ -23,7 +23,7 @@ const findName = "찾기";
 const regiName = "회원가입";
 const addName = "추가입력";
 export default function App() {
-  LogBox.ignoreLogs(["__expo"]);
+  LogBox.ignoreLogs(["__expo", "useEffect"]);
   const [stackLoading, setStackLoading] = useState(false);
   const [initScreen, setInitScreen] = useState("");
   const [fontsLoad, setFontsLoad] = useState(false);

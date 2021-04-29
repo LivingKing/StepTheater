@@ -19,6 +19,7 @@ import {
 } from "react-native-paper";
 import styles from "../assets/styles";
 import * as Crypto from "expo-crypto";
+import { server } from "../app.json";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");

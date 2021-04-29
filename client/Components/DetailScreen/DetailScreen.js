@@ -398,8 +398,8 @@ export default function DetailScreen({ navigation }) {
                     nowY <= 0
                       ? divHeight
                       : nowY < divHeight
-                        ? divHeight - nowY
-                        : 0,
+                      ? divHeight - nowY
+                      : 0,
                   zIndex: 11,
                   backgroundColor: "white",
                 }}
@@ -420,8 +420,8 @@ export default function DetailScreen({ navigation }) {
                       nowY <= 0
                         ? windowWidth / 2.5
                         : nowY < divHeight
-                          ? windowWidth / 2.5 + nowY
-                          : windowWidth / 2.5 + divHeight,
+                        ? windowWidth / 2.5 + nowY
+                        : windowWidth / 2.5 + divHeight,
                     backgroundColor: "white",
                   }}
                 >
@@ -916,7 +916,9 @@ export default function DetailScreen({ navigation }) {
                                       svgDeltaY > svgDeltaX
                                         ? svgDeltaY
                                         : svgDeltaX;
-                                    go = `${svgMidX - val / 2 - val * 0.15} ${svgMidY - val / 2 - val * 0.15} ${val * 1.3} ${val * 1.3}`;
+                                    go = `${svgMidX - val / 2 - val * 0.15} ${
+                                      svgMidY - val / 2 - val * 0.15
+                                    } ${val * 1.3} ${val * 1.3}`;
                                   }
                                 }
                                 const svgPoint = temp
@@ -990,17 +992,17 @@ export default function DetailScreen({ navigation }) {
                                                 ? ""
                                                 : Number(svgDeltaY) >
                                                   Number(svgDeltaX)
-                                                  ? Number(svgDeltaY) / 13
-                                                  : Number(svgDeltaX) / 13
+                                                ? Number(svgDeltaY) / 13
+                                                : Number(svgDeltaX) / 13
                                             }
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             points={svgPoint}
-                                          // points="5.24928,8.90221 5.24930 9.5"
-                                          // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
-                                          // fill="none"
-                                          // stroke="black"
-                                          // strokeWidth="1"
+                                            // points="5.24928,8.90221 5.24930 9.5"
+                                            // points="0,55.15 1.10,55.43 2.20,55.98 3.30,56.01 4.40,56.09"
+                                            // fill="none"
+                                            // stroke="black"
+                                            // strokeWidth="1"
                                           />
                                         </Svg>
                                       </View>
@@ -1015,8 +1017,10 @@ export default function DetailScreen({ navigation }) {
                                       >
                                         {routeData !== undefined ? (
                                           routeData.data.map((route, index) => {
-                                            if (route.id == content.id && route.distance != 0)
-
+                                            if (
+                                              route.id == content.id &&
+                                              route.distance != 0
+                                            )
                                               return (
                                                 <View
                                                   style={{
@@ -1136,7 +1140,7 @@ export default function DetailScreen({ navigation }) {
                                                               -windowWidth / 90,
                                                           }}
                                                         >
-                                                          5hr
+                                                          5min
                                                         </Text>
                                                       </View>
                                                     ) : route.minutes >= 1 ? (
@@ -1169,7 +1173,7 @@ export default function DetailScreen({ navigation }) {
                                                               -windowWidth / 90,
                                                           }}
                                                         >
-                                                          1hr
+                                                          1min
                                                         </Text>
                                                       </View>
                                                     ) : (
